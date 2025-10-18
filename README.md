@@ -3,8 +3,11 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.9.22-blue.svg?logo=kotlin)](https://kotlinlang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Gradle](https://img.shields.io/badge/Gradle-8.5-02303A.svg?logo=gradle)](https://gradle.org)
+[![API Docs](https://img.shields.io/badge/API-Documentation-blue.svg)](https://yidafu.github.io/feishu2html/)
 
 A powerful Kotlin library and CLI tool to convert Feishu (Lark) documents to beautiful, standalone HTML files.
+
+> 📖 **[View API Documentation](https://yidafu.github.io/feishu2html/)** - Complete KDoc reference
 
 ## ✨ Features
 
@@ -131,7 +134,7 @@ A powerful Kotlin library and CLI tool to convert Feishu (Lark) documents to bea
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/feishu2html.git
+git clone https://github.com/yidafu/feishu2html.git
 cd feishu2html
 
 # Build the project
@@ -363,23 +366,11 @@ The Feishu API has rate limits. The tool includes built-in rate limiting (QPS=2)
 
 ## 📚 API Documentation
 
-Full API documentation is available after building:
+Complete API documentation is automatically generated and published to GitHub Pages:
 
-```bash
-# Generate HTML documentation
-./gradlew dokkaHtml
+**🔗 [View Online API Documentation](https://yidafu.github.io/feishu2html/)**
 
-# Open the documentation (macOS)
-open build/dokka/html/index.html
-
-# Open the documentation (Linux)
-xdg-open build/dokka/html/index.html
-
-# Open the documentation (Windows)
-start build/dokka/html/index.html
-```
-
-Documentation will be generated in `build/dokka/html/`.
+The documentation is automatically updated on every push to the `main` branch.
 
 ## 📖 References
 
