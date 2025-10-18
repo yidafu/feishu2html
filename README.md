@@ -1,20 +1,43 @@
-# Feishu2Md
+# Feishu2HTML
 
-A Kotlin library and CLI tool to convert Feishu (Lark) documents to HTML.
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.22-blue.svg?logo=kotlin)](https://kotlinlang.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Gradle](https://img.shields.io/badge/Gradle-8.5-02303A.svg?logo=gradle)](https://gradle.org)
 
-## Features
+A powerful Kotlin library and CLI tool to convert Feishu (Lark) documents to beautiful, standalone HTML files.
 
-- ✅ Support for all Feishu document block types (headings, paragraphs, lists, tables, code blocks, etc.)
-- ✅ Automatic download and save of images and attachments
-- ✅ Support for text styles (bold, italic, underline, strikethrough, links, etc.)
-- ✅ Mathematical formulas rendering (via MathJax)
-- ✅ Code syntax highlighting (70+ languages)
-- ✅ Modular design - use as library or CLI tool
-- ✅ Asynchronous resource downloading
-- ✅ Type-safe HTML generation using kotlinx.html DSL
-- ✅ Elegant Renderer delegation pattern
+## ✨ Features
 
-## Supported Block Types
+- 🎯 **Comprehensive Block Support** - All major Feishu document block types (headings, paragraphs, lists, tables, code blocks, etc.)
+- 📦 **Resource Management** - Automatic download and save of images and attachments
+- 🎨 **Rich Text Formatting** - Full support for text styles (bold, italic, underline, strikethrough, links, etc.)
+- 🧮 **Math Rendering** - Mathematical formulas powered by MathJax
+- 💻 **Syntax Highlighting** - Code blocks with 70+ language support
+- 🔧 **Flexible Usage** - Use as library or CLI tool
+- ⚡ **Async Downloads** - Asynchronous resource downloading for better performance
+- 🛡️ **Type Safety** - Type-safe HTML generation using kotlinx.html DSL
+- 🎭 **Clean Architecture** - Elegant Renderer delegation pattern
+
+## 📋 Table of Contents
+
+- [Supported Block Types](#-supported-block-types)
+- [Quick Start](#-quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Get Feishu App Credentials](#1-get-feishu-app-credentials)
+  - [Grant Document Access](#2-grant-document-access)
+  - [CLI Usage](#3-cli-usage)
+  - [Library Usage](#4-library-usage)
+  - [Custom CSS Styling](#5-custom-css-styling)
+- [Getting Document ID](#-getting-document-id)
+- [Troubleshooting](#-troubleshooting)
+- [Known Limitations](#-known-limitations)
+- [API Documentation](#-api-documentation)
+- [References](#-references)
+- [License](#-license)
+- [Contributing](#-contributing)
+- [Acknowledgments](#-acknowledgments)
+
+## 📊 Supported Block Types
 
 | Block Type | Type Code | Support Status | Notes |
 |------------|-----------|----------------|-------|
@@ -64,12 +87,12 @@ A Kotlin library and CLI tool to convert Feishu (Lark) documents to HTML.
 | AI Template | 52 | ❌ Unsupported | - |
 
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 
 - JDK 17 or higher
-- Gradle 8.0 or higher (or use the included gradlew wrapper)
+- Gradle 8.0 or higher (or use the included Gradle wrapper)
 
 ### 1. Get Feishu App Credentials
 
@@ -95,18 +118,25 @@ A Kotlin library and CLI tool to convert Feishu (Lark) documents to HTML.
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/yourusername/feishu2html.git
 cd feishu2html
+
+# Build the project
+./gradlew build
 
 # Export a single document
 ./gradlew run --args="<app_id> <app_secret> <document_id>"
 
 # Export multiple documents
 ./gradlew run --args="<app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>"
-
-# Example
-./gradlew run --args="cli_a8790687b4bdd01c 3sxXNpzmX4ErVg07gNMOgdMkQn2usPgq TPDddjY5foJZ8axlf9fctf2Wnse"
 ```
+
+**Example:**
+```bash
+./gradlew run --args="cli_a1234567890abcde your_app_secret_here doxcnABC123XYZ456"
+```
+
+Output files will be saved to `./output/` directory by default.
 
 ### 4. Library Usage
 
@@ -120,7 +150,7 @@ dependencies {
 }
 ```
 
-#### Code Example
+#### Basic Example
 
 ```kotlin
 import dev.yidafu.feishu2md.Feishu2Html
@@ -128,7 +158,31 @@ import dev.yidafu.feishu2md.Feishu2HtmlOptions
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
-    // Configure options
+    val options = Feishu2HtmlOptions(
+        appId = "your_app_id",
+        appSecret = "your_app_secret"
+    )
+
+    val feishu2Html = Feishu2Html(options)
+
+    try {
+        // Export a single document
+        feishu2Html.export("doxcnABC123XYZ456")
+        println("Export completed successfully!")
+    } finally {
+        feishu2Html.close()
+    }
+}
+```
+
+#### Advanced Example with Custom Options
+
+```kotlin
+import dev.yidafu.feishu2md.Feishu2Html
+import dev.yidafu.feishu2md.Feishu2HtmlOptions
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
     val options = Feishu2HtmlOptions(
         appId = "your_app_id",
         appSecret = "your_app_secret",
@@ -143,15 +197,15 @@ fun main() = runBlocking {
     val feishu2Html = Feishu2Html(options)
 
     try {
-        // Export a single document
-        feishu2Html.export("document_id_here")
-
-        // Batch export
-        feishu2Html.exportBatch(listOf(
-            "document_id_1",
-            "document_id_2",
-            "document_id_3"
-        ))
+        // Batch export multiple documents
+        val documentIds = listOf(
+            "doxcnABC123XYZ456",
+            "doxcnDEF789GHI012",
+            "doxcnJKL345MNO678"
+        )
+        
+        feishu2Html.exportBatch(documentIds)
+        println("Batch export completed!")
     } finally {
         feishu2Html.close()
     }
@@ -160,19 +214,43 @@ fun main() = runBlocking {
 
 ### 5. Custom CSS Styling
 
+You can customize the appearance of exported HTML with your own CSS:
+
 ```kotlin
 val customCss = """
+    /* Custom fonts and colors */
     body {
-        font-family: "Custom Font", sans-serif;
-        background-color: #f5f5f5;
+        font-family: "Inter", "Segoe UI", sans-serif;
+        background-color: #f8f9fa;
+        line-height: 1.8;
     }
     
+    /* Heading styles */
     h1 {
         color: #2c3e50;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 10px;
     }
     
-    /* More custom styles... */
-"""
+    /* Code block customization */
+    pre {
+        background-color: #1e1e1e;
+        border-radius: 8px;
+        padding: 20px;
+    }
+    
+    /* Link styles */
+    a {
+        color: #3498db;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.3s;
+    }
+    
+    a:hover {
+        border-bottom-color: #3498db;
+    }
+""".trimIndent()
 
 val options = Feishu2HtmlOptions(
     appId = "your_app_id",
@@ -183,17 +261,21 @@ val options = Feishu2HtmlOptions(
 
 
 
-## Getting Document ID
+## 🔍 Getting Document ID
 
 The document ID can be extracted from the Feishu document URL:
 
 ```
-https://example.feishu.cn/docx/abc123xyz456
-                              ↑
-                         This is the document_id
+https://example.feishu.cn/docx/doxcnABC123XYZ456
+                              └─────────────────┘
+                                 Document ID
 ```
 
-## Troubleshooting
+For example:
+- URL: `https://company.feishu.cn/docx/TPDddjY5foJZ8axlf9fctf2Wnse`
+- Document ID: `TPDddjY5foJZ8axlf9fctf2Wnse`
+
+## 🔧 Troubleshooting
 
 ### 1. Token Acquisition Failure
 
@@ -220,7 +302,7 @@ https://example.feishu.cn/docx/abc123xyz456
 - Confirm app has `drive:drive` permission
 - Some legacy documents may have API limitations
 
-## Known Limitations
+## ⚠️ Known Limitations
 
 ### 1. External Document References
 
@@ -266,7 +348,7 @@ These blocks will be rendered with a placeholder: `[暂不支持的Block类型: 
 The Feishu API has rate limits. The tool includes built-in rate limiting (QPS=2) to avoid exceeding limits, but very large documents may take time to process.
 
 
-## API Documentation
+## 📚 API Documentation
 
 Full API documentation is available after building:
 
@@ -274,33 +356,46 @@ Full API documentation is available after building:
 # Generate HTML documentation
 ./gradlew dokkaHtml
 
-# Open the documentation
+# Open the documentation (macOS)
 open build/dokka/html/index.html
+
+# Open the documentation (Linux)
+xdg-open build/dokka/html/index.html
+
+# Open the documentation (Windows)
+start build/dokka/html/index.html
 ```
 
 Documentation will be generated in `build/dokka/html/`.
 
-## References
+## 📖 References
 
-- [Feishu Open Platform Docs](https://open.feishu.cn/document/home/index)
-- [Document Block API](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/list)
-- [Block Type Reference](https://open.feishu.cn/document/docs/docs/data-structure/block)
-- [API Documentation](build/dokka/html/index.html) (generate with `./gradlew dokkaHtml`)
+- [Feishu Open Platform Docs](https://open.feishu.cn/document/home/index) - Official Feishu API documentation
+- [Document Block API](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/list) - Block API reference
+- [Block Type Reference](https://open.feishu.cn/document/docs/docs/data-structure/block) - All available block types
+- [API Documentation](build/dokka/html/index.html) - Generated KDoc (run `./gradlew dokkaHtml`)
 
-## License
+## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Contributing
+## 🤝 Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
-- Project architecture and structure
-- How to add support for new block types
-- Coding standards and best practices
-- Pull request process
 
-Issues and Pull Requests are welcome!
+- 🏗️ Project architecture and structure
+- 🧩 How to add support for new block types
+- 📝 Coding standards and best practices
+- 🔄 Pull request process
 
-## Acknowledgments
+Issues and Pull Requests are always welcome!
+
+## 🙏 Acknowledgments
 
 This project was inspired by [feishu2md](https://github.com/S-TE11A/feishu2md).
+
+---
+
+<div align="center">
+Made with ❤️ by the Feishu2HTML contributors
+</div>
