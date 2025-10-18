@@ -1,0 +1,122 @@
+Feishu2Html 项目文件清单
+========================================
+
+根目录文件
+----------------------------------------
+├── build.gradle.kts                   # 根项目Gradle配置
+├── settings.gradle.kts                # 多模块设置
+├── gradle.properties                  # Gradle属性配置
+├── gradlew                           # Gradle Wrapper脚本（Unix）
+├── .gitignore                        # Git忽略规则
+├── LICENSE                           # GPL-3.0开源协议
+
+文档文件
+----------------------------------------
+├── README.md                         # 项目说明（英文）
+├── README.zh-CN.md                   # 项目说明（中文）
+├── QUICKSTART.md                     # 快速开始指南
+├── PROJECT_SUMMARY.md                # 项目技术总结
+├── IMPLEMENTATION_COMPLETE.md        # 项目完成报告
+└── FILES.txt                         # 本文件清单
+
+配置示例
+----------------------------------------
+├── config.sample.kts                 # 配置文件示例
+└── run-example.sh                    # 快速运行脚本
+
+Gradle配置
+----------------------------------------
+└── gradle/
+    └── wrapper/
+        └── gradle-wrapper.properties # Gradle Wrapper配置
+
+feishu-api模块
+----------------------------------------
+└── feishu-api/
+    ├── build.gradle.kts              # 模块构建配置
+    └── src/main/
+        ├── kotlin/com/feishu2html/api/
+        │   ├── FeishuAuthService.kt  # 飞书认证服务
+        │   ├── FeishuApiClient.kt    # 飞书API客户端
+        │   └── model/
+        │       ├── Block.kt          # 文档块模型（30+类型）
+        │       ├── TextElement.kt    # 文本元素模型
+        │       └── Document.kt       # 文档响应模型
+        └── resources/
+            └── logback.xml           # 日志配置
+
+docx-to-html模块
+----------------------------------------
+└── docx-to-html/
+    ├── build.gradle.kts              # 模块构建配置
+    └── src/main/kotlin/com/feishu2html/converter/
+        ├── HtmlConverter.kt          # 块转HTML转换器
+        ├── TextElementConverter.kt   # 文本样式转换器
+        └── HtmlBuilder.kt            # HTML文档构建器
+
+feishu2html主模块
+----------------------------------------
+└── feishu2html/
+    ├── build.gradle.kts              # 模块构建配置
+    └── src/main/kotlin/com/feishu2html/
+        ├── Feishu2Html.kt            # 主入口类
+        └── Main.kt                   # 命令行工具入口
+
+示例代码
+----------------------------------------
+└── example/
+    └── Example.kt                    # 使用示例代码
+
+代码统计
+========================================
+- Kotlin源文件:     8个
+- 配置文件:         7个
+- 文档文件:         6个
+- 示例文件:         2个
+- 总代码行数:       约1500+行
+
+模块统计
+========================================
+- feishu-api:       5个Kt文件 + 1个资源文件
+- docx-to-html:     3个Kt文件
+- feishu2html:      2个Kt文件
+
+支持的功能
+========================================
+✓ 30+ 种文档块类型
+✓ 完整的文本样式支持
+✓ 图片和附件自动下载
+✓ 异步并发处理
+✓ 批量导出支持
+✓ 自定义CSS样式
+✓ 命令行和编程两种使用方式
+
+技术栈
+========================================
+- Kotlin 1.9.21
+- Ktor Client 2.3.7
+- kotlinx.coroutines 1.7.3
+- kotlinx.serialization 1.6.2
+- Gradle 8.5
+- SLF4J + Logback
+
+项目位置
+========================================
+/Users/dovyih/feishu2html/
+
+快速开始
+========================================
+# 运行示例
+./run-example.sh <app_id> <app_secret> <document_id>
+
+# 或使用Gradle
+./gradlew :feishu2html:run --args="<app_id> <app_secret> <doc_id>"
+
+# 编译项目
+./gradlew build
+
+========================================
+生成时间: 2025-10-18
+项目状态: ✅ 完成
+========================================
+

@@ -1,0 +1,86 @@
+package dev.yidafu.feishu2md.api.model
+
+/**
+ * 代码块语言枚举
+ * 参考: https://open.feishu.cn/document/docs/docs/data-structure/block
+ */
+enum class CodeLanguage(val code: Int, val languageName: String) {
+    PLAINTEXT(1, "plaintext"),
+    ABAP(2, "abap"),
+    ADA(3, "ada"),
+    APACHE(4, "apache"),
+    APEX(5, "apex"),
+    ASSEMBLY(6, "assembly"),
+    BASH(7, "bash"),
+    CSHARP(8, "csharp"),
+    CPP(9, "cpp"),
+    C(10, "c"),
+    COBOL(11, "cobol"),
+    CSS(12, "css"),
+    COFFEESCRIPT(13, "coffeescript"),
+    D(14, "d"),
+    DART(15, "dart"),
+    DELPHI(16, "delphi"),
+    DJANGO(17, "django"),
+    DOCKERFILE(18, "dockerfile"),
+    ERLANG(19, "erlang"),
+    FORTRAN(20, "fortran"),
+    FOXPRO(21, "foxpro"),
+    GO(22, "go"),
+    GROOVY(23, "groovy"),
+    HTML(24, "html"),
+    HTMLBARS(25, "htmlbars"),
+    HTTP(26, "http"),
+    HASKELL(27, "haskell"),
+    JSON(28, "json"),
+    JAVA(29, "java"),
+    JAVASCRIPT(30, "javascript"),
+    JULIA(31, "julia"),
+    KOTLIN(32, "kotlin"),
+    LATEX(33, "latex"),
+    LISP(34, "lisp"),
+    LOGO(35, "logo"),
+    LUA(36, "lua"),
+    MATLAB(37, "matlab"),
+    MAKEFILE(38, "makefile"),
+    MARKDOWN(39, "markdown"),
+    NGINX(40, "nginx"),
+    OBJECTIVEC(41, "objectivec"),
+    OPENCL(42, "opencl"),
+    PHP(43, "php"),
+    PERL(44, "perl"),
+    POSTSCRIPT(45, "postscript"),
+    POWERSHELL(46, "powershell"),
+    PROLOG(47, "prolog"),
+    PROTOBUF(48, "protobuf"),
+    PYTHON(49, "python"),
+    R(50, "r"),
+    RPG(51, "rpg"),
+    RUBY(52, "ruby"),
+    RUST(53, "rust"),
+    SAS(54, "sas"),
+    SCSS(55, "scss"),
+    SQL(56, "sql"),
+    SCALA(57, "scala"),
+    SCHEME(58, "scheme"),
+    SCRATCH(59, "scratch"),
+    SHELL(60, "shell"),
+    SWIFT(61, "swift"),
+    THRIFT(62, "thrift"),
+    TYPESCRIPT(63, "typescript"),
+    VBSCRIPT(64, "vbscript"),
+    VHDL(65, "vhdl"),
+    VERILOG(66, "verilog"),
+    VISUAL_BASIC(67, "visual-basic"),
+    WEBASSEMBLY(68, "webassembly"),
+    XML(69, "xml"),
+    YAML(70, "yaml"),
+    ;
+
+    companion object {
+        fun fromCode(code: Int?): String {
+            if (code == null) return "plaintext"
+            return entries.firstOrNull { it.code == code }?.languageName ?: "plaintext"
+        }
+    }
+}
