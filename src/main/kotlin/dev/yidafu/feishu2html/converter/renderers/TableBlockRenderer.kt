@@ -67,7 +67,8 @@ internal object TableBlockRenderer : Renderable {
     ) {
         val elements = cellBlock.tableCell?.elements ?: emptyList()
         val children = cellBlock.children
-        logger.debug("渲染表格单元格: ID=${cellBlock.blockId}, elements=${elements.size}, children=${children?.size ?: 0}")
+        logger.debug("Rendering table cell: ID={}, elements={}, children={}",
+            cellBlock.blockId, elements.size, children?.size ?: 0)
 
         if (elements.isNotEmpty()) {
             context.textConverter.convertElements(elements, parent)

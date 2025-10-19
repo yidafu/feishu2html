@@ -1,37 +1,37 @@
 package dev.yidafu.feishu2html.api.model
 
 /**
- * Iframe 嵌入类型枚举
+ * Iframe embed type enum
  *
- * 根据飞书 API 文档定义的 iframe_type 类型
- * 参考：https://open.feishu.cn/document/docs/docs/data-structure/block#f7b07e0c
+ * Defines iframe_type as per Feishu API documentation
+ * Reference: https://open.feishu.cn/document/docs/docs/data-structure/block#f7b07e0c
  */
 internal enum class IframeType(val typeCode: Int, val displayName: String) {
-    BILIBILI(1, "哔哩哔哩视频"),
+    BILIBILI(1, "Bilibili"),
     AIRTABLE(3, "Airtable"),
-    YOUKU(5, "优酷视频"),
+    YOUKU(5, "Youku"),
     YOUTUBE(6, "YouTube"),
     FIGMA(7, "Figma"),
-    MODAO(8, "墨刀"),
+    MODAO(8, "Modao"),
     CANVA(9, "Canva"),
     CODEPEN(10, "CodePen"),
-    FEISHU_DOCS(11, "飞书文档"),
-    FEISHU_SHEET(12, "飞书表格"),
-    FEISHU_BITABLE(15, "飞书多维表格"),
-    FEISHU_BOARD(17, "飞书白板"),
+    FEISHU_DOCS(11, "Feishu Docs"),
+    FEISHU_SHEET(12, "Feishu Sheet"),
+    FEISHU_BITABLE(15, "Feishu Bitable"),
+    FEISHU_BOARD(17, "Feishu Board"),
     INVISION(18, "InVision"),
-    LANHU(21, "蓝湖"),
+    LANHU(21, "Lanhu"),
     PROCESSON(24, "ProcessOn"),
-    MODIAN(28, "摩点"),
+    MODIAN(28, "Modian"),
     AXURE(31, "Axure"),
-    XIAOPENG(36, "小鹏汽车"),
-    GENERIC(99, "通用嵌入"), // 自定义iframe
-    UNDEFINED(999, "未知类型"),
+    XIAOPENG(36, "XPeng"),
+    GENERIC(99, "Generic Embed"), // Custom iframe
+    UNDEFINED(999, "Unknown"),
     ;
 
     companion object {
         /**
-         * 根据类型代码获取 IframeType
+         * Get IframeType from type code
          */
         fun fromCode(code: Int): IframeType {
             return entries.firstOrNull { it.typeCode == code } ?: UNDEFINED
