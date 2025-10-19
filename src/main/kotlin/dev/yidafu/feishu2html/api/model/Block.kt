@@ -6,11 +6,11 @@ import kotlinx.serialization.encoding.*
 import kotlinx.serialization.json.*
 
 /**
- * 文档块基类 - 使用sealed class实现类型安全的继承体系
+ * Document block base class - uses sealed class for type-safe inheritance hierarchy
  *
- * 公共字段：block_id, block_type, parent_id, children, comment_ids
+ * Common fields: block_id, block_type, parent_id, children, comment_ids
  *
- * Block子类被分组到以下文件：
+ * Block subclasses are grouped into the following files:
  * - TextBlocks.kt: Page, Text
  * - HeadingBlocks.kt: Heading1-9
  * - ListBlocks.kt: Bullet, Ordered
@@ -18,11 +18,11 @@ import kotlinx.serialization.json.*
  * - MediaBlocks.kt: Image, File, Board, Diagram, Iframe
  * - ContainerBlocks.kt: Callout, Grid, GridColumn, QuoteContainer, Table, TableCell
  * - OtherBlocks.kt: Bitable, ChatCard, Unknown
- * - UnsupportedBlocks.kt: 所有暂不支持的类型（Type 28-52，除已实现的）
- * - BlockData.kt: 所有BlockData数据类
+ * - UnsupportedBlocks.kt: All unsupported types (Type 28-52, excluding implemented ones)
+ * - BlockData.kt: All BlockData data classes
  */
 @Serializable(with = BlockSerializer::class)
-sealed class Block {
+internal sealed class Block {
     abstract val blockId: String
     abstract val blockType: BlockType
     abstract val parentId: String?
@@ -31,15 +31,15 @@ sealed class Block {
 }
 
 /**
- * Block自定义序列化器
+ * Custom Block serializer
  *
- * 实现多态序列化，根据JSON中的block_type字段值，选择对应的Block子类进行反序列化。
- * 支持所有52种飞书官方定义的Block类型。
+ * Implements polymorphic serialization, selecting appropriate Block subclass for deserialization
+ * based on the block_type field value in JSON. Supports all 52 official Feishu Block types.
  *
  * @see BlockType
  * @see Block
  */
-object BlockSerializer : JsonContentPolymorphicSerializer<Block>(Block::class) {
+internal object BlockSerializer : JsonContentPolymorphicSerializer<Block>(Block::class) {
     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<Block> {
         val jsonObj = element.jsonObject
         val typeCode = jsonObj["block_type"]?.jsonPrimitive?.int ?: return UnknownBlock.serializer()
@@ -103,17 +103,17 @@ object BlockSerializer : JsonContentPolymorphicSerializer<Block>(Block::class) {
     }
 }
 
-// ==================== BlockType 枚举 ====================
+// ==================== BlockType Enum ====================
 
 /**
- * BlockType枚举序列化器
+ * BlockType enum serializer
  *
- * 处理飞书API中block_type字段（整数）到BlockType枚举的转换。
- * 飞书API使用整数表示Block类型，此序列化器负责类型转换。
+ * Handles conversion between block_type field (integer) in Feishu API and BlockType enum.
+ * Feishu API uses integers to represent Block types, this serializer handles the conversion.
  *
  * @see BlockType
  */
-object BlockTypeSerializer : KSerializer<BlockType> {
+internal object BlockTypeSerializer : KSerializer<BlockType> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("BlockType", PrimitiveKind.INT)
 
     override fun serialize(
@@ -130,27 +130,27 @@ object BlockTypeSerializer : KSerializer<BlockType> {
 }
 
 /**
- * 飞书文档Block类型枚举
+ * Feishu document Block type enum
  *
- * 定义了所有飞书官方支持的Block类型（共52种）。
- * 每个枚举值对应一个整数类型码，与飞书API返回的block_type字段一致。
+ * Defines all officially supported Feishu Block types (52 in total).
+ * Each enum value corresponds to an integer type code matching the block_type field returned by Feishu API.
  *
- * ## 分类
- * - **文本类（1-2）**: Page, Text
- * - **标题类（3-11）**: Heading1-9
- * - **列表类（12-13）**: Bullet, Ordered
- * - **内容类（14-17, 22）**: Code, Quote, Equation, Todo, Divider
- * - **容器类（18-19, 24-25, 31-32, 34）**: Bitable, Callout, Grid, Table, Quote Container
- * - **媒体类（21, 23, 26-27, 43）**: Diagram, File, Iframe, Image, Board
- * - **扩展类（20, 28-30, 33, 35-52）**: 各类第三方集成和高级功能
+ * ## Categories
+ * - **Text Types (1-2)**: Page, Text
+ * - **Heading Types (3-11)**: Heading1-9
+ * - **List Types (12-13)**: Bullet, Ordered
+ * - **Content Types (14-17, 22)**: Code, Quote, Equation, Todo, Divider
+ * - **Container Types (18-19, 24-25, 31-32, 34)**: Bitable, Callout, Grid, Table, Quote Container
+ * - **Media Types (21, 23, 26-27, 43)**: Diagram, File, Iframe, Image, Board
+ * - **Extension Types (20, 28-30, 33, 35-52)**: Various third-party integrations and advanced features
  *
- * @property typeCode 类型代码，与飞书API的block_type字段对应
+ * @property typeCode Type code matching Feishu API's block_type field
  *
  * @see Block
  * @see BlockSerializer
  */
 @Serializable(with = BlockTypeSerializer::class)
-enum class BlockType(val typeCode: Int) {
+internal enum class BlockType(val typeCode: Int) {
     PAGE(1),
     TEXT(2),
     HEADING1(3),
