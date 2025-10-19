@@ -1,13 +1,24 @@
 # local.properties.example
-# 复制此文件为 local.properties 并填写您的实际配置
-# ⚠️ 注意：local.properties 包含敏感信息，不应提交到 Git
+# Copy this file to local.properties and fill in your actual configuration
+# ⚠️  Warning: local.properties contains sensitive information and should not be committed to Git
 
 # ==========================================
-# Sonatype OSS Repository 配置
+# Central Portal Configuration (OSSRH Sunset - June 2025)
 # ==========================================
-# 在 https://s01.oss.sonatype.org/ 注册账号后获取
-ossrhUsername=your-sonatype-username
-ossrhPassword=your-sonatype-password
+# OSSRH has been shut down. Use Central Portal instead.
+# See: https://central.sonatype.org/pages/ossrh-eol/
+#
+# 1. Log in to https://central.sonatype.com/ (use your OSSRH credentials if migrating)
+# 2. Generate a Portal user token (Account Settings -> Generate Token)
+# 3. Use the generated token as username/password below
+
+# Portal user token (replaces OSSRH credentials)
+centralUsername=your-portal-token-username
+centralPassword=your-portal-token-password
+
+# Legacy OSSRH credentials (for backward compatibility only - will fallback to Central if not set)
+# ossrhUsername=your-sonatype-username
+# ossrhPassword=your-sonatype-password
 
 # ==========================================
 # GPG 签名配置（发布到 Maven Central 必需）

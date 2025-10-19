@@ -1,100 +1,121 @@
 # 📦 Publishing Guide - 发布指南
 
-## 前置准备
+> **Important Update**: As of June 30, 2025, OSSRH has been shut down and replaced by **Central Portal Publisher**.  
+> See: https://central.sonatype.org/pages/ossrh-eol/
 
-### 1. 注册 Sonatype 账号
+---
 
-1. 访问 [Sonatype JIRA](https://issues.sonatype.org/)
-2. 创建账号
-3. 创建一个 Issue 申请 `dev.yidafu.feishu2html` 组ID
-4. 等待审核通过（通常 1-2 个工作日）
+## Prerequisites - 前置准备
 
-### 2. 生成 GPG 密钥
+### 1. Register Central Portal Account
+
+1. Visit [Maven Central Portal](https://central.sonatype.com/)
+2. Create an account using the same credentials as your previous OSSRH account (if migrating)
+3. Verify your namespace ownership (e.g., `dev.yidafu.feishu2html`)
+
+### 2. Generate Portal User Token
+
+**Important**: You must generate a new Portal user token to replace your OSSRH token.
+
+1. Log in to [Maven Central Portal](https://central.sonatype.com/)
+2. Navigate to your account settings
+3. Generate a new user token
+4. Save the token securely (username + password)
+
+Documentation: [Generating a Portal Token](https://central.sonatype.org/publish/generate-portal-token/)
+
+### 3. Generate GPG Keys
 
 ```bash
-# 生成密钥
+# Generate key pair
 gpg --gen-key
 
-# 查看密钥
+# List keys
 gpg --list-keys
 
-# 导出公钥到密钥服务器
+# Export public key to keyserver
 gpg --keyserver keyserver.ubuntu.com --send-keys YOUR_KEY_ID
 
-# 导出私钥（用于签名）
+# Export private key (for signing)
 gpg --export-secret-keys -a YOUR_KEY_ID > private-key.asc
 ```
 
-### 3. 配置本地凭证
+### 4. Configure Credentials
 
-复制 `local.properties.example` 为 `local.properties`：
+Copy the example configuration:
 
 ```bash
 cp local.properties.example local.properties
 ```
 
-编辑 `local.properties` 填写：
-- `ossrhUsername` - Sonatype 用户名
-- `ossrhPassword` - Sonatype 密码
-- `signing.keyId` - GPG 密钥 ID（最后 8 位）
-- `signing.password` - GPG 密钥密码
+Edit `local.properties` and fill in:
 
-**⚠️ 注意**：`local.properties` 包含敏感信息，已在 `.gitignore` 中，不会被提交到 Git。
+```properties
+# Central Portal credentials (Portal user token)
+centralUsername=your-portal-token-username
+centralPassword=your-portal-token-password
+
+# GPG signing configuration
+signing.password=your-gpg-passphrase
+signing.key=-----BEGIN PGP PRIVATE KEY BLOCK-----\n...\n-----END PGP PRIVATE KEY BLOCK-----
+```
+
+**⚠️ Note**: `local.properties` is git-ignored for security.
 
 ---
 
-## 发布流程
+## Publishing Process
 
-### 发布 SNAPSHOT 版本
+### Publish SNAPSHOT Version
 
-SNAPSHOT 版本会自动发布，无需手动审批：
-
-```bash
-# 确保版本号以 -SNAPSHOT 结尾
-# 在 build.gradle.kts 中：version = "1.0.0-SNAPSHOT"
-
-# 发布所有平台
-./gradlew publishAllPublicationsToSonatypeRepository
-
-# 或发布特定平台
-./gradlew publishJvmPublicationToSonatypeRepository
-./gradlew publishJsPublicationToSonatypeRepository
-```
-
-**SNAPSHOT 仓库**：
-```
-https://s01.oss.sonatype.org/content/repositories/snapshots/
-```
-
-### 发布 Release 版本
-
-Release 版本需要手动审批和发布：
+SNAPSHOT versions are published directly without manual approval:
 
 ```bash
-# 1. 更新版本号（移除 -SNAPSHOT）
-# 在 build.gradle.kts 中：version = "1.0.0"
+# Ensure version ends with -SNAPSHOT
+# In build.gradle.kts: version = "1.0.0-SNAPSHOT"
 
-# 2. 发布到 staging 仓库
-./gradlew publishAllPublicationsToSonatypeRepository
+# Publish all platforms (JVM + JS only currently due to Native compilation issues)
+./gradlew publishJvmPublicationToCentralRepository publishJsPublicationToCentralRepository
 
-# 3. 登录 Sonatype Nexus 进行审批
-# https://s01.oss.sonatype.org/
+# Or publish specific platform
+./gradlew publishJvmPublicationToCentralRepository
+```
 
-# 4. 在 "Staging Repositories" 中找到你的仓库
-# 5. 点击 "Close" 进行验证
-# 6. 验证通过后点击 "Release" 发布到 Maven Central
+**SNAPSHOT Repository**:
+```
+https://central.sonatype.com/api/v1/publisher/upload
+```
 
-# 7. 等待同步到 Maven Central（2-4 小时）
+### Publish Release Version
+
+Release versions require manual validation in the Portal:
+
+```bash
+# 1. Update version (remove -SNAPSHOT)
+# In build.gradle.kts: version = "1.0.0"
+
+# 2. Publish to Central Portal
+./gradlew publishAllPublicationsToCentralRepository
+
+# 3. Log in to Central Portal
+# https://central.sonatype.com/
+
+# 4. Verify and publish your deployment
+# - Navigate to "Deployments"
+# - Review your published components
+# - Click "Publish" to release to Maven Central
+
+# 5. Wait for sync to Maven Central (typically 30 minutes to 4 hours)
 # https://repo1.maven.org/maven2/dev/yidafu/feishu2html/
 ```
 
 ---
 
-## 使用 Maven Central 的包
+## Using Published Artifacts
 
 ### Gradle (Kotlin DSL)
 
-**Multiplatform 项目**：
+**Multiplatform Project**:
 ```kotlin
 kotlin {
     sourceSets {
@@ -107,14 +128,14 @@ kotlin {
 }
 ```
 
-**JVM 项目**：
+**JVM Project**:
 ```kotlin
 dependencies {
     implementation("dev.yidafu.feishu2html:feishu2html-jvm:1.0.0")
 }
 ```
 
-**JS 项目**：
+**JS Project**:
 ```kotlin
 dependencies {
     implementation("dev.yidafu.feishu2html:feishu2html-js:1.0.0")
@@ -133,152 +154,184 @@ dependencies {
 
 ---
 
-## 环境变量配置（CI/CD）
+## CI/CD Configuration
 
-在 GitHub Actions 或其他 CI/CD 中使用环境变量：
+### Using Environment Variables
+
+In GitHub Actions or other CI/CD platforms:
 
 ```yaml
 # .github/workflows/publish.yml
 env:
-  OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-  OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+  CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+  CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
   SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
   SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 ```
 
-在 GitHub Secrets 中配置：
-- `OSSRH_USERNAME`
-- `OSSRH_PASSWORD`
-- `SIGNING_KEY` （GPG 私钥，base64 编码或 ASCII armor 格式）
-- `SIGNING_PASSWORD`
+Configure in GitHub Secrets:
+- `CENTRAL_USERNAME` - Portal token username
+- `CENTRAL_PASSWORD` - Portal token password
+- `SIGNING_KEY` - GPG private key (ASCII armored)
+- `SIGNING_PASSWORD` - GPG key passphrase
 
 ---
 
-## 常用命令
+## Common Commands
 
-### 本地验证
+### Local Validation
 
 ```bash
-# 验证 POM 文件
+# Verify POM generation
 ./gradlew generatePomFileForKotlinMultiplatformPublication
 
-# 查看生成的 POM
+# View generated POM
 cat build/publications/kotlinMultiplatform/pom-default.xml
 
-# 发布到本地 Maven 仓库（用于测试）
+# Publish to local Maven repository (for testing)
 ./gradlew publishToMavenLocal
 
-# 检查本地发布的文件
+# Check locally published files
 ls ~/.m2/repository/dev/yidafu/feishu2html/
 ```
 
-### 签名测试
+### Signing Tests
 
 ```bash
-# 测试签名配置
+# Test signing configuration
 ./gradlew signKotlinMultiplatformPublication
 
-# 查看签名文件
+# View signature files
 find build/libs -name "*.asc"
 ```
 
-### 发布任务
+### Publishing Tasks
 
 ```bash
-# 查看所有发布任务
+# List all publishing tasks
 ./gradlew tasks --group publishing
 
-# 发布所有平台
+# Publish all publications
 ./gradlew publish
 
-# 发布到 Sonatype
-./gradlew publishAllPublicationsToSonatypeRepository
+# Publish to Central Portal
+./gradlew publishAllPublicationsToCentralRepository
 
-# 发布特定平台
-./gradlew publishJvmPublicationToSonatypeRepository
-./gradlew publishJsPublicationToSonatypeRepository
-./gradlew publishMacosArm64PublicationToSonatypeRepository
+# Publish specific platforms
+./gradlew publishJvmPublicationToCentralRepository
+./gradlew publishJsPublicationToCentralRepository
 ```
 
 ---
 
-## 发布检查清单
+## Migration from OSSRH
 
-### 首次发布前
+If you previously used OSSRH, here's what changed:
 
-- [ ] 在 Sonatype JIRA 申请组 ID
-- [ ] 等待 Sonatype 审核通过
-- [ ] 生成 GPG 密钥对
-- [ ] 上传公钥到密钥服务器
-- [ ] 配置 `local.properties`
-- [ ] 测试本地发布：`./gradlew publishToMavenLocal`
+### What Changed
 
-### 每次发布前
+1. **New Portal**: Central Portal replaces OSSRH Nexus
+2. **New URL**: `https://central.sonatype.com/api/v1/publisher/upload`
+3. **New Tokens**: Generate Portal user tokens (old OSSRH tokens don't work)
+4. **Same Credentials**: Your OSSRH username/password work for Portal login
+5. **Migrated Namespaces**: All OSSRH namespaces were automatically migrated
 
-- [ ] 更新版本号
-- [ ] 运行所有测试：`./gradlew jvmTest`
-- [ ] 验证所有平台编译：`./gradlew build`
-- [ ] 更新 CHANGELOG.md（如果有）
-- [ ] 检查 POM 信息正确
+### What Stays the Same
 
-### 发布 SNAPSHOT
+- ✅ GPG signing still required
+- ✅ POM requirements unchanged
+- ✅ Artifact structure unchanged
+- ✅ Maven Central as final destination
 
-- [ ] 确保版本号包含 `-SNAPSHOT`
-- [ ] 运行：`./gradlew publish`
-- [ ] 验证 SNAPSHOT 仓库中的文件
+### Quick Migration Steps
 
-### 发布 Release
-
-- [ ] 移除版本号中的 `-SNAPSHOT`
-- [ ] 运行：`./gradlew publish`
-- [ ] 登录 Sonatype Nexus
-- [ ] Close staging repository
-- [ ] Release to Maven Central
-- [ ] 创建 Git tag：`git tag v1.0.0`
-- [ ] 推送 tag：`git push origin v1.0.0`
+1. Log in to [Central Portal](https://central.sonatype.com/) with OSSRH credentials
+2. Generate a new Portal user token
+3. Update `local.properties` with new token
+4. Change repository URL in `build.gradle.kts` (already done)
+5. Publish as before
 
 ---
 
-## 故障排查
+## Pre-publish Checklist
 
-### 签名失败
+### First Time Publishing
+
+- [ ] Central Portal account created
+- [ ] Namespace verified and approved
+- [ ] GPG key pair generated
+- [ ] Public key uploaded to keyserver
+- [ ] `local.properties` configured with Portal token
+- [ ] Test local publishing: `./gradlew publishToMavenLocal`
+
+### Every Release
+
+- [ ] Update version number
+- [ ] Run all tests: `./gradlew jvmTest`
+- [ ] Verify all platforms compile: `./gradlew build`
+- [ ] Update CHANGELOG.md (if exists)
+- [ ] Check POM information is correct
+
+### Publishing SNAPSHOT
+
+- [ ] Version ends with `-SNAPSHOT`
+- [ ] Run: `./gradlew publish`
+- [ ] Verify in Central Portal deployments
+
+### Publishing Release
+
+- [ ] Remove `-SNAPSHOT` from version
+- [ ] Run: `./gradlew publish`
+- [ ] Log in to Central Portal
+- [ ] Review deployment in "Deployments" section
+- [ ] Click "Publish" button
+- [ ] Create Git tag: `git tag v1.0.0`
+- [ ] Push tag: `git push origin v1.0.0`
+
+---
+
+## Troubleshooting
+
+### Signing Failures
 
 ```bash
-# 检查 GPG 配置
+# Check GPG configuration
 gpg --list-secret-keys
 
-# 测试签名
+# Test signing
 echo "test" | gpg --clearsign
 ```
 
-### 上传失败
+### Upload Failures
 
 ```bash
-# 检查凭证
+# Check credentials
 ./gradlew publish --info
 
-# 检查网络连接
-curl -I https://s01.oss.sonatype.org/
+# Test network connectivity
+curl -I https://central.sonatype.com/
 ```
 
-### POM 验证失败
+### POM Validation Failures
 
-常见问题：
-- 缺少 `licenses` 信息
-- 缺少 `developers` 信息
-- 缺少 `scm` 信息
-- 缺少源码和文档 JAR
+Common issues:
+- Missing `licenses` information
+- Missing `developers` information
+- Missing `scm` information
+- Missing source and javadoc JARs
 
 ---
 
-## 参考资料
+## Resources
 
-- [Sonatype OSSRH Guide](https://central.sonatype.org/publish/publish-guide/)
-- [GPG 签名指南](https://central.sonatype.org/publish/requirements/gpg/)
+- [Central Portal Documentation](https://central.sonatype.org/publish/)
+- [OSSRH Sunset Notice](https://central.sonatype.org/pages/ossrh-eol/)
+- [Generating Portal Tokens](https://central.sonatype.org/publish/generate-portal-token/)
+- [GPG Signing Guide](https://central.sonatype.org/publish/requirements/gpg/)
 - [Kotlin Multiplatform Publishing](https://kotlinlang.org/docs/multiplatform-publish-lib.html)
 - [Gradle Maven Publish Plugin](https://docs.gradle.org/current/userguide/publishing_maven.html)
 
 ---
 
-**最后更新**: 2025-10-19
-
+**Last Updated**: 2025-10-19  
+**Portal**: Central Portal Publisher (replacing OSSRH)

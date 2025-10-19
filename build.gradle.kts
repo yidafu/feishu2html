@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
@@ -10,6 +12,13 @@ plugins {
 
 group = "dev.yidafu.feishu2html"
 version = "1.0.0-SNAPSHOT"
+
+// Load local.properties
+val localPropertiesFile = rootProject.file("local.properties")
+val localProperties = Properties()
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
+}
 
 repositories {
     mavenCentral()
@@ -194,14 +203,24 @@ publishing {
 
     repositories {
         maven {
-            name = "sonatype"
-            val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+            name = "central"
+            // Central Portal Publisher API (replaces OSSRH since June 2025)
+            // See: https://central.sonatype.org/pages/ossrh-eol/
+            url = uri("https://central.sonatype.com/api/v1/publisher/upload")
 
             credentials {
-                username = project.findProperty("ossrhUsername") as String? ?: System.getenv("OSSRH_USERNAME")
-                password = project.findProperty("ossrhPassword") as String? ?: System.getenv("OSSRH_PASSWORD")
+                username = localProperties.getProperty("centralUsername")
+                    ?: localProperties.getProperty("ossrhUsername")
+                    ?: project.findProperty("centralUsername") as String?
+                    ?: project.findProperty("ossrhUsername") as String?
+                    ?: System.getenv("CENTRAL_USERNAME")
+                    ?: System.getenv("OSSRH_USERNAME")
+                password = localProperties.getProperty("centralPassword")
+                    ?: localProperties.getProperty("ossrhPassword")
+                    ?: project.findProperty("centralPassword") as String?
+                    ?: project.findProperty("ossrhPassword") as String?
+                    ?: System.getenv("CENTRAL_PASSWORD")
+                    ?: System.getenv("OSSRH_PASSWORD")
             }
         }
     }
@@ -209,9 +228,12 @@ publishing {
 
 // Signing 配置 (发布到 Maven Central 需要)
 signing {
-    // 使用环境变量或 gradle.properties 中的配置
-    val signingKey = project.findProperty("signing.key") as String? ?: System.getenv("SIGNING_KEY")
-    val signingPassword = project.findProperty("signing.password") as String? ?: System.getenv("SIGNING_PASSWORD")
+    val signingKey = localProperties.getProperty("signing.key")
+        ?: project.findProperty("signing.key") as String?
+        ?: System.getenv("SIGNING_KEY")
+    val signingPassword = localProperties.getProperty("signing.password")
+        ?: project.findProperty("signing.password") as String?
+        ?: System.getenv("SIGNING_PASSWORD")
 
     if (signingKey != null && signingPassword != null) {
         useInMemoryPgpKeys(signingKey, signingPassword)
