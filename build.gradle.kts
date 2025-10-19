@@ -189,7 +189,7 @@ kotlin {
             dependsOn(commonMain)
             dependencies {
                 // 使用 CIO 引擎代替 Curl，避免 libcurl 依赖问题
-                implementation(libs.ktor.client.cio)
+                implementation(libs.ktor.client.curl)
             }
         }
 

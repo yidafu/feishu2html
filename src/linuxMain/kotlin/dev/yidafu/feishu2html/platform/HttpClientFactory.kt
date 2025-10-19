@@ -1,7 +1,7 @@
 package dev.yidafu.feishu2html.platform
 
 import io.ktor.client.*
-import io.ktor.client.engine.curl.*
+import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
@@ -10,7 +10,7 @@ import kotlinx.serialization.json.Json
  * Desktop Native (Linux/Windows) implementation using Curl engine
  */
 actual fun createHttpClient(): HttpClient =
-    HttpClient(Curl) {
+    HttpClient(CIO) {
         install(ContentNegotiation) {
             json(
                 Json {
