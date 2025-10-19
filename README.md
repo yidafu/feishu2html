@@ -59,8 +59,6 @@ The generated HTML preserves typography, colors, layout, and all media content w
     - [2. Grant Document Access](#2-grant-document-access)
     - [3. Installation](#3-installation)
     - [4. CLI Usage](#4-cli-usage)
-      - [Using Pre-built Binary](#using-pre-built-binary)
-      - [Building from Source](#building-from-source)
     - [5. Library Usage](#5-library-usage)
       - [Add to Your Project](#add-to-your-project)
       - [Basic Example](#basic-example)
