@@ -221,28 +221,62 @@ fun main() = runBlocking {
 }
 ```
 
-### 5. Custom CSS Styling
+### 5. CSS Styling Options
 
-You can customize the appearance of exported HTML with your own CSS:
+#### Using Official Feishu Styles (Default)
+
+By default, exported HTML uses official Feishu styles for authentic visual appearance:
+
+```kotlin
+val options = Feishu2HtmlOptions(
+    appId = "your_app_id",
+    appSecret = "your_app_secret",
+    externalCss = true,              // Use external CSS file (default)
+    cssFileName = "feishu-style.css" // CSS file name (default)
+)
+
+Feishu2Html(options).use { converter ->
+    converter.export("document_id")
+}
+// Output: 
+//   - document.html (with <link> to CSS)
+//   - feishu-style.css (official styles, 980KB)
+```
+
+#### Inline CSS Mode
+
+Use inline CSS for single-file portability (no separate CSS file):
+
+```kotlin
+val options = Feishu2HtmlOptions(
+    appId = "your_app_id",
+    appSecret = "your_app_secret",
+    externalCss = false  // Embed CSS in <style> tag
+)
+```
+
+#### Custom CSS Styling
+
+Override with your own CSS (requires inline mode):
 
 ```kotlin
 val customCss = """
     /* Custom fonts and colors */
-    body {
+    .protyle-wysiwyg {
         font-family: "Inter", "Segoe UI", sans-serif;
         background-color: #f8f9fa;
         line-height: 1.8;
     }
     
     /* Heading styles */
-    h1 {
+    .heading-h1 {
         color: #2c3e50;
         border-bottom: 3px solid #3498db;
         padding-bottom: 10px;
     }
     
     /* Code block customization */
-    pre {
+    .code-block pre {
         background-color: #1e1e1e;
         border-radius: 8px;
         padding: 20px;
@@ -264,6 +298,7 @@ val customCss = """
 val options = Feishu2HtmlOptions(
     appId = "your_app_id",
     appSecret = "your_app_secret",
+    externalCss = false,  // Must use inline mode for custom CSS
     customCss = customCss
 )
 ```
