@@ -49,7 +49,6 @@ As you can see, the locally generated HTML perfectly preserves the visual style 
   - [✨ Features](#-features)
   - [🎨 Visual Comparison](#-visual-comparison)
   - [📋 Table of Contents](#-table-of-contents)
-  - [📊 Supported Block Types](#-supported-block-types)
   - [🚀 Quick Start](#-quick-start)
     - [Prerequisites](#prerequisites)
     - [1. Get Feishu App Credentials](#1-get-feishu-app-credentials)
@@ -74,60 +73,11 @@ As you can see, the locally generated HTML perfectly preserves the visual style 
     - [3. Unsupported Block Types](#3-unsupported-block-types)
     - [4. API Rate Limiting](#4-api-rate-limiting)
   - [📚 API Documentation](#-api-documentation)
+  - [📊 Supported Block Types](#-supported-block-types)
   - [📖 References](#-references)
   - [📄 License](#-license)
   - [🤝 Contributing](#-contributing)
   - [🙏 Acknowledgments](#-acknowledgments)
-
-## 📊 Supported Block Types
-
-| Block Type | Type Code | Support Status | Notes |
-|------------|-----------|----------------|-------|
-| Page | 1 | ✅ Full | - |
-| Text | 2 | ✅ Full | - |
-| Heading 1-9 | 3-11 | ✅ Full | All 9 levels supported |
-| Bullet List | 12 | ✅ Full | - |
-| Ordered List | 13 | ✅ Full | - |
-| Code Block | 14 | ✅ Full | 70+ languages |
-| Quote | 15 | ✅ Full | - |
-| Equation | 16 | ✅ Full | MathJax rendering |
-| Todo | 17 | ✅ Full | - |
-| Bitable | 18 | ⚠️ Partial | Placeholder only |
-| Callout | 19 | ✅ Full | - |
-| Chat Card | 20 | ⚠️ Partial | Placeholder only |
-| Diagram | 21 | ✅ Full | - |
-| Divider | 22 | ✅ Full | - |
-| File | 23 | ✅ Full | - |
-| Grid | 24 | ✅ Full | Column layout |
-| Grid Column | 25 | ✅ Full | - |
-| Iframe | 26 | ✅ Full | Multiple embed types |
-| Image | 27 | ✅ Full | - |
-| ISV | 28 | ❌ Unsupported | - |
-| Mindnote | 29 | ❌ Unsupported | - |
-| Sheet | 30 | ❌ Unsupported | - |
-| Table | 31 | ✅ Full | - |
-| Table Cell | 32 | ✅ Full | - |
-| View | 33 | ❌ Unsupported | - |
-| Quote Container | 34 | ✅ Full | - |
-| Task | 35 | ❌ Unsupported | - |
-| OKR | 36 | ❌ Unsupported | - |
-| OKR Objective | 37 | ❌ Unsupported | - |
-| OKR Key Result | 38 | ❌ Unsupported | - |
-| OKR Progress | 39 | ❌ Unsupported | - |
-| Add-ons | 40 | ❌ Unsupported | Plugin components |
-| Jira Issue | 41 | ❌ Unsupported | - |
-| Wiki Catalog | 42 | ❌ Unsupported | Legacy wiki subpage list |
-| Board | 43 | ✅ Full | Electronic whiteboard |
-| Agenda | 44 | ❌ Unsupported | - |
-| Agenda Item | 45 | ❌ Unsupported | - |
-| Agenda Item Title | 46 | ❌ Unsupported | - |
-| Agenda Item Content | 47 | ❌ Unsupported | - |
-| Link Preview | 48 | ❌ Unsupported | - |
-| Source Synced | 49 | ❌ Unsupported | - |
-| Reference Synced | 50 | ❌ Unsupported | - |
-| Sub Page List | 51 | ❌ Unsupported | Wiki subpage list (new) |
-| AI Template | 52 | ❌ Unsupported | - |
-
 
 ## 🚀 Quick Start
 
@@ -439,6 +389,55 @@ Complete API documentation is automatically generated and published to GitHub Pa
 **🔗 [View Online API Documentation](https://yidafu.github.io/feishu2html/)**
 
 The documentation is automatically updated on every push to the `main` branch.
+
+## 📊 Supported Block Types
+
+| Block Type | Type Code | Support Status | Notes |
+|------------|-----------|----------------|-------|
+| Page | 1 | ✅ Full | - |
+| Text | 2 | ✅ Full | - |
+| Heading 1-9 | 3-11 | ✅ Full | All 9 levels supported |
+| Bullet List | 12 | ✅ Full | - |
+| Ordered List | 13 | ✅ Full | - |
+| Code Block | 14 | ✅ Full | 70+ languages |
+| Quote | 15 | ✅ Full | - |
+| Equation | 16 | ✅ Full | MathJax rendering |
+| Todo | 17 | ✅ Full | - |
+| Bitable | 18 | ⚠️ Partial | Placeholder only |
+| Callout | 19 | ✅ Full | - |
+| Chat Card | 20 | ⚠️ Partial | Placeholder only |
+| Diagram | 21 | ✅ Full | - |
+| Divider | 22 | ✅ Full | - |
+| File | 23 | ✅ Full | - |
+| Grid | 24 | ✅ Full | Column layout |
+| Grid Column | 25 | ✅ Full | - |
+| Iframe | 26 | ✅ Full | Multiple embed types |
+| Image | 27 | ✅ Full | - |
+| ISV | 28 | ❌ Unsupported | - |
+| Mindnote | 29 | ❌ Unsupported | - |
+| Sheet | 30 | ❌ Unsupported | - |
+| Table | 31 | ✅ Full | - |
+| Table Cell | 32 | ✅ Full | - |
+| View | 33 | ❌ Unsupported | - |
+| Quote Container | 34 | ✅ Full | - |
+| Task | 35 | ❌ Unsupported | - |
+| OKR | 36 | ❌ Unsupported | - |
+| OKR Objective | 37 | ❌ Unsupported | - |
+| OKR Key Result | 38 | ❌ Unsupported | - |
+| OKR Progress | 39 | ❌ Unsupported | - |
+| Add-ons | 40 | ❌ Unsupported | Plugin components |
+| Jira Issue | 41 | ❌ Unsupported | - |
+| Wiki Catalog | 42 | ❌ Unsupported | Legacy wiki subpage list |
+| Board | 43 | ✅ Full | Electronic whiteboard |
+| Agenda | 44 | ❌ Unsupported | - |
+| Agenda Item | 45 | ❌ Unsupported | - |
+| Agenda Item Title | 46 | ❌ Unsupported | - |
+| Agenda Item Content | 47 | ❌ Unsupported | - |
+| Link Preview | 48 | ❌ Unsupported | - |
+| Source Synced | 49 | ❌ Unsupported | - |
+| Reference Synced | 50 | ❌ Unsupported | - |
+| Sub Page List | 51 | ❌ Unsupported | Wiki subpage list (new) |
+| AI Template | 52 | ❌ Unsupported | - |
 
 ## 📖 References
 
