@@ -164,7 +164,7 @@ class FeishuAuthServiceTest : FunSpec({
                 authService.getAccessToken()
             }
 
-        exception.message shouldContain "获取token失败"
+        exception.message shouldContain "Failed to get token"
 
         httpClient.close()
     }
@@ -198,7 +198,7 @@ class FeishuAuthServiceTest : FunSpec({
                 authService.getAccessToken()
             }
 
-        exception.message shouldContain "token为空"
+        exception.message shouldContain "Returned token is empty"
 
         httpClient.close()
     }

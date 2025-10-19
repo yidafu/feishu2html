@@ -62,7 +62,7 @@ class EnumsTest : FunSpec({
     }
 
     test("IframeType应该有displayName") {
-        IframeType.BILIBILI.displayName shouldBe "哔哩哔哩视频"
+        IframeType.BILIBILI.displayName shouldBe "Bilibili"
         IframeType.YOUTUBE.displayName shouldNotBe ""
         IframeType.FIGMA.displayName shouldNotBe ""
     }

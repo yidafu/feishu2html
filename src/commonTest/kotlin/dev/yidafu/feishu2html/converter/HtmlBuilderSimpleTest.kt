@@ -63,6 +63,7 @@ class HtmlBuilderSimpleTest : FunSpec({
         val builder =
             HtmlBuilder(
                 title = "Test",
+                cssMode = CssMode.INLINE,
                 customCss = null,
             )
 
@@ -80,6 +81,7 @@ class HtmlBuilderSimpleTest : FunSpec({
         val builder =
             HtmlBuilder(
                 title = "Test",
+                cssMode = CssMode.INLINE,
                 customCss = customCss,
             )
 

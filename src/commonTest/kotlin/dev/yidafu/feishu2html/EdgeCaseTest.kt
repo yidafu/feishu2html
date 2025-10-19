@@ -280,8 +280,8 @@ class EdgeCaseTest : FunSpec({
         val builder = HtmlBuilder(title = "Mixed Lists Test", customCss = null)
         val html = builder.build(blocks, allBlocks)
 
-        html shouldContain "<ul"
-        html shouldContain "<ol"
+        html shouldContain "bullet-list"
+        html shouldContain "ordered-list"
     }
 
     test("应该正确处理所有对齐方式") {

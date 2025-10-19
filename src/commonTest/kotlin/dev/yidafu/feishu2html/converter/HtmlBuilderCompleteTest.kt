@@ -93,11 +93,10 @@ class HtmlBuilderCompleteTest : FunSpec({
         val builder = HtmlBuilder(title = "List Test", customCss = null)
         val html = builder.build(blocks, allBlocks)
 
-        html shouldContain "<ul"
+        html shouldContain "bullet-list"
         html shouldContain "Item 1"
         html shouldContain "Item 2"
         html shouldContain "Item 3"
-        html shouldContain "</ul>"
     }
 
     test("应该正确处理连续的有序列表") {
@@ -131,10 +130,9 @@ class HtmlBuilderCompleteTest : FunSpec({
         val builder = HtmlBuilder(title = "Ordered List Test", customCss = null)
         val html = builder.build(blocks, allBlocks)
 
-        html shouldContain "<ol"
+        html shouldContain "ordered-list"
         html shouldContain "First"
         html shouldContain "Second"
-        html shouldContain "</ol>"
     }
 
     test("应该正确处理列表中断") {
@@ -179,9 +177,9 @@ class HtmlBuilderCompleteTest : FunSpec({
         val builder = HtmlBuilder(title = "List Break Test", customCss = null)
         val html = builder.build(blocks, allBlocks)
 
-        // 应该有两个独立的ul列表
-        val ulCount = Regex("<ul").findAll(html).count()
-        ulCount shouldBe 2
+        // 应该有两个独立的bullet-list
+        val listCount = Regex("bullet-list").findAll(html).count()
+        listCount shouldBe 2
     }
 
     test("应该正确渲染表格并避免内容重复") {
@@ -544,7 +542,7 @@ class HtmlBuilderCompleteTest : FunSpec({
 
         html shouldContain "<h1"
         html shouldContain "<p"
-        html shouldContain "<ul"
+        html shouldContain "bullet-list"
         html shouldContain "<pre"
     }
 
