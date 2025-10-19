@@ -62,7 +62,11 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        arch: [macosArm64, macosX64]
+        include:
+          - arch: macosArm64
+            target: MacosArm64
+          - arch: macosX64
+            target: MacosX64
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -75,7 +79,7 @@ jobs:
           cache: gradle
 
       - name: Build ${{ matrix.arch }} Release
-        run: ./gradlew link${{ matrix.arch }}ReleaseExecutable
+        run: ./gradlew link${{ matrix.target }}ReleaseExecutable
 
       - name: Package binary
         run: |
