@@ -38,6 +38,7 @@ internal class TextElementConverter {
             element.mentionDoc != null -> convertMentionDoc(element.mentionDoc!!, parent)
             element.equation != null -> convertInlineEquation(element.equation!!, parent)
             element.file != null -> convertInlineFile(parent)
+            element.undefined != null -> convertUndefinedElement(element.undefined!!, parent)
         }
     }
 
@@ -48,6 +49,7 @@ internal class TextElementConverter {
             element.mentionDoc != null -> element.mentionDoc!!.title ?: "@文档"
             element.equation != null -> element.equation!!.content
             element.file != null -> "[文件]"
+            element.undefined != null -> element.undefined!!.content ?: "Button"
             else -> ""
         }
     }
@@ -175,6 +177,19 @@ internal class TextElementConverter {
     private fun convertInlineFile(parent: FlowContent) {
         parent.span(classes = "inline-file") {
             +"[文件]"
+        }
+    }
+
+    private fun convertUndefinedElement(
+        undefined: UndefinedElement,
+        parent: FlowContent,
+    ) {
+        // Render as a simple button placeholder
+        // The API returns {"undefined":{}} for buttons, which are not fully supported yet
+        val buttonText = undefined.content ?: "Button"
+        parent.button(classes = "ud__button ud__button--default ud__button--size-md feishu-button") {
+            type = ButtonType.button
+            +buttonText
         }
     }
 }

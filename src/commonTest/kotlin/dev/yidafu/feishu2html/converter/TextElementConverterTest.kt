@@ -352,4 +352,54 @@ class TextElementConverterTest : FunSpec({
         html shouldContain "and"
         html shouldContain "<em>Italic</em>"
     }
+
+    test("应该正确渲染undefined元素为按钮") {
+        val elements =
+            listOf(
+                TextElement(undefined = UndefinedElement(content = null)),
+            )
+
+        val html =
+            createHTML().div {
+                converter.convertElements(elements, this)
+            }
+
+        html shouldContain "<button"
+        html shouldContain "ud__button"
+        html shouldContain "ud__button--default"
+        html shouldContain "ud__button--size-md"
+        html shouldContain "feishu-button"
+        html shouldContain "Button"
+        html shouldContain """type="button""""
+    }
+
+    test("应该使用自定义文本渲染按钮") {
+        val elements =
+            listOf(
+                TextElement(undefined = UndefinedElement(content = "Click Me")),
+            )
+
+        val html =
+            createHTML().div {
+                converter.convertElements(elements, this)
+            }
+
+        html shouldContain "Click Me"
+        html shouldContain "<button"
+        html shouldContain "ud__button"
+    }
+
+    test("convertElementsPlainText应该处理undefined元素") {
+        val elements =
+            listOf(
+                TextElement(textRun = TextRun(content = "Text ")),
+                TextElement(undefined = UndefinedElement(content = "CustomButton")),
+                TextElement(textRun = TextRun(content = " More")),
+            )
+
+        val plainText = converter.convertElementsPlainText(elements)
+
+        plainText shouldContain "Text CustomButton More"
+        plainText shouldNotContain "<"
+    }
 })

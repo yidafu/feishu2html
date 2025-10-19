@@ -584,6 +584,93 @@ internal object FeishuStyles {
             margin: 16px 0;
         }
 
+        /* Button Styles */
+        .feishu-button,
+        .ud__button {
+            box-sizing: border-box;
+            margin: 0 4px 0 0;
+            padding: 0;
+            color: #1f2329;
+            font-size: 14px;
+            line-height: 1.5715;
+            list-style: none;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 400;
+            white-space: nowrap;
+            text-align: center;
+            background-image: none;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+            user-select: none;
+            touch-action: manipulation;
+            position: relative;
+            border-radius: 8px;
+        }
+
+        .ud__button--size-md {
+            height: 32px;
+            line-height: 20px;
+            padding: 5px 15px;
+            font-size: 14px;
+            border-radius: 8px;
+            min-width: 60px;
+        }
+
+        .ud__button--default {
+            color: #1f2329;
+            background: #fff;
+            border-color: #dee0e3;
+        }
+
+        .ud__button--default:hover {
+            color: #1f2329;
+            background: #f7f8fa;
+            border-color: #c9cdd4;
+        }
+
+        .ud__button--default:active {
+            color: #1f2329;
+            background: #eff0f1;
+            border-color: #c9cdd4;
+        }
+
+        .ud__button--primary {
+            color: #fff;
+            background: #3370ff;
+            border-color: #3370ff;
+        }
+
+        .ud__button--primary:hover {
+            background: #165dff;
+            border-color: #165dff;
+        }
+
+        .ud__button--primary:active {
+            background: #0e42d2;
+            border-color: #0e42d2;
+        }
+
+        .ud__button--text {
+            height: auto;
+            min-width: 0;
+            border: none;
+            padding: 2px 4px;
+            color: #1f2329;
+            background: transparent;
+            border-color: transparent;
+        }
+
+        .ud__button--text:hover {
+            background: rgba(31, 35, 41, 0.06);
+        }
+
+        .ud__button--text:active {
+            background: rgba(31, 35, 41, 0.1);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .container {
