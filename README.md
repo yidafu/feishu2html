@@ -2,7 +2,9 @@
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.1.0-blue.svg?logo=kotlin)](https://kotlinlang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.yidafu.feishu2html/feishu2html?logo=apachemaven)](https://central.sonatype.com/artifact/dev.yidafu.feishu2html/feishu2html)
 [![Gradle](https://img.shields.io/badge/Gradle-8.5-02303A.svg?logo=gradle)](https://gradle.org)
+[![GitHub Release](https://img.shields.io/github/v/release/yidafu/feishu2html?logo=github)](https://github.com/yidafu/feishu2html/releases/latest)
 [![API Docs](https://img.shields.io/badge/API-Documentation-blue.svg)](https://yidafu.github.io/feishu2html/)
 [![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-purple.svg?logo=kotlin)](https://kotlinlang.org/docs/multiplatform.html)
 

@@ -82,6 +82,17 @@ This is the first stable release of Feishu2HTML - a powerful Kotlin Multiplatfor
   - `feishu2html-jvm` - JVM-specific
   - `feishu2html-js` - JS-specific
   - `feishu2html-metadata` - Kotlin Multiplatform metadata
+- GitHub Releases with pre-built binaries:
+  - macOS (Apple Silicon & Intel)
+  - Linux x64
+  - Windows x64
+  - Cross-platform JVM JAR
+
+### 🔧 CI/CD & Automation
+- GitHub Actions workflow for automatic releases
+- Automated multi-platform binary builds
+- Automatic release asset uploads on version tags
+- Changelog-driven release notes
 
 ### ⚠️ Known Limitations
 - External document references require manual permission grants
