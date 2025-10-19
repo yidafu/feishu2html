@@ -48,13 +48,13 @@ The generated HTML preserves typography, colors, layout, and all media content w
 - [✨ Features](#-features)
 - [🎨 Visual Comparison](#-visual-comparison)
 - [🚀 Quick Start](#-quick-start)
+- [📚 Usage Guides](#-usage-guides)
 - [🌐 Multiplatform Support](#-multiplatform-support)
 - [🔍 Getting Document ID](#-getting-document-id)
 - [🔧 Troubleshooting](#-troubleshooting)
 - [⚠️ Known Limitations](#️-known-limitations)
 - [📊 Supported Block Types](#-supported-block-types)
-- [📚 API Documentation](#-api-documentation)
-- [📖 References](#-references)
+- [📖 API Documentation & References](#-api-documentation--references)
 - [📄 License](#-license)
 - [🤝 Contributing](#-contributing)
 
@@ -254,6 +254,13 @@ val options = Feishu2HtmlOptions(
 )
 ```
 
+## 📚 Usage Guides
+
+Detailed platform-specific usage guides:
+
+- **[JVM Usage Guide](docs/jvm-usage.md)** - Complete guide for JVM platform (CLI & Library)
+- **[Node.js Usage Guide](docs/nodejs-usage.md)** - ES Module setup and usage
+
 ## 🌐 Multiplatform Support
 
 Feishu2HTML is built with **Kotlin Multiplatform**, enabling it to run on multiple platforms from a single codebase.
@@ -365,14 +372,26 @@ See the [Supported Block Types](#-supported-block-types) table for a complete li
 
 The Feishu API has rate limits. The tool includes built-in rate limiting (QPS=2) to avoid exceeding limits, but very large documents may take time to process.
 
+## 📖 API Documentation & References
 
-## 📚 API Documentation
+### API Documentation
 
 Complete API documentation is automatically generated and published to GitHub Pages:
 
 **🔗 [View Online API Documentation](https://yidafu.github.io/feishu2html/)**
 
 The documentation is automatically updated on every push to the `main` branch.
+
+### Platform-Specific Guides
+
+- [JVM Usage Guide](docs/jvm-usage.md) - Detailed JVM platform guide
+- [Node.js Usage Guide](docs/nodejs-usage.md) - Node.js / JavaScript guide
+
+### Feishu API References
+
+- [Feishu Open Platform Docs](https://open.feishu.cn/document/home/index)
+- [Document Block API](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/list)
+- [Block Type Reference](https://open.feishu.cn/document/docs/docs/data-structure/block)
 
 ## 📊 Supported Block Types
 
@@ -422,12 +441,6 @@ The documentation is automatically updated on every push to the `main` branch.
 | Reference Synced | 50 | ❌ Unsupported | - |
 | Sub Page List | 51 | ❌ Unsupported | Wiki subpage list (new) |
 | AI Template | 52 | ❌ Unsupported | - |
-
-## 📖 References
-
-- [Feishu Open Platform Docs](https://open.feishu.cn/document/home/index)
-- [Document Block API](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/list)
-- [Block Type Reference](https://open.feishu.cn/document/docs/docs/data-structure/block)
 
 ## 📄 License
 

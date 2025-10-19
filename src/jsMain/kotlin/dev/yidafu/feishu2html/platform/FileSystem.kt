@@ -1,56 +1,75 @@
 package dev.yidafu.feishu2html.platform
 
+import kotlin.js.Promise
+
+/**
+ * Node.js fs module for ES Module
+ */
+@JsModule("fs")
+@JsNonModule
+external object NodeFs {
+    fun mkdirSync(path: String, options: dynamic): dynamic
+    fun existsSync(path: String): Boolean
+    fun writeFileSync(path: String, data: dynamic, encoding: String? = definedExternally): Unit
+}
+
+/**
+ * Node.js path module for ES Module
+ */
+@JsModule("path")
+@JsNonModule
+external object NodePath {
+    fun dirname(path: String): String
+}
+
+/**
+ * Node.js Buffer for ES Module
+ */
+external object Buffer {
+    fun from(array: Array<Byte>): dynamic
+}
+
 /**
  * JS (Node.js) implementation of file system operations
- * Uses Node.js fs module
+ * Uses Node.js fs and path modules via ES Module imports
  */
 actual class PlatformFileSystem {
     actual fun createDirectories(path: String) {
-        val fs = js("require('fs')")
-        val pathModule = js("require('path')")
-
         // Create directories recursively
         try {
-            fs.mkdirSync(path, js("{ recursive: true }"))
+            NodeFs.mkdirSync(path, js("{ recursive: true }"))
         } catch (e: dynamic) {
             // Directory might already exist, ignore
         }
     }
 
     actual fun exists(path: String): Boolean {
-        val fs = js("require('fs')")
         return try {
-            fs.existsSync(path) as Boolean
+            NodeFs.existsSync(path)
         } catch (e: dynamic) {
             false
         }
     }
 
     actual fun writeText(path: String, content: String) {
-        val fs = js("require('fs')")
-        val pathModule = js("require('path')")
-
         // Ensure parent directory exists
-        val dirname = pathModule.dirname(path)
-        createDirectories(dirname as String)
+        val dirname = NodePath.dirname(path)
+        createDirectories(dirname)
 
         // Write file
-        fs.writeFileSync(path, content, "utf8")
+        NodeFs.writeFileSync(path, content, "utf8")
     }
 
     actual fun writeBytes(path: String, content: ByteArray) {
-        val fs = js("require('fs')")
-        val pathModule = js("require('path')")
-
         // Ensure parent directory exists
-        val dirname = pathModule.dirname(path)
-        createDirectories(dirname as String)
+        val dirname = NodePath.dirname(path)
+        createDirectories(dirname)
 
         // Convert ByteArray to Buffer
-        val buffer = js("Buffer").from(content.toTypedArray())
+        val buffer = Buffer.from(content.toTypedArray())
 
         // Write file
-        fs.writeFileSync(path, buffer)
+        NodeFs.writeFileSync(path, buffer)
     }
 }
 

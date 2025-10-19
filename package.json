@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "Convert Feishu (Lark) documents to beautiful, standalone HTML files - Kotlin Multiplatform library and CLI tool",
   "type": "module",
-  "main": "./build/compileSync/js/main/productionExecutable/kotlin/feishu2html.js",
+  "main": "./build/js/packages/feishu2html/kotlin/feishu2html.mjs",
   "bin": {
-    "feishu2html": "./bin/feishu2html"
+    "feishu2html": "./bin/feishu2html.mjs"
   },
   "files": [
     "bin/",
+    "build/js/packages/feishu2html/kotlin/",
     "build/compileSync/js/main/productionExecutable/kotlin/",
     "README.md",
     "LICENSE"
@@ -42,6 +43,9 @@
   "homepage": "https://github.com/yidafu/feishu2html#readme",
   "bugs": {
     "url": "https://github.com/yidafu/feishu2html/issues"
+  },
+  "dependencies": {
+    "abort-controller": "^3.0.0",
+    "node-fetch": "^3.3.2"
   }
 }
-

@@ -25,9 +25,7 @@ repositories {
     mavenCentral()
     google()
     gradlePluginPortal() // Fallback
-
 }
-
 
 kotlin {
     jvmToolchain(17)
@@ -45,10 +43,52 @@ kotlin {
         }
     }
 
-    // JS 目标平台 (Node.js only)
+    // JS 目标平台 (Node.js only) - ES Module
     js(IR) {
         nodejs()
         binaries.executable()
+
+        // 配置为输出 ES Module 格式
+        useEsModules()
+
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    moduleKind.set(org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_ES)
+                }
+
+                // 构建后处理：将 eval('require') 替换为 require
+                doLast {
+                    val outputDir = destinationDirectory.get().asFile
+                    val jsFiles =
+                        outputDir.listFiles { file ->
+                            file.extension == "mjs"
+                        }
+
+                    jsFiles?.forEach { file ->
+                        var content = file.readText()
+                        var modified = false
+
+                        // 替换 eval('require')('xxx') 为 require('xxx')
+                        if (content.contains("eval('require')")) {
+                            content = content.replace(Regex("eval\\('require'\\)"), "require")
+                            modified = true
+                        }
+
+                        // 替换 eval("require")("xxx") 为 require("xxx")
+                        if (content.contains("eval(\"require\")")) {
+                            content = content.replace(Regex("eval\\(\"require\"\\)"), "require")
+                            modified = true
+                        }
+
+                        if (modified) {
+                            file.writeText(content)
+                            println("Patched: ${file.name} - Replaced eval('require') with require")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Native 桌面平台
@@ -65,11 +105,11 @@ kotlin {
     sourceSets {
         // Common 依赖
         val commonMain by getting {
-dependencies {
+            dependencies {
                 // Kotlin 核心
                 implementation(libs.kotlinx.coroutines.core)
 
-    // 序列化
+                // 序列化
                 implementation(libs.kotlinx.serialization.json)
 
                 // HTTP 客户端
@@ -177,15 +217,18 @@ publishing {
         withType<MavenPublication> {
             // Create empty Javadoc JAR to satisfy Central Portal requirements
             // Dokka HTML is available separately via dokkaHtml task
-            val javadocJar = tasks.register("${name}JavadocJar", Jar::class) {
-                archiveClassifier.set("javadoc")
-                // Empty JAR is acceptable for Central Portal
-            }
+            val javadocJar =
+                tasks.register("${name}JavadocJar", Jar::class) {
+                    archiveClassifier.set("javadoc")
+                    // Empty JAR is acceptable for Central Portal
+                }
             artifact(javadocJar)
 
             pom {
                 name.set("Feishu2HTML")
-                description.set("A Kotlin Multiplatform library and CLI tool to convert Feishu (Lark) documents to beautiful, standalone HTML files")
+                description.set(
+                    "A Kotlin Multiplatform library and CLI tool to convert Feishu (Lark) documents to beautiful, standalone HTML files",
+                )
                 url.set("https://github.com/yidafu/feishu2html")
 
                 licenses {
@@ -224,12 +267,12 @@ nmcp {
         username.set(
             localProperties.getProperty("centralUsername")
                 ?: project.findProperty("centralUsername") as String?
-                ?: System.getenv("CENTRAL_USERNAME")
+                ?: System.getenv("CENTRAL_USERNAME"),
         )
         password.set(
             localProperties.getProperty("centralPassword")
                 ?: project.findProperty("centralPassword") as String?
-                ?: System.getenv("CENTRAL_PASSWORD")
+                ?: System.getenv("CENTRAL_PASSWORD"),
         )
 
         // Publication type: USER_MANAGED requires manual approval in Portal UI
@@ -239,12 +282,47 @@ nmcp {
 }
 
 // Signing 配置 (发布到 Maven Central 需要)
+// Patch compiled JS files: Replace eval('require') with require
+// This runs after JS compilation tasks
+tasks.matching { it.name == "compileProductionExecutableKotlinJs" || it.name == "jsProductionExecutableCompileSync" }.configureEach {
+    doLast {
+        val outputDirs = listOf(
+            File(project.buildDir, "compileSync/js/main/productionExecutable/kotlin"),
+            File(project.buildDir, "js/packages/feishu2html/kotlin")
+        )
+
+        outputDirs.forEach { outputDir ->
+            if (outputDir.exists()) {
+                val jsFiles = outputDir.listFiles { file ->
+                    file.extension == "mjs"
+                }
+
+                jsFiles?.forEach { file ->
+                    var content = file.readText()
+                    val originalContent = content
+
+                    // 替换 eval('require') 为 require
+                    content = content.replace("eval('require')", "require")
+                    content = content.replace("eval(\"require\")", "require")
+
+                    if (content != originalContent) {
+                        file.writeText(content)
+                        println("✅ Patched: ${file.name} - Replaced eval('require') with require")
+                    }
+                }
+            }
+        }
+    }
+}
+
 signing {
     // Check for signing configuration in local.properties
-    val signingKey = localProperties.getProperty("signing.key")
-        ?: System.getenv("SIGNING_KEY")
-    val signingPassword = localProperties.getProperty("signing.password")
-        ?: System.getenv("SIGNING_PASSWORD")
+    val signingKey =
+        localProperties.getProperty("signing.key")
+            ?: System.getenv("SIGNING_KEY")
+    val signingPassword =
+        localProperties.getProperty("signing.password")
+            ?: System.getenv("SIGNING_PASSWORD")
     val signingKeyId = localProperties.getProperty("signing.keyId")
     val signingSecretKeyRingFile = localProperties.getProperty("signing.secretKeyRingFile")
 
@@ -321,33 +399,33 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 
     // Set source directories
     sourceDirectories.setFrom(
-        files(kotlin.sourceSets["commonMain"].kotlin.srcDirs, kotlin.sourceSets["jvmMain"].kotlin.srcDirs)
+        files(kotlin.sourceSets["commonMain"].kotlin.srcDirs, kotlin.sourceSets["jvmMain"].kotlin.srcDirs),
     )
 
     classDirectories.setFrom(
         files(
-            layout.buildDirectory.dir("classes/kotlin/jvm/main")
-        )
+            layout.buildDirectory.dir("classes/kotlin/jvm/main"),
+        ),
     )
 
     // 排除数据类和模型类
     classDirectories.setFrom(
-            classDirectories.files.map {
-                fileTree(it) {
-                    exclude(
-                        "**/model/**Data.class",
-                        "**/model/Block.class",
-                        "**/model/Document.class",
-                        "**/model/BlockType.class",
-                        "**/model/Emoji.class",
-                        "**/model/TextAlign.class",
-                        "**/model/BlockColor.class",
-                        "**/model/CodeLanguage.class",
-                        "**/model/IframeType.class",
-                        "**/MainKt.class",
-                    )
-                }
-        }
+        classDirectories.files.map {
+            fileTree(it) {
+                exclude(
+                    "**/model/**Data.class",
+                    "**/model/Block.class",
+                    "**/model/Document.class",
+                    "**/model/BlockType.class",
+                    "**/model/Emoji.class",
+                    "**/model/TextAlign.class",
+                    "**/model/BlockColor.class",
+                    "**/model/CodeLanguage.class",
+                    "**/model/IframeType.class",
+                    "**/MainKt.class",
+                )
+            }
+        },
     )
 }
 
@@ -362,9 +440,10 @@ tasks.register<JavaExec>("runJvm") {
     dependsOn("jvmJar")
     group = "application"
     description = "Run the JVM CLI application"
-    classpath = files(
-        tasks.named("jvmJar"),
-        configurations.named("jvmRuntimeClasspath")
-    )
+    classpath =
+        files(
+            tasks.named("jvmJar"),
+            configurations.named("jvmRuntimeClasspath"),
+        )
     mainClass.set("dev.yidafu.feishu2html.MainKt")
 }
