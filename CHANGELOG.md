@@ -1,0 +1,99 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.0] - 2025-10-19
+
+### 🎉 Initial Release
+
+This is the first stable release of Feishu2HTML - a powerful Kotlin Multiplatform library and CLI tool to convert Feishu (Lark) documents to beautiful, standalone HTML files.
+
+### ✨ Features
+
+#### Core Functionality
+- **Kotlin Multiplatform Support** - Runs on JVM, JS (Node.js), and Native platforms (macOS, Linux, Windows, iOS)
+- **Comprehensive Block Support** - All major Feishu document block types:
+  - Headings (H1-H9)
+  - Paragraphs and text formatting
+  - Lists (bullet, ordered)
+  - Tables with cells
+  - Code blocks with 70+ language syntax highlighting
+  - Math equations (MathJax rendering)
+  - Images and file attachments
+  - Quote blocks and callouts
+  - Todo lists
+  - Diagrams
+  - Iframe embeds
+  - Grid layouts
+  - Board (electronic whiteboard)
+  - And more...
+
+#### Document Processing
+- **Resource Management** - Automatic download and save of images and attachments
+- **Rich Text Formatting** - Full support for text styles (bold, italic, underline, strikethrough, links, etc.)
+- **Async Downloads** - Asynchronous resource downloading for better performance
+- **Batch Export** - Export multiple documents in one go
+
+#### Styling & Output
+- **Official Feishu Styles** - Optimized CSS extracted from official Feishu (98.4% size reduction, 16KB vs 1MB)
+- **Flexible CSS Options**:
+  - External CSS file (default)
+  - Inline CSS mode for single-file portability
+  - Custom CSS support
+- **Authentic Appearance** - Faithfully recreates original Feishu document styling and layout
+
+#### Developer Experience
+- **Type Safety** - Type-safe HTML generation using kotlinx.html DSL
+- **Clean Architecture** - Elegant Renderer delegation pattern
+- **Comprehensive Logging** - Built-in logging throughout the application
+- **Resource Management** - AutoCloseable interface for proper cleanup
+- **API Documentation** - Complete KDoc reference published to GitHub Pages
+
+#### Platform Support
+- **JVM** (✅ Production Ready) - Full features including CLI tool
+- **JS (Node.js)** (✅ Fully Supported) - Core library features
+- **Native (macOS/Linux/Windows/iOS)** (🔄 Experimental) - Core library features
+
+### 📚 Documentation
+- Comprehensive README with quick start guide
+- Contributing guide with architecture details
+- API documentation automatically generated and deployed
+- Visual comparison screenshots
+- Detailed troubleshooting section
+- Complete block type support reference
+
+### 🛠️ Technical Highlights
+- Built with Kotlin 2.1.0
+- Uses Ktor for HTTP client
+- kotlinx.html for type-safe HTML generation
+- kotlinx.serialization for JSON handling
+- kotlinx.coroutines for async operations
+- MathJax for mathematical formula rendering
+- Multiplatform file system abstraction
+- Rate limiting (QPS=2) to respect API limits
+
+### 📦 Distribution
+- Published to Maven Central
+- Available for:
+  - `feishu2html` - Common multiplatform artifact
+  - `feishu2html-jvm` - JVM-specific
+  - `feishu2html-js` - JS-specific
+  - `feishu2html-metadata` - Kotlin Multiplatform metadata
+
+### ⚠️ Known Limitations
+- External document references require manual permission grants
+- Real-time collaboration content not included in exports
+- Some advanced block types not yet supported (ISV, Mindnote, Sheet, Task, OKR, Wiki Catalog, Agenda, Link Preview, etc.)
+- API rate limiting may affect very large documents
+
+### 🙏 Acknowledgments
+- Inspired by [feishu2md](https://github.com/S-TE11A/feishu2md)
+- Uses official Feishu CSS for authentic styling
+
+---
+
+[1.0.0]: https://github.com/yidafu/feishu2html/releases/tag/v1.0.0
+
