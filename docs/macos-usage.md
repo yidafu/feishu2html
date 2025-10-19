@@ -1,5 +1,8 @@
 # macOS Native Usage Guide
 
+> ✅ **Platform Status: Verified**  
+> Successfully tested and verified on macOS (both Intel x64 and Apple Silicon ARM64)
+
 ## Overview
 
 Feishu2HTML provides native macOS executable support, allowing you to run the converter directly on macOS without JVM or Node.js.

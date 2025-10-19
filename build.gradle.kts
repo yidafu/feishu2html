@@ -301,25 +301,26 @@ signing {
     }
 }
 
-// Dokka 配置 - 生成 API 文档
-tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml").configure {
-    outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
-    dokkaSourceSets {
-        configureEach {
-            // Temporarily disable MODULE.md due to Dokka parsing issues
-            // includes.from("MODULE.md")
-            suppressInheritedMembers.set(false)
-        }
-    }
-}
+// Dokka V2 配置 - 生成 API 文档
+dokka {
+    moduleName.set("feishu2html")
 
-tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaGfm").configure {
-    outputDirectory.set(layout.buildDirectory.dir("dokka/markdown"))
+    dokkaPublications.html {
+        outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
+        suppressInheritedMembers.set(false)
+    }
+
+    dokkaSourceSets.named("commonMain") {
+        // TODO: Dokka 2.1.0 的 Markdown 解析器存在问题，暂时禁用包含文件
+        // 等待后续版本修复或寻找替代方案
+        // includes.from("MODULE.md")
+        // includes.from("src/commonMain/kotlin/dev/yidafu/feishu2html/package.md")
+    }
 }
 
 // 便捷的文档生成任务
 tasks.register("docs") {
-    dependsOn("dokkaHtml", "dokkaGfm")
+    dependsOn("dokkaGenerateHtml")
     description = "Generate all documentation (HTML and Markdown)"
     group = "documentation"
 }

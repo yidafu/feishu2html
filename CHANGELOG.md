@@ -12,11 +12,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Corrected macOS build tasks to use `macosArm64MainBinaries` and `macosX64MainBinaries`
   - Updated Linux and Windows tasks to use `linuxX64MainBinaries` and `mingwX64MainBinaries`
 - Added `kotlin.native.ignoreDisabledTargets=true` to gradle.properties to allow cross-platform builds
+- Fixed Linux x64 linker errors by disabling Kotlin Native cache (`kotlin.native.cacheKind.linuxX64=none`)
+- Fixed Windows build path issues in GitHub Actions workflow
 
 ### Changed
 - Updated Gradle version badge from 8.5 to 8.10.2 in README
 - Improved Quick Start guide with dedicated Installation section
 - Added quick links to releases, documentation, and Maven Central at top of README
+- Upgraded Dokka to version 2.1.0 with V2 configuration
+
+### Verified
+- ✅ **macOS Platform Verified** - Successfully tested on macOS (both Intel and Apple Silicon)
+  - macOS x64 (Intel) binary working correctly
+  - macOS ARM64 (Apple Silicon) binary working correctly
+  - All features confirmed functional on macOS platform
 
 ## [1.0.0] - 2025-10-19
 
