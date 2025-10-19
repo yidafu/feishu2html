@@ -3,6 +3,8 @@
 > **Important Update**: As of June 30, 2025, OSSRH has been shut down and replaced by **Central Portal Publisher**.  
 > See: https://central.sonatype.org/pages/ossrh-eol/
 
+> **Plugin Used**: This project uses [NMCP (New Maven Central Publisher)](https://github.com/GradleUp/nmcp) - a modern Gradle plugin purpose-built for Central Portal.
+
 ---
 
 ## Prerequisites - 前置准备
@@ -66,36 +68,42 @@ signing.key=-----BEGIN PGP PRIVATE KEY BLOCK-----\n...\n-----END PGP PRIVATE KEY
 
 ## Publishing Process
 
+### Using NMCP Plugin
+
+This project uses the **NMCP (New Maven Central Publisher)** plugin, which simplifies publishing to Central Portal with a single command.
+
 ### Publish SNAPSHOT Version
 
-SNAPSHOT versions are published directly without manual approval:
+SNAPSHOT versions are automatically published without manual approval:
 
 ```bash
 # Ensure version ends with -SNAPSHOT
 # In build.gradle.kts: version = "1.0.0-SNAPSHOT"
 
-# Publish all platforms (JVM + JS only currently due to Native compilation issues)
-./gradlew publishJvmPublicationToCentralRepository publishJsPublicationToCentralRepository
+# Publish all platforms with one command
+./gradlew nmcpPublish
 
-# Or publish specific platform
-./gradlew publishJvmPublicationToCentralRepository
+# The plugin will:
+# 1. Build all publications
+# 2. Sign artifacts (if configured)
+# 3. Upload to Central Portal
+# 4. Automatically publish (SNAPSHOT mode)
 ```
 
-**SNAPSHOT Repository**:
-```
-https://central.sonatype.com/api/v1/publisher/upload
-```
+**Note**: SNAPSHOT versions are immediately available after successful upload.
 
 ### Publish Release Version
 
-Release versions require manual validation in the Portal:
+Release versions require manual approval in the Portal:
 
 ```bash
 # 1. Update version (remove -SNAPSHOT)
 # In build.gradle.kts: version = "1.0.0"
 
 # 2. Publish to Central Portal
-./gradlew publishAllPublicationsToCentralRepository
+./gradlew nmcpPublish
+
+# The plugin will upload and mark as USER_MANAGED
 
 # 3. Log in to Central Portal
 # https://central.sonatype.com/
@@ -107,6 +115,21 @@ Release versions require manual validation in the Portal:
 
 # 5. Wait for sync to Maven Central (typically 30 minutes to 4 hours)
 # https://repo1.maven.org/maven2/dev/yidafu/feishu2html/
+```
+
+### Platform-Specific Publishing
+
+If you need to publish specific platforms only:
+
+```bash
+# Publish JVM only
+./gradlew publishAllPublicationsToNmcpJvmRepository
+
+# Publish JS only
+./gradlew publishAllPublicationsToNmcpJsRepository
+
+# List all nmcp publish tasks
+./gradlew tasks --all | grep nmcp
 ```
 
 ---
@@ -208,18 +231,18 @@ find build/libs -name "*.asc"
 ### Publishing Tasks
 
 ```bash
-# List all publishing tasks
-./gradlew tasks --group publishing
+# Main publishing command (recommended)
+./gradlew nmcpPublish
 
-# Publish all publications
-./gradlew publish
-
-# Publish to Central Portal
-./gradlew publishAllPublicationsToCentralRepository
+# List all NMCP tasks
+./gradlew tasks --all | grep nmcp
 
 # Publish specific platforms
-./gradlew publishJvmPublicationToCentralRepository
-./gradlew publishJsPublicationToCentralRepository
+./gradlew publishAllPublicationsToNmcpJvmRepository
+./gradlew publishAllPublicationsToNmcpJsRepository
+
+# Legacy maven-publish tasks (not recommended for Central Portal)
+./gradlew publish
 ```
 
 ---
