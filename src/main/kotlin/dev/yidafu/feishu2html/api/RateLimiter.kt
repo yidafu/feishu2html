@@ -6,12 +6,12 @@ import kotlinx.coroutines.sync.withLock
 import org.slf4j.LoggerFactory
 
 /**
- * 请求速率限制器
+ * Request rate limiter
  *
- * 飞书API限制：单个应用调用频率上限为每秒 5 次
- * 超过该频率限制，接口将返回 HTTP 状态码 400 及错误码 99991400
+ * Feishu API limit: Maximum 5 requests per second per application
+ * Exceeding this limit will result in HTTP 400 with error code 99991400
  */
-class RateLimiter(
+internal class RateLimiter(
     private val maxRequestsPerSecond: Int = 5,
     private val maxRetries: Int = 3,
     private val initialBackoffMs: Long = 1000,
@@ -21,74 +21,76 @@ class RateLimiter(
     private val requestTimes = mutableListOf<Long>()
 
     /**
-     * 执行带限流控制的请求
+     * Execute a request with rate limiting control
      *
-     * @param block 要执行的请求操作
-     * @return 请求结果
-     * @throws Exception 如果所有重试都失败
+     * @param block The request operation to execute
+     * @return Request result
+     * @throws Exception If all retries fail
      */
     suspend fun <T> execute(block: suspend () -> T): T {
         var lastException: Exception? = null
 
         for (attempt in 0 until maxRetries) {
             try {
-                // 等待直到可以发送请求
+                // Wait until a slot is available
                 waitForAvailableSlot()
 
-                // 执行请求
+                // Execute request
                 val result = block()
 
-                // 请求成功，记录时间
+                // Request succeeded, record the time
                 recordRequest()
 
                 return result
             } catch (e: FeishuApiException) {
-                // 检查是否是限频错误
+                // Check if it's a rate limit error
                 if (e.code == 99991400) {
-                    logger.warn("遇到限频错误 (99991400)，尝试第 ${attempt + 1}/$maxRetries 次重试")
+                    logger.warn("Rate limit error encountered (99991400), retry attempt {}/{}",
+                        attempt + 1, maxRetries)
                     lastException = e
 
-                    // 使用指数退避算法
+                    // Use exponential backoff algorithm
                     val backoffTime = calculateBackoff(attempt)
-                    logger.info("等待 ${backoffTime}ms 后重试...")
+                    logger.info("Waiting {}ms before retry...", backoffTime)
                     delay(backoffTime)
 
-                    // 清理旧的请求记录，重新开始
+                    // Clear old request records and start fresh
                     clearOldRequests()
                 } else {
-                    // 不是限频错误，直接抛出
+                    // Not a rate limit error, throw immediately
                     throw e
                 }
             } catch (e: Exception) {
-                // 其他异常，直接抛出
+                // Other exceptions, throw immediately
                 throw e
             }
         }
 
-        // 所有重试都失败了
-        throw lastException ?: Exception("请求失败，已达到最大重试次数")
+        // All retries failed
+        throw lastException ?: Exception("Request failed after maximum retries")
     }
 
     /**
-     * 等待直到有可用的请求槽位
+     * Wait until a request slot is available
      */
     private suspend fun waitForAvailableSlot() {
         mutex.withLock {
             val now = System.currentTimeMillis()
 
-            // 移除1秒之前的请求记录
+            // Remove records older than 1 second
             requestTimes.removeIf { it < now - 1000 }
 
-            // 如果当前1秒内的请求数已达上限，等待
+            // If request limit reached within current second, wait
             if (requestTimes.size >= maxRequestsPerSecond) {
                 val oldestRequest = requestTimes.first()
                 val waitTime = 1000 - (now - oldestRequest)
 
                 if (waitTime > 0) {
-                    logger.debug("已达到速率限制 (${requestTimes.size}/$maxRequestsPerSecond)，等待 ${waitTime}ms")
+                    logger.debug("Rate limit reached ({}/{}), waiting {}ms",
+                        requestTimes.size, maxRequestsPerSecond, waitTime)
                     delay(waitTime)
 
-                    // 重新清理旧记录
+                    // Clean old records again
                     val newNow = System.currentTimeMillis()
                     requestTimes.removeIf { it < newNow - 1000 }
                 }
@@ -97,42 +99,43 @@ class RateLimiter(
     }
 
     /**
-     * 记录请求时间
+     * Record request time
      */
     private suspend fun recordRequest() {
         mutex.withLock {
             val now = System.currentTimeMillis()
             requestTimes.add(now)
-            logger.trace("记录请求，当前窗口内请求数: ${requestTimes.size}/$maxRequestsPerSecond")
+            logger.trace("Request recorded, current window requests: {}/{}",
+                requestTimes.size, maxRequestsPerSecond)
         }
     }
 
     /**
-     * 清理旧的请求记录
+     * Clear old request records
      */
     private suspend fun clearOldRequests() {
         mutex.withLock {
             val now = System.currentTimeMillis()
             requestTimes.removeIf { it < now - 1000 }
-            logger.debug("清理旧请求记录，当前窗口内请求数: ${requestTimes.size}")
+            logger.debug("Cleared old request records, current window requests: {}", requestTimes.size)
         }
     }
 
     /**
-     * 计算指数退避时间
+     * Calculate exponential backoff time
      *
-     * @param attempt 当前重试次数（从0开始）
-     * @return 需要等待的毫秒数
+     * @param attempt Current retry attempt (starting from 0)
+     * @return Milliseconds to wait
      */
     private fun calculateBackoff(attempt: Int): Long {
-        // 指数退避：initialBackoff * 2^attempt + 随机抖动
+        // Exponential backoff: initialBackoff * 2^attempt + random jitter
         val exponentialBackoff = initialBackoffMs * (1 shl attempt)
-        val jitter = (Math.random() * 500).toLong() // 0-500ms 的随机抖动
+        val jitter = (Math.random() * 500).toLong() // 0-500ms random jitter
         return exponentialBackoff + jitter
     }
 
     /**
-     * 获取当前窗口内的请求数（用于监控）
+     * Get current request count in the window (for monitoring)
      */
     suspend fun getCurrentRequestCount(): Int {
         mutex.withLock {

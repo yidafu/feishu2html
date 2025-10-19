@@ -9,12 +9,12 @@ import java.io.File
 import java.nio.file.Paths
 
 /**
- * 飞书文档转HTML主类
+ * Main class for converting Feishu documents to HTML
  *
- * 提供将飞书云文档导出为HTML文件的功能，支持自动下载图片和附件。
- * 实现 AutoCloseable 接口，支持使用 use 函数自动管理资源。
+ * Provides functionality to export Feishu documents to standalone HTML files with automatic
+ * download of images and attachments. Implements AutoCloseable for automatic resource management.
  *
- * ## 使用示例
+ * ## Usage Example
  *
  * ```kotlin
  * val options = Feishu2HtmlOptions(
@@ -28,7 +28,7 @@ import java.nio.file.Paths
  * }
  * ```
  *
- * @property options 配置选项，包含应用凭证、输出路径等
+ * @property options Configuration options including app credentials and output paths
  * @see Feishu2HtmlOptions
  */
 class Feishu2Html(
@@ -38,20 +38,20 @@ class Feishu2Html(
     private val apiClient = FeishuApiClient(options.appId, options.appSecret)
 
     /**
-     * 导出单个飞书文档为HTML文件
+     * Export a single Feishu document to HTML file
      *
-     * 该方法会：
-     * 1. 获取文档基本信息（标题、版本等）
-     * 2. 获取文档所有Block内容
-     * 3. 下载文档中的图片和附件
-     * 4. 生成HTML文件并保存
+     * This method will:
+     * 1. Fetch document metadata (title, version, etc.)
+     * 2. Fetch all document blocks
+     * 3. Download images and attachments
+     * 4. Generate and save HTML file
      *
-     * @param documentId 飞书文档ID，可从文档URL中提取
-     * @param outputFileName 可选的输出文件名，默认使用文档标题
-     * @throws FeishuApiException 当API调用失败时抛出（如权限不足、文档不存在等）
-     * @throws java.io.IOException 当文件写入失败时抛出
+     * @param documentId Feishu document ID, can be extracted from document URL
+     * @param outputFileName Optional output filename, defaults to document title
+     * @throws FeishuApiException When API call fails (e.g., insufficient permissions, document not found)
+     * @throws java.io.IOException When file write operation fails
      *
-     * @see exportBatch 批量导出多个文档
+     * @see exportBatch Batch export multiple documents
      */
     suspend fun export(
         documentId: String,
@@ -62,13 +62,13 @@ class Feishu2Html(
             options.outputDir, options.imageDir, options.fileDir)
 
         try {
-            // 先获取文档基本信息（包括标题、封面等）
+            // Fetch document metadata (title, cover, etc.)
             logger.debug("Fetching document info for: {}", documentId)
             val documentInfo = apiClient.getDocumentInfo(documentId)
             logger.info("Document info retrieved - Title: {}, Version: {}",
                 documentInfo.title, documentInfo.revisionId)
 
-            // 获取文档内容
+            // Fetch document content
             logger.debug("Fetching document content for: {}", documentId)
             val content = apiClient.getDocumentRawContent(documentId)
             val document = content.document
@@ -77,15 +77,15 @@ class Feishu2Html(
             logger.info("Document content loaded - Total blocks: {}", blocks.size)
             logger.debug("Document has {} top-level children", document.body?.children?.size ?: 0)
 
-            // 获取有序的文档块列表
+            // Get ordered block list
             val orderedBlocks = apiClient.getOrderedBlocks(content)
             logger.debug("Ordered blocks count: {}", orderedBlocks.size)
 
-            // 下载图片和文件
+            // Download images and files
             logger.info("Starting asset download for document: {}", documentId)
             downloadAssets(orderedBlocks)
 
-            // 生成HTML
+            // Generate HTML
             val fileName = outputFileName ?: "${document.title}.html"
             val htmlFile = File(options.outputDir, fileName)
             htmlFile.parentFile?.mkdirs()
@@ -104,14 +104,14 @@ class Feishu2Html(
     }
 
     /**
-     * 批量导出多个飞书文档
+     * Batch export multiple Feishu documents
      *
-     * 按顺序依次导出列表中的每个文档。如果某个文档导出失败，
-     * 会记录错误日志但继续处理后续文档。
+     * Exports each document in the list sequentially. If a document fails to export,
+     * the error is logged but processing continues with subsequent documents.
      *
-     * @param documentIds 文档ID列表
+     * @param documentIds List of document IDs to export
      *
-     * @see export 导出单个文档
+     * @see export Export a single document
      */
     suspend fun exportBatch(documentIds: List<String>) =
         coroutineScope {
@@ -155,12 +155,12 @@ class Feishu2Html(
                                         val imagePath = Paths.get(options.imageDir, "$token.png")
                                         if (!imagePath.toFile().exists()) {
                                             apiClient.downloadFile(token, imagePath)
-                                            logger.info("图片已下载: $token")
+                                            logger.info("Image downloaded: {}", token)
                                         } else {
-                                            logger.debug("图片已存在，跳过下载: $token")
+                                            logger.debug("Image already exists, skipping: {}", token)
                                         }
                                     } catch (e: Exception) {
-                                        logger.error("下载图片失败: $token", e)
+                                        logger.error("Failed to download image: {}", token, e)
                                     }
                                 }
                             imageJobs.add(job)
@@ -177,19 +177,19 @@ class Feishu2Html(
                                         val filePath = Paths.get(options.fileDir, fileName)
                                         if (!filePath.toFile().exists()) {
                                             apiClient.downloadFile(token, filePath)
-                                            logger.info("文件已下载: $fileName")
+                                            logger.info("File downloaded: {}", fileName)
                                         } else {
-                                            logger.debug("文件已存在，跳过下载: $fileName")
+                                            logger.debug("File already exists, skipping: {}", fileName)
                                         }
                                     } catch (e: Exception) {
-                                        logger.error("下载文件失败: $token", e)
+                                        logger.error("Failed to download file: {}", token, e)
                                     }
                                 }
                             fileJobs.add(job)
                         }
                     }
                     is BoardBlock -> {
-                        // 电子画板块
+                        // Board block
                         val token = block.board?.token
                         if (token != null) {
                             val job =
@@ -198,12 +198,12 @@ class Feishu2Html(
                                         val imagePath = Paths.get(options.imageDir, "$token.png")
                                         if (!imagePath.toFile().exists()) {
                                             apiClient.exportBoard(token, imagePath)
-                                            logger.info("电子画板图片已下载: $token")
+                                            logger.info("Board exported as image: {}", token)
                                         } else {
-                                            logger.debug("电子画板图片已存在，跳过下载: $token")
+                                            logger.debug("Board image already exists, skipping: {}", token)
                                         }
                                     } catch (e: Exception) {
-                                        logger.error("下载电子画板图片失败: $token", e)
+                                        logger.error("Failed to export board: {}", token, e)
                                     }
                                 }
                             imageJobs.add(job)
@@ -213,7 +213,7 @@ class Feishu2Html(
                 }
             }
 
-            // 等待所有下载完成
+            // Wait for all downloads to complete
             logger.debug("Waiting for {} image downloads and {} file downloads",
                 imageJobs.size, fileJobs.size)
             imageJobs.awaitAll()
@@ -224,19 +224,19 @@ class Feishu2Html(
         }
 
     /**
-     * 关闭HTTP客户端并释放资源
+     * Close HTTP client and release resources
      *
-     * 实现 AutoCloseable 接口，会自动在 use 块结束时调用。
-     * 也可以手动调用以立即释放资源。
+     * Implements AutoCloseable interface and is automatically called at the end of use {} block.
+     * Can also be called manually to immediately release resources.
      *
-     * ## 示例（推荐使用 use）
+     * ## Example (recommended with use {})
      * ```kotlin
      * Feishu2Html(options).use { converter ->
      *     converter.export("doc_id")
      * }
      * ```
      *
-     * ## 或手动管理
+     * ## Or manual management
      * ```kotlin
      * val converter = Feishu2Html(options)
      * try {
@@ -254,16 +254,16 @@ class Feishu2Html(
 }
 
 /**
- * 飞书文档转HTML的配置选项
+ * Configuration options for Feishu document to HTML conversion
  *
- * @property appId 飞书应用ID，从飞书开放平台获取
- * @property appSecret 飞书应用密钥，从飞书开放平台获取
- * @property outputDir HTML文件输出目录，默认为"./output"
- * @property imageDir 图片保存目录，默认为"./output/images"
- * @property fileDir 附件保存目录，默认为"./output/files"
- * @property imagePath HTML中引用图片的相对路径，默认为"images"
- * @property filePath HTML中引用附件的相对路径，默认为"files"
- * @property customCss 自定义CSS样式，如果提供则覆盖默认样式
+ * @property appId Feishu app ID, obtained from Feishu Open Platform
+ * @property appSecret Feishu app secret, obtained from Feishu Open Platform
+ * @property outputDir HTML file output directory, defaults to "./output"
+ * @property imageDir Image save directory, defaults to "./output/images"
+ * @property fileDir Attachment save directory, defaults to "./output/files"
+ * @property imagePath Relative path for images in HTML, defaults to "images"
+ * @property filePath Relative path for attachments in HTML, defaults to "files"
+ * @property customCss Custom CSS styles, overrides default styles if provided
  *
  * @see Feishu2Html
  */
@@ -278,7 +278,7 @@ data class Feishu2HtmlOptions(
     val customCss: String? = null,
 ) {
     init {
-        // 创建输出目录
+        // Create output directories
         File(outputDir).mkdirs()
         File(imageDir).mkdirs()
         File(fileDir).mkdirs()

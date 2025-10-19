@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory
 import java.time.Instant
 
 /**
- * 飞书认证服务，负责管理tenant_access_token的获取和刷新
+ * Feishu authentication service for managing tenant_access_token acquisition and refresh
  */
-class FeishuAuthService(
+internal class FeishuAuthService(
     private val appId: String,
     private val appSecret: String,
     private val httpClient: HttpClient,
@@ -26,7 +26,7 @@ class FeishuAuthService(
     private var cachedToken: TokenCache? = null
 
     /**
-     * 获取有效的tenant_access_token
+     * Get a valid tenant_access_token
      */
     suspend fun getAccessToken(): String =
         mutex.withLock {
@@ -52,18 +52,18 @@ class FeishuAuthService(
 
                 if (result.code != 0) {
                     logger.error("Failed to get access token - code: {}, msg: {}", result.code, result.msg)
-                    throw FeishuApiException("获取token失败: ${result.msg}")
+                    throw FeishuApiException("Failed to get token: ${result.msg}")
                 }
 
                 val token =
                     result.tenantAccessToken
-                        ?: throw FeishuApiException("返回的token为空")
+                        ?: throw FeishuApiException("Returned token is empty")
 
                 val expiresAt = Instant.now().plusSeconds(result.expire.toLong() - 60)
                 cachedToken =
                     TokenCache(
                         token = token,
-                        expiresAt = expiresAt, // 提前60秒过期
+                        expiresAt = expiresAt, // Expire 60 seconds early
                     )
 
                 logger.info("Successfully obtained new access token (expires at: {}, valid for {} seconds)",

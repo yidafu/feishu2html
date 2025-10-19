@@ -54,7 +54,7 @@ fun main(args: Array<String>) {
         )
 
     logger.info("Initializing Feishu2Html with output directory: {}", options.outputDir)
-    
+
     Feishu2Html(options).use { feishu2Html ->
         try {
             logger.info("Starting document export process")
@@ -83,6 +83,6 @@ fun main(args: Array<String>) {
             println("=".repeat(60))
         }
     }
-    
+
     logger.info("Feishu2HTML application terminated")
 }

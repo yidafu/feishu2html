@@ -5,13 +5,13 @@ import kotlinx.html.*
 import org.slf4j.LoggerFactory
 
 /**
- * 文本元素转换器 - 使用 kotlinx.html DSL
+ * Text element converter - uses kotlinx.html DSL
  */
-class TextElementConverter {
+internal class TextElementConverter {
     private val logger = LoggerFactory.getLogger(TextElementConverter::class.java)
 
     /**
-     * 将文本元素列表转换为HTML (DSL方式)
+     * Convert text element list to HTML (DSL approach)
      */
     fun convertElements(
         elements: List<TextElement>,
@@ -22,7 +22,7 @@ class TextElementConverter {
     }
 
     /**
-     * 将文本元素列表转换为纯文本（用于代码块等）
+     * Convert text element list to plain text (for code blocks, etc.)
      */
     fun convertElementsPlainText(elements: List<TextElement>): String {
         return elements.joinToString("") { getPlainText(it) }

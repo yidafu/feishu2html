@@ -17,28 +17,28 @@ import java.io.File
 import java.nio.file.Path
 
 /**
- * 飞书开放平台API客户端
+ * Feishu Open Platform API client
  *
- * 封装了与飞书文档API的所有交互，包括：
- * - 文档信息获取
- * - 文档内容读取
- * - 图片和文件下载
- * - 电子画板导出
+ * Encapsulates all interactions with Feishu Document API, including:
+ * - Document info retrieval
+ * - Document content reading
+ * - Image and file downloads
+ * - Board export
  *
- * 内置限流机制（QPS=5）以避免触发API限流。
+ * Built-in rate limiting (QPS=5) to avoid triggering API limits.
  *
- * @param appId 飞书应用ID
- * @param appSecret 飞书应用密钥
+ * @param appId Feishu application ID
+ * @param appSecret Feishu application secret
  *
  * @see FeishuAuthService
  * @see RateLimiter
  */
-class FeishuApiClient(
+internal class FeishuApiClient(
     appId: String,
     appSecret: String,
 ) {
     private val logger = LoggerFactory.getLogger(FeishuApiClient::class.java)
-    private val rateLimiter = RateLimiter(maxRequestsPerSecond = 5) // 飞书API限制：每秒5次
+    private val rateLimiter = RateLimiter(maxRequestsPerSecond = 5) // Feishu API limit: 5 requests per second
 
     private val httpClient =
         HttpClient(CIO) {
@@ -56,22 +56,22 @@ class FeishuApiClient(
     private val authService = FeishuAuthService(appId, appSecret, httpClient)
 
     /**
-     * 获取飞书文档的基本信息
+     * Get basic information of a Feishu document
      *
-     * 调用飞书开放平台API获取文档的元数据，包括标题、创建者、修改时间等。
+     * Calls Feishu Open Platform API to retrieve document metadata including title, creator, modification time, etc.
      *
-     * @param documentId 文档ID
-     * @return [DocumentInfo] 文档基本信息对象
-     * @throws FeishuApiException 当API调用失败时抛出，可能的原因包括：
-     *   - 权限不足（code: 1770032）
-     *   - 文档不存在
-     *   - API限流（code: 99991400）
+     * @param documentId Document ID
+     * @return [DocumentInfo] Document metadata object
+     * @throws FeishuApiException When API call fails, possible reasons include:
+     *   - Insufficient permissions (code: 1770032)
+     *   - Document not found
+     *   - API rate limit (code: 99991400)
      *
-     * @see <a href="https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/get">官方API文档</a>
+     * @see <a href="https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/get">Official API Documentation</a>
      */
     suspend fun getDocumentInfo(documentId: String): DocumentInfo =
         rateLimiter.execute {
-            logger.info("获取文档基本信息: $documentId")
+            logger.info("Fetching document info: {}", documentId)
 
             val token = authService.getAccessToken()
 
@@ -80,7 +80,7 @@ class FeishuApiClient(
                     header("Authorization", "Bearer $token")
                 }
 
-            // 检查 HTTP 状态码（限频会返回 400）
+            // Check HTTP status code (rate limit returns 400)
             if (response.status == HttpStatusCode.BadRequest) {
                 val responseText = response.bodyAsText()
                 val json =
@@ -91,18 +91,18 @@ class FeishuApiClient(
                 try {
                     val errorResult: DocumentInfoResponse = json.decodeFromString(responseText)
                     if (errorResult.code == 99991400) {
-                        throw FeishuApiException("API限频", code = 99991400)
+                        throw FeishuApiException("API rate limit", code = 99991400)
                     }
                 } catch (e: Exception) {
-                    // 解析失败，继续正常流程
+                    // Parsing failed, continue with normal flow
                 }
             }
 
-            // 获取原始响应文本用于调试
+            // Get raw response text for debugging
             val responseText = response.bodyAsText()
-            logger.debug("文档基本信息 API 原始响应: $responseText")
+            logger.debug("Document info API raw response: {}", responseText)
 
-            // 手动解析 JSON 以获取更好的错误处理
+            // Manually parse JSON for better error handling
             val json =
                 Json {
                     ignoreUnknownKeys = true
@@ -114,33 +114,33 @@ class FeishuApiClient(
                 try {
                     json.decodeFromString(responseText)
                 } catch (e: Exception) {
-                    logger.error("解析文档基本信息响应失败: ${e.message}")
-                    logger.error("响应内容: $responseText")
-                    throw FeishuApiException("解析API响应失败: ${e.message}\n响应内容: ${responseText.take(500)}")
+                    logger.error("Failed to parse document info response: {}", e.message)
+                    logger.error("Response content: {}", responseText)
+                    throw FeishuApiException("Failed to parse API response: ${e.message}\nResponse: ${responseText.take(500)}")
                 }
 
             if (result.code != 0) {
                 val errorMsg = StringBuilder()
-                errorMsg.append("获取文档基本信息失败\n")
-                errorMsg.append("  错误代码: ${result.code}\n")
-                errorMsg.append("  错误信息: ${result.msg}\n")
-                errorMsg.append("  文档ID: $documentId\n")
-                errorMsg.append("\n常见原因:\n")
+                errorMsg.append("Failed to get document info\n")
+                errorMsg.append("  Error code: ${result.code}\n")
+                errorMsg.append("  Error message: ${result.msg}\n")
+                errorMsg.append("  Document ID: $documentId\n")
+                errorMsg.append("\nCommon causes:\n")
                 when (result.code) {
                     99991663 -> {
-                        errorMsg.append("  - 应用没有访问该文档的权限\n")
-                        errorMsg.append("  - 请确认文档已分享给应用，或将文档移至应用可访问的空间\n")
+                        errorMsg.append("  - App does not have permission to access this document\n")
+                        errorMsg.append("  - Please share the document with the app or move it to an accessible space\n")
                     }
                     99991668, 1770032 -> {
-                        errorMsg.append("  - 应用缺少必要的权限\n")
-                        errorMsg.append("  - 请在开放平台添加 'docx:document' 权限并发布应用\n")
-                        errorMsg.append("  - 请确认文档已分享给应用，应用需要有文档的访问权限\n")
+                        errorMsg.append("  - App is missing required permissions\n")
+                        errorMsg.append("  - Please add 'docx:document' permission in Open Platform and publish the app\n")
+                        errorMsg.append("  - Please ensure the document is shared with the app\n")
                     }
                     else -> {
-                        errorMsg.append("  - 检查应用是否已添加 'docx:document' 权限\n")
-                        errorMsg.append("  - 检查应用是否已发布/启用\n")
-                        errorMsg.append("  - 检查文档ID是否正确\n")
-                        errorMsg.append("  - 检查应用是否有权限访问该文档\n")
+                        errorMsg.append("  - Check if app has 'docx:document' permission\n")
+                        errorMsg.append("  - Check if app is published/enabled\n")
+                        errorMsg.append("  - Check if document ID is correct\n")
+                        errorMsg.append("  - Check if app has permission to access the document\n")
                     }
                 }
                 logger.error(errorMsg.toString())
@@ -150,19 +150,20 @@ class FeishuApiClient(
             val documentInfo =
                 result.data?.document
                     ?: throw FeishuApiException(
-                        "文档基本信息为空。响应: code=${result.code}, msg=${result.msg}",
+                        "Document info is empty. Response: code=${result.code}, msg=${result.msg}",
                         code = result.code,
                     )
 
             logger.info(
-                "成功获取文档基本信息: ${documentInfo.title} (ID: ${documentInfo.documentId}, Revision: ${documentInfo.revisionId})",
+                "Successfully fetched document info: {} (ID: {}, Revision: {})",
+                documentInfo.title, documentInfo.documentId, documentInfo.revisionId
             )
             documentInfo
         }
 
     /**
-     * 获取文档所有块
-     * 参考: https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/list
+     * Get all blocks of a document
+     * Reference: https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/list
      */
     suspend fun getDocumentRawContent(documentId: String): DocumentRawContent {
         logger.info("Starting to fetch document blocks for: {}", documentId)
@@ -174,7 +175,7 @@ class FeishuApiClient(
         var pageCount = 0
         var hasMore = true
 
-        // JSON 解析器
+        // JSON parser
         val json =
             Json {
                 ignoreUnknownKeys = true
@@ -182,25 +183,26 @@ class FeishuApiClient(
                 encodeDefaults = true
             }
 
-        // 分页获取所有块
+        // Fetch all blocks with pagination
         while (hasMore) {
             pageCount++
-            logger.debug("获取第 $pageCount 页块数据" + if (pageToken != null) ", page_token=$pageToken" else "")
+            logger.debug("Fetching page {} blocks{}", pageCount, 
+                if (pageToken != null) " with page_token=$pageToken" else "")
 
-            // 使用限流器包装请求
+            // Execute request with rate limiter
             val currentPageToken = pageToken
             val response =
                 rateLimiter.execute {
                     httpClient.get("https://open.feishu.cn/open-apis/docx/v1/documents/$documentId/blocks") {
                         header("Authorization", "Bearer $token")
-                        parameter("page_size", 500) // 每页最多500个块
+                        parameter("page_size", 500) // Max 500 blocks per page
                         if (currentPageToken != null) {
                             parameter("page_token", currentPageToken)
                         }
                     }
                 }
 
-            // 检查 HTTP 状态码（限频会返回 400）
+            // Check HTTP status code (rate limit returns 400)
             if (response.status == HttpStatusCode.BadRequest) {
                 val responseText = response.bodyAsText()
                 val errorJson =
@@ -211,52 +213,52 @@ class FeishuApiClient(
                 try {
                     val errorResult: DocumentBlocksResponse = errorJson.decodeFromString(responseText)
                     if (errorResult.code == 99991400) {
-                        throw FeishuApiException("API限频", code = 99991400)
+                        throw FeishuApiException("API rate limit", code = 99991400)
                     }
                 } catch (e: FeishuApiException) {
                     throw e
                 } catch (e: Exception) {
-                    // 解析失败，继续正常流程
+                    // Parsing failed, continue with normal flow
                 }
             }
 
-            // 获取原始响应文本用于调试
+            // Get raw response text for debugging
             val responseText = response.bodyAsText()
             if (pageCount == 1) {
-                logger.debug("块列表 API 原始响应: $responseText")
+                logger.debug("Blocks list API raw response: {}", responseText)
             }
 
             val result: DocumentBlocksResponse =
                 try {
                     json.decodeFromString(responseText)
                 } catch (e: Exception) {
-                    logger.error("解析响应失败: ${e.message}")
-                    logger.error("响应内容: $responseText")
-                    throw FeishuApiException("解析API响应失败: ${e.message}\n响应内容: ${responseText.take(500)}")
+                    logger.error("Failed to parse response: {}", e.message)
+                    logger.error("Response content: {}", responseText)
+                    throw FeishuApiException("Failed to parse API response: ${e.message}\nResponse: ${responseText.take(500)}")
                 }
 
             if (result.code != 0) {
                 val errorMsg = StringBuilder()
-                errorMsg.append("获取文档块列表失败\n")
-                errorMsg.append("  错误代码: ${result.code}\n")
-                errorMsg.append("  错误信息: ${result.msg}\n")
-                errorMsg.append("  文档ID: $documentId\n")
-                errorMsg.append("\n常见原因:\n")
+                errorMsg.append("Failed to get document blocks\n")
+                errorMsg.append("  Error code: ${result.code}\n")
+                errorMsg.append("  Error message: ${result.msg}\n")
+                errorMsg.append("  Document ID: $documentId\n")
+                errorMsg.append("\nCommon causes:\n")
                 when (result.code) {
                     99991663 -> {
-                        errorMsg.append("  - 应用没有访问该文档的权限\n")
-                        errorMsg.append("  - 请确认文档已分享给应用，或将文档移至应用可访问的空间\n")
+                        errorMsg.append("  - App does not have permission to access this document\n")
+                        errorMsg.append("  - Please share the document with the app or move it to an accessible space\n")
                     }
                     99991668, 1770032 -> {
-                        errorMsg.append("  - 应用缺少必要的权限\n")
-                        errorMsg.append("  - 请在开放平台添加 'docx:document' 权限并发布应用\n")
-                        errorMsg.append("  - 请确认文档已分享给应用\n")
+                        errorMsg.append("  - App is missing required permissions\n")
+                        errorMsg.append("  - Please add 'docx:document' permission in Open Platform and publish the app\n")
+                        errorMsg.append("  - Please ensure the document is shared with the app\n")
                     }
                     else -> {
-                        errorMsg.append("  - 检查应用是否已添加 'docx:document' 权限\n")
-                        errorMsg.append("  - 检查应用是否已发布/启用\n")
-                        errorMsg.append("  - 检查文档ID是否正确\n")
-                        errorMsg.append("  - 检查应用是否有权限访问该文档\n")
+                        errorMsg.append("  - Check if app has 'docx:document' permission\n")
+                        errorMsg.append("  - Check if app is published/enabled\n")
+                        errorMsg.append("  - Check if document ID is correct\n")
+                        errorMsg.append("  - Check if app has permission to access the document\n")
                     }
                 }
                 logger.error(errorMsg.toString())
@@ -266,7 +268,7 @@ class FeishuApiClient(
             val data =
                 result.data
                     ?: throw FeishuApiException(
-                        "文档块数据为空。响应: code=${result.code}, msg=${result.msg}",
+                        "Document blocks data is empty. Response: code=${result.code}, msg=${result.msg}",
                         code = result.code,
                     )
 
@@ -274,21 +276,22 @@ class FeishuApiClient(
             pageToken = data.pageToken
             hasMore = data.hasMore
 
-            logger.debug("获取到 ${data.items.size} 个块, has_more=$hasMore")
+            logger.debug("Fetched {} blocks, has_more={}", data.items.size, hasMore)
         }
 
-        logger.info("成功获取文档所有块: 共 ${allBlocks.size} 个块, 分 $pageCount 页获取")
+        logger.info("Successfully fetched all document blocks: {} blocks across {} pages",
+            allBlocks.size, pageCount)
 
-        // 将块列表转换为 Map 格式
+        // Convert block list to Map format
         val blocksMap = allBlocks.associateBy { it.blockId }
 
-        // 构造 Document 对象（从第一个 page 块中获取信息，或使用文档ID）
+        // Construct Document object (get info from first page block, or use document ID)
         val pageBlock = allBlocks.firstOrNull { it is PageBlock } as? PageBlock
         val document =
             Document(
                 documentId = documentId,
-                revisionId = 0, // 从块列表API无法获取 revision_id
-                title = pageBlock?.page?.elements?.firstOrNull()?.textRun?.content?.trim() ?: "未知标题",
+                revisionId = 0, // Cannot get revision_id from blocks list API
+                title = pageBlock?.page?.elements?.firstOrNull()?.textRun?.content?.trim() ?: "Unknown Title",
             )
 
         return DocumentRawContent(
@@ -298,16 +301,16 @@ class FeishuApiClient(
     }
 
     /**
-     * 下载文件（图片或附件）
+     * Download file (image or attachment)
      *
-     * 使用文件token从飞书云盘下载文件并保存到指定路径。
-     * 支持图片、文档附件等各类文件类型。
+     * Downloads a file from Feishu Drive using file token and saves it to specified path.
+     * Supports images, document attachments, and other file types.
      *
-     * @param fileToken 文件token，从Block数据中获取
-     * @param outputPath 文件保存路径
-     * @return [File] 下载后的文件对象
-     * @throws FeishuApiException 当下载失败时抛出（如token无效、权限不足等）
-     * @throws java.io.IOException 当文件写入失败时抛出
+     * @param fileToken File token, obtained from Block data
+     * @param outputPath File save path
+     * @return [File] Downloaded file object
+     * @throws FeishuApiException When download fails (e.g., invalid token, insufficient permissions)
+     * @throws java.io.IOException When file write fails
      */
     suspend fun downloadFile(
         fileToken: String,
@@ -326,16 +329,16 @@ class FeishuApiClient(
                             header("Authorization", "Bearer $token")
                         }
 
-                    // 检查限频
+                    // Check for rate limiting
                     if (response.status == HttpStatusCode.BadRequest) {
                         logger.warn("API rate limit hit while downloading file: {}", fileToken)
-                        throw FeishuApiException("API限频", code = 99991400)
+                        throw FeishuApiException("API rate limit", code = 99991400)
                     }
 
                     if (!response.status.isSuccess()) {
                         logger.error("File download failed with status: {} for token: {}",
                             response.status, fileToken)
-                        throw FeishuApiException("下载文件失败: ${response.status}")
+                        throw FeishuApiException("File download failed: ${response.status}")
                     }
 
                     val file = outputPath.toFile()
@@ -355,17 +358,17 @@ class FeishuApiClient(
         }
 
     /**
-     * 导出电子画板为PNG图片
+     * Export board as PNG image
      *
-     * 调用飞书画板导出API将电子画板导出为PNG图片。
-     * 注意：需要应用具有画板访问权限。
+     * Calls Feishu board export API to export an electronic board as a PNG image.
+     * Note: Requires app to have board access permission.
      *
-     * @param boardToken 画板token，从BoardBlock中获取
-     * @param outputPath 图片保存路径
-     * @return [File] 导出的PNG图片文件
-     * @throws FeishuApiException 当导出失败时抛出（如权限不足、画板不存在等）
+     * @param boardToken Board token, obtained from BoardBlock
+     * @param outputPath Image save path
+     * @return [File] Exported PNG image file
+     * @throws FeishuApiException When export fails (e.g., insufficient permissions, board not found)
      *
-     * @see <a href="https://open.feishu.cn/document/docs/board-v1/whiteboard/download_as_image">官方API文档</a>
+     * @see <a href="https://open.feishu.cn/document/docs/board-v1/whiteboard/download_as_image">Official API Documentation</a>
      */
     suspend fun exportBoard(
         boardToken: String,
@@ -379,27 +382,27 @@ class FeishuApiClient(
                 val token = authService.getAccessToken()
 
                 val apiUrl = "https://open.feishu.cn/open-apis/board/v1/whiteboards/$boardToken/download_as_image"
-                logger.debug("画板下载API URL: $apiUrl")
+                logger.debug("Board download API URL: {}", apiUrl)
 
-                // 使用官方的画板下载图片API (GET方法)
+                // Use official board image download API (GET method)
                 val response: HttpResponse =
                     httpClient.get(apiUrl) {
                         header("Authorization", "Bearer $token")
-                        parameter("file_type", "png") // 指定导出格式为 PNG
+                        parameter("file_type", "png") // Specify PNG export format
                     }
 
-                logger.debug("画板下载API响应状态: ${response.status}")
+                logger.debug("Board download API response status: {}", response.status)
 
-                // 检查限频
+                // Check for rate limiting
                 if (response.status == HttpStatusCode.BadRequest) {
-                    throw FeishuApiException("API限频", code = 99991400)
+                    throw FeishuApiException("API rate limit", code = 99991400)
                 }
 
                 if (!response.status.isSuccess()) {
                     val responseText = response.bodyAsText()
-                    logger.debug("画板下载API响应内容: $responseText")
+                    logger.debug("Board download API response content: {}", responseText)
                     throw FeishuApiException(
-                        "画板下载失败: ${response.status}, 响应: $responseText",
+                        "Board download failed: ${response.status}, response: $responseText",
                         code = response.status.value,
                     )
                 }
@@ -410,13 +413,14 @@ class FeishuApiClient(
                 val bytes = response.body<ByteArray>()
                 file.writeBytes(bytes)
 
-                logger.info("电子画板已保存: ${file.absolutePath}, 大小: ${bytes.size} bytes")
+                logger.info("Board saved successfully: {} ({} bytes)", 
+                    file.absolutePath, bytes.size)
                 file
             }
         }
 
     /**
-     * 获取文档块的有序列表（按文档结构排序）
+     * Get ordered list of document blocks (sorted by document structure)
      */
     fun getOrderedBlocks(content: DocumentRawContent): List<Block> {
         val blocks = content.blocks
@@ -435,19 +439,20 @@ class FeishuApiClient(
             }
         }
 
-        // 从文档根节点（PAGE 块）开始遍历
-        // 新的块列表 API 中，第一个块就是 PAGE 块（文档根节点）
+        // Traverse from document root (PAGE block)
+        // In the new blocks list API, the first block is the PAGE block (document root)
         val pageBlock = blocks.values.firstOrNull { it is PageBlock } as? PageBlock
         if (pageBlock != null) {
-            logger.debug("找到 PAGE 块，ID: ${pageBlock.blockId}, 子块数量: ${pageBlock.children?.size ?: 0}")
+            logger.debug("Found PAGE block - ID: {}, children count: {}", 
+                pageBlock.blockId, pageBlock.children?.size ?: 0)
 
-            // 遍历 PAGE 块的所有子块（不包括 PAGE 块本身）
+            // Traverse all children of PAGE block (excluding PAGE block itself)
             pageBlock.children?.forEach { childId ->
                 traverse(childId)
             }
         } else {
-            // 如果没有找到 PAGE 块，尝试使用旧的方式（兼容旧 API）
-            logger.warn("未找到 PAGE 块，使用所有块")
+            // If no PAGE block found, use fallback method (compatibility with old API)
+            logger.warn("PAGE block not found, using all blocks as fallback")
             blocks.values.forEach { block ->
                 if (block !is PageBlock) {
                     result.add(block)
@@ -455,14 +460,14 @@ class FeishuApiClient(
             }
         }
 
-        logger.debug("有序块列表大小: ${result.size}")
+        logger.debug("Ordered blocks list size: {}", result.size)
         return result
     }
 
     /**
-     * 关闭HTTP客户端并释放资源
+     * Close HTTP client and release resources
      *
-     * 关闭底层的Ktor HttpClient，释放网络连接等资源。
+     * Closes the underlying Ktor HttpClient and releases network connection resources.
      */
     fun close() {
         httpClient.close()

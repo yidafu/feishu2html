@@ -9,19 +9,19 @@ import org.slf4j.LoggerFactory
 private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.HtmlBuilder")
 
 /**
- * 全局Block渲染函数 - 根据Block类型分发到对应的Renderer
+ * Global Block rendering function - dispatches to appropriate Renderer based on Block type
  *
- * 使用when表达式根据Block的实际类型，分发到对应的Renderer进行渲染。
- * 这个函数是整个渲染系统的入口点。
+ * Uses a when expression to dispatch blocks to their corresponding Renderer based on actual type.
+ * This function is the entry point for the entire rendering system.
  *
- * @param block 要渲染的Block对象
- * @param parent kotlinx.html的FlowContent对象
- * @param allBlocks 文档中所有Block的映射表
- * @param context 渲染上下文
+ * @param block Block object to render
+ * @param parent kotlinx.html FlowContent object
+ * @param allBlocks Mapping of all blocks in the document
+ * @param context Rendering context
  *
  * @see Renderable
  */
-fun renderBlock(
+internal fun renderBlock(
     block: Block,
     parent: FlowContent,
     allBlocks: Map<String, Block>,
@@ -29,7 +29,7 @@ fun renderBlock(
 ) {
     logger.debug("Rendering block: type={}, id={}", block::class.simpleName, block.blockId)
     when (block) {
-        is PageBlock -> { /* Page块通常不需要渲染 */ }
+        is PageBlock -> { /* Page blocks typically don't need rendering */ }
         is TextBlock -> TextBlockRenderer.render(parent, block, allBlocks, context)
         is Heading1Block -> Heading1BlockRenderer.render(parent, block, allBlocks, context)
         is Heading2Block -> Heading2BlockRenderer.render(parent, block, allBlocks, context)
@@ -86,35 +86,35 @@ fun renderBlock(
 }
 
 /**
- * HTML文档构建器
+ * HTML document builder
  *
- * 使用kotlinx.html DSL生成完整的HTML文档，包括：
- * - HTML head（元数据、样式、MathJax配置）
- * - Body内容（所有Block的渲染）
+ * Generates complete HTML documents using kotlinx.html DSL, including:
+ * - HTML head (metadata, styles, MathJax configuration)
+ * - Body content (rendering of all Blocks)
  *
- * 采用Renderable + Delegate模式，将每个Block的渲染逻辑委托给专门的Renderer。
+ * Uses Renderable + Delegate pattern, delegating each Block's rendering logic to a specialized Renderer.
  *
- * @property title HTML文档标题
- * @property customCss 自定义CSS样式，如果提供则覆盖默认的Feishu样式
+ * @property title HTML document title
+ * @property customCss Custom CSS styles, overrides default Feishu styles if provided
  *
  * @see renderBlock
  * @see FeishuStyles
  */
-class HtmlBuilder(
+internal class HtmlBuilder(
     private val title: String,
     private val customCss: String? = null,
 ) {
     private val builderLogger = LoggerFactory.getLogger(HtmlBuilder::class.java)
 
     /**
-     * 构建完整的HTML文档
+     * Build complete HTML document
      *
-     * 生成包含head和body的完整HTML5文档。
-     * head部分包含CSS样式和MathJax配置，body部分渲染所有Block。
+     * Generates a complete HTML5 document with head and body sections.
+     * The head contains CSS styles and MathJax configuration, body renders all Blocks.
      *
-     * @param blocks 有序的Block列表（按文档结构排序）
-     * @param allBlocks 所有Block的映射表（blockId -> Block）
-     * @return 完整的HTML字符串
+     * @param blocks Ordered Block list (sorted by document structure)
+     * @param allBlocks Mapping of all blocks (blockId -> Block)
+     * @return Complete HTML string
      */
     fun build(
         blocks: List<Block>,
