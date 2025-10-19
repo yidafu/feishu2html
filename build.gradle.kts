@@ -1,17 +1,23 @@
 plugins {
-    kotlin("multiplatform") version "2.1.0"
-    kotlin("plugin.serialization") version "2.1.0"
-    id("org.jetbrains.dokka") version "1.9.20"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.ktlint)
+    `maven-publish`
+    signing
     jacoco
 }
 
 group = "dev.yidafu.feishu2html"
-version = "1.0.0"
+version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    google()
+    gradlePluginPortal() // Fallback
+
 }
+
 
 kotlin {
     jvmToolchain(17)
@@ -29,7 +35,7 @@ kotlin {
         }
     }
 
-    // JS 目标平台 (Node.js and Browser)
+    // JS 目标平台 (Node.js only)
     js(IR) {
         nodejs()
         binaries.executable()
@@ -37,7 +43,6 @@ kotlin {
 
     // Native 桌面平台
     linuxX64()
-    linuxArm64()
     macosX64()
     macosArm64()
     mingwX64() // Windows
@@ -47,46 +52,35 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
-    // Android Native 平台
-    androidNativeArm32()
-    androidNativeArm64()
-    androidNativeX86()
-    androidNativeX64()
-
     sourceSets {
         // Common 依赖
         val commonMain by getting {
             dependencies {
                 // Kotlin 核心
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+                implementation(libs.kotlinx.coroutines.core)
 
                 // 序列化
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+                implementation(libs.kotlinx.serialization.json)
 
                 // HTTP 客户端
-                implementation("io.ktor:ktor-client-core:2.3.7")
-                implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+                implementation(libs.bundles.ktor.common)
 
                 // HTML DSL (多平台版本)
-                implementation("org.jetbrains.kotlinx:kotlinx-html:0.11.0")
+                implementation(libs.kotlinx.html)
 
                 // 日志
-                implementation("io.github.oshai:kotlin-logging:6.0.3")
-
-                // 文件系统 (多平台)
-                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.3.1")
+                implementation(libs.kotlin.logging)
 
                 // 日期时间 (多平台)
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
+                implementation(libs.kotlinx.datetime)
             }
         }
 
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
-                implementation("io.ktor:ktor-client-mock:2.3.7")
+                implementation(libs.kotlin.test)
+                implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.ktor.client.mock)
             }
         }
 
@@ -94,20 +88,18 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 // Ktor CIO 引擎 (JVM)
-                implementation("io.ktor:ktor-client-cio:2.3.7")
+                implementation(libs.ktor.client.cio)
 
                 // JVM 日志实现
-                implementation("ch.qos.logback:logback-classic:1.4.14")
+                implementation(libs.logback.classic)
             }
         }
 
         val jvmTest by getting {
             dependencies {
                 // JVM 测试框架
-                implementation("io.kotest:kotest-runner-junit5:5.8.0")
-                implementation("io.kotest:kotest-assertions-core:5.8.0")
-                implementation("io.kotest:kotest-property:5.8.0")
-                implementation("io.mockk:mockk:1.13.9")
+                implementation(libs.bundles.kotest)
+                implementation(libs.mockk)
             }
         }
 
@@ -115,7 +107,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 // Ktor JS 引擎
-                implementation("io.ktor:ktor-client-js:2.3.7")
+                implementation(libs.ktor.client.js)
             }
         }
 
@@ -128,7 +120,7 @@ kotlin {
         val darwinMain by creating {
             dependsOn(nativeMain)
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:2.3.7")
+                implementation(libs.ktor.client.darwin)
             }
         }
 
@@ -151,26 +143,12 @@ kotlin {
         val desktopNativeMain by creating {
             dependsOn(nativeMain)
             dependencies {
-                implementation("io.ktor:ktor-client-curl:2.3.7")
+                implementation(libs.ktor.client.curl)
             }
         }
 
         val linuxX64Main by getting { dependsOn(desktopNativeMain) }
-        val linuxArm64Main by getting { dependsOn(desktopNativeMain) }
         val mingwX64Main by getting { dependsOn(desktopNativeMain) }
-
-        // Android Native 平台
-        val androidNativeMain by creating {
-            dependsOn(nativeMain)
-            dependencies {
-                implementation("io.ktor:ktor-client-curl:2.3.7")
-            }
-        }
-
-        val androidNativeArm32Main by getting { dependsOn(androidNativeMain) }
-        val androidNativeArm64Main by getting { dependsOn(androidNativeMain) }
-        val androidNativeX86Main by getting { dependsOn(androidNativeMain) }
-        val androidNativeX64Main by getting { dependsOn(androidNativeMain) }
     }
 
     // 配置所有 Native 平台使用新的内存管理器
@@ -178,6 +156,66 @@ kotlin {
         binaries.all {
             freeCompilerArgs += "-Xallocator=std"
         }
+    }
+}
+
+// Maven Publishing 配置
+publishing {
+    publications {
+        withType<MavenPublication> {
+            pom {
+                name.set("Feishu2HTML")
+                description.set("A Kotlin Multiplatform library and CLI tool to convert Feishu (Lark) documents to beautiful, standalone HTML files")
+                url.set("https://github.com/yidafu/feishu2html")
+
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("yidafu")
+                        name.set("YidaFu")
+                        email.set("yidafu90@qq.com")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:git://github.com/yidafu/feishu2html.git")
+                    developerConnection.set("scm:git:ssh://github.com/yidafu/feishu2html.git")
+                    url.set("https://github.com/yidafu/feishu2html")
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "sonatype"
+            val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+
+            credentials {
+                username = project.findProperty("ossrhUsername") as String? ?: System.getenv("OSSRH_USERNAME")
+                password = project.findProperty("ossrhPassword") as String? ?: System.getenv("OSSRH_PASSWORD")
+            }
+        }
+    }
+}
+
+// Signing 配置 (发布到 Maven Central 需要)
+signing {
+    // 使用环境变量或 gradle.properties 中的配置
+    val signingKey = project.findProperty("signing.key") as String? ?: System.getenv("SIGNING_KEY")
+    val signingPassword = project.findProperty("signing.password") as String? ?: System.getenv("SIGNING_PASSWORD")
+
+    if (signingKey != null && signingPassword != null) {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign(publishing.publications)
     }
 }
 

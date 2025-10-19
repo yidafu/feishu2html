@@ -23,6 +23,9 @@ out/
 /backup/
 /output/
 config.kts
+local.properties
+local.properties.backup
+!local.properties.example
 !README.md
 /feishu-style.css
 /feishu-demo.html

@@ -346,10 +346,9 @@ Feishu2HTML is built with **Kotlin Multiplatform**, enabling it to run on multip
 | **JVM** | ✅ Production Ready | Full features (Library + CLI) |
 | **JS (Node.js)** | ✅ Fully Supported | Core library features |
 | **Native (macOS)** | 🔄 Experimental | Core library features |
-| **Native (Linux)** | 🔄 Experimental | Core library features |
-| **Native (Windows)** | 🔄 Experimental | Core library features |
+| **Native (Linux x64)** | 🔄 Experimental | Core library features |
+| **Native (Windows x64)** | 🔄 Experimental | Core library features |
 | **iOS** | 🔄 Experimental | Core library features |
-| **Android Native** | 🔄 Experimental | Core library features |
 
 ### Platform-Specific Notes
 

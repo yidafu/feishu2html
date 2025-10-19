@@ -1,0 +1,46 @@
+# local.properties.example
+# 复制此文件为 local.properties 并填写您的实际配置
+# ⚠️ 注意：local.properties 包含敏感信息，不应提交到 Git
+
+# ==========================================
+# Sonatype OSS Repository 配置
+# ==========================================
+# 在 https://s01.oss.sonatype.org/ 注册账号后获取
+ossrhUsername=your-sonatype-username
+ossrhPassword=your-sonatype-password
+
+# ==========================================
+# GPG 签名配置（发布到 Maven Central 必需）
+# ==========================================
+# 生成 GPG 密钥：gpg --gen-key
+# 导出私钥：gpg --export-secret-keys -a YOUR_KEY_ID > private-key.asc
+# 然后将私钥内容作为单行字符串（替换换行为 \n）
+
+# GPG 密钥 ID（可选，如果使用 key 则不需要）
+signing.keyId=YOUR_8_CHAR_KEY_ID
+
+# GPG 密钥文件路径（可选）
+signing.secretKeyRingFile=/Users/yourname/.gnupg/secring.gpg
+
+# GPG 密钥密码
+signing.password=your-gpg-passphrase
+
+# GPG 私钥（Base64 编码或 ASCII armor 格式，作为单行）
+# 使用这种方式更适合 CI/CD
+signing.key=-----BEGIN PGP PRIVATE KEY BLOCK-----\n...\n-----END PGP PRIVATE KEY BLOCK-----
+
+# ==========================================
+# 可选：Maven Central Staging 配置
+# ==========================================
+# 如果需要手动控制发布流程
+sonatype.stagingProfileId=your-staging-profile-id
+
+# ==========================================
+# 项目信息（覆盖 build.gradle.kts 中的默认值）
+# ==========================================
+# 项目版本（可选）
+# version=1.0.0
+
+# 组 ID（可选）
+# group=dev.yidafu.feishu2html
+
