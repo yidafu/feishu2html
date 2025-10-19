@@ -26,3 +26,24 @@ config.kts
 !README.md
 /feishu-style.css
 /feishu-demo.html
+# Multiplatform specific
+build/
+.gradle/
+.kotlin/
+
+# Platform binaries
+*.klib
+*.framework
+*.so
+*.dylib
+*.dll
+*.exe
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# Generated
+src/**/generated/

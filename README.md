@@ -1,25 +1,30 @@
 # Feishu2HTML
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.22-blue.svg?logo=kotlin)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.0-blue.svg?logo=kotlin)](https://kotlinlang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Gradle](https://img.shields.io/badge/Gradle-8.5-02303A.svg?logo=gradle)](https://gradle.org)
 [![API Docs](https://img.shields.io/badge/API-Documentation-blue.svg)](https://yidafu.github.io/feishu2html/)
+[![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-purple.svg?logo=kotlin)](https://kotlinlang.org/docs/multiplatform.html)
 
-A powerful Kotlin library and CLI tool to convert Feishu (Lark) documents to beautiful, standalone HTML files.
+A powerful **Kotlin Multiplatform** library and CLI tool to convert Feishu (Lark) documents to beautiful, standalone HTML files.
+
+**🌐 Now supports JVM, JS, and Native platforms!**
 
 > 📖 **[View API Documentation](https://yidafu.github.io/feishu2html/)** - Complete KDoc reference
 
 ## ✨ Features
 
+- 🌐 **Kotlin Multiplatform** - Runs on JVM, JS (Node.js/Browser), and Native platforms
 - 🎯 **Comprehensive Block Support** - All major Feishu document block types (headings, paragraphs, lists, tables, code blocks, etc.)
 - 📦 **Resource Management** - Automatic download and save of images and attachments
 - 🎨 **Rich Text Formatting** - Full support for text styles (bold, italic, underline, strikethrough, links, etc.)
 - 🧮 **Math Rendering** - Mathematical formulas powered by MathJax
 - 💻 **Syntax Highlighting** - Code blocks with 70+ language support
-- 🔧 **Flexible Usage** - Use as library or CLI tool
+- 🔧 **Flexible Usage** - Use as library or CLI tool (JVM)
 - ⚡ **Async Downloads** - Asynchronous resource downloading for better performance
 - 🛡️ **Type Safety** - Type-safe HTML generation using kotlinx.html DSL
 - 🎭 **Clean Architecture** - Elegant Renderer delegation pattern
+- 🚀 **Cross-Platform** - >95% code shared across all platforms
 
 ## 🎨 Visual Comparison
 
@@ -62,6 +67,11 @@ As you can see, the locally generated HTML perfectly preserves the visual style 
       - [Using Official Feishu Styles (Default)](#using-official-feishu-styles-default)
       - [Inline CSS Mode](#inline-css-mode)
       - [Custom CSS Styling](#custom-css-styling)
+  - [🌐 Multiplatform Support](#-multiplatform-support)
+    - [Supported Platforms](#supported-platforms)
+    - [Platform-Specific Notes](#platform-specific-notes)
+    - [Build Targets](#build-targets)
+    - [Platform-Specific Usage Examples](#platform-specific-usage-examples)
   - [🔍 Getting Document ID](#-getting-document-id)
   - [🔧 Troubleshooting](#-troubleshooting)
     - [1. Token Acquisition Failure](#1-token-acquisition-failure)
@@ -83,8 +93,16 @@ As you can see, the locally generated HTML perfectly preserves the visual style 
 
 ### Prerequisites
 
+**For JVM:**
 - JDK 17 or higher
 - Gradle 8.0 or higher (or use the included Gradle wrapper)
+
+**For JS:**
+- Node.js 16+ (for Node.js usage)
+- Modern browser (for browser usage)
+
+**For Native:**
+- Platform-specific toolchain (XCode for macOS/iOS, GCC/Clang for Linux, MinGW for Windows)
 
 ### 1. Get Feishu App Credentials
 
@@ -134,11 +152,33 @@ Output files will be saved to `./output/` directory by default.
 
 #### Add to Your Project
 
-In your `build.gradle.kts`:
+**Kotlin Multiplatform Project:**
+
+```kotlin
+kotlin {
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation("dev.yidafu.feishu2html:feishu2html:1.0.0")
+            }
+        }
+    }
+}
+```
+
+**JVM-only Project:**
 
 ```kotlin
 dependencies {
-    implementation("dev.yidafu.feishu2html:feishu2md:1.0.0")
+    implementation("dev.yidafu.feishu2html:feishu2html-jvm:1.0.0")
+}
+```
+
+**JS Project:**
+
+```kotlin
+dependencies {
+    implementation("dev.yidafu.feishu2html:feishu2html-js:1.0.0")
 }
 ```
 
@@ -294,6 +334,120 @@ val options = Feishu2HtmlOptions(
 ```
 
 
+
+## 🌐 Multiplatform Support
+
+Feishu2HTML is built with **Kotlin Multiplatform**, enabling it to run on multiple platforms from a single codebase.
+
+### Supported Platforms
+
+| Platform | Status | Notes |
+|----------|--------|-------|
+| **JVM** | ✅ Production Ready | Full features (Library + CLI) |
+| **JS (Node.js)** | ✅ Fully Supported | Core library features |
+| **Native (macOS)** | 🔄 Experimental | Core library features |
+| **Native (Linux)** | 🔄 Experimental | Core library features |
+| **Native (Windows)** | 🔄 Experimental | Core library features |
+| **iOS** | 🔄 Experimental | Core library features |
+| **Android Native** | 🔄 Experimental | Core library features |
+
+### Platform-Specific Notes
+
+**JVM Platform (Fully Supported)**
+- ✅ CLI tool available
+- ✅ All features supported
+- ✅ Logback logging
+- ✅ File I/O fully implemented
+
+**JS Platform (Node.js - Fully Supported)**
+- ✅ File system operations using Node.js fs module
+- ✅ HTTP client with Ktor Js engine
+- ✅ Core conversion logic supported
+- ⚠️ Note: Browser environment not supported (Node.js only)
+
+**Native Platform (Experimental)**
+- 🔄 File system operations use POSIX API
+- ✅ HTTP client with platform-specific engines (Darwin/Curl)
+- ✅ Core conversion logic supported
+
+### Build Targets
+
+Build for specific platforms:
+
+```bash
+# JVM
+./gradlew compileKotlinJvm
+./gradlew jvmJar
+
+# JS
+./gradlew compileKotlinJs
+./gradlew jsJar
+
+# Native (macOS ARM64)
+./gradlew compileKotlinMacosArm64
+
+# All platforms
+./gradlew build
+```
+
+### Platform-Specific Usage Examples
+
+**JVM (Recommended):**
+```kotlin
+import dev.yidafu.feishu2html.Feishu2Html
+import dev.yidafu.feishu2html.Feishu2HtmlOptions
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
+    val options = Feishu2HtmlOptions(
+        appId = "your_app_id",
+        appSecret = "your_app_secret"
+    )
+    
+    Feishu2Html(options).use { converter ->
+        converter.export("document_id")
+    }
+}
+```
+
+**JS (Node.js):**
+```kotlin
+import dev.yidafu.feishu2html.Feishu2Html
+import dev.yidafu.feishu2html.Feishu2HtmlOptions
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.promise
+
+fun main() {
+    GlobalScope.promise {
+        val options = Feishu2HtmlOptions(
+            appId = "your_app_id",
+            appSecret = "your_app_secret"
+        )
+        
+        Feishu2Html(options).use { converter ->
+            converter.export("document_id")
+        }
+    }
+}
+```
+
+**Native (macOS/Linux/Windows):**
+```kotlin
+import dev.yidafu.feishu2html.Feishu2Html
+import dev.yidafu.feishu2html.Feishu2HtmlOptions
+import kotlinx.coroutines.runBlocking
+
+fun main() = runBlocking {
+    val options = Feishu2HtmlOptions(
+        appId = "your_app_id",
+        appSecret = "your_app_secret"
+    )
+    
+    Feishu2Html(options).use { converter ->
+        converter.export("document_id")
+    }
+}
+```
 
 ## 🔍 Getting Document ID
 

@@ -1,14 +1,16 @@
-# Contributing to Feishu2Md
+# Contributing to Feishu2HTML
 
-Thank you for your interest in contributing to Feishu2Md! This document provides guidelines and technical details for contributors.
+Thank you for your interest in contributing to Feishu2HTML! This document provides guidelines and technical details for contributors.
 
 ## 📋 Table of Contents
 
 - [Project Structure](#project-structure)
+- [Multiplatform Architecture](#multiplatform-architecture)
 - [Architecture Highlights](#architecture-highlights)
 - [Supported Features](#supported-features)
 - [Tech Stack](#tech-stack)
 - [Building the Project](#building-the-project)
+- [Platform-Specific Development](#platform-specific-development)
 - [Generating Documentation](#generating-documentation)
 - [API Reference](#api-reference)
 - [Adding Support for New Block Types](#adding-support-for-new-block-types)
@@ -21,68 +23,157 @@ Thank you for your interest in contributing to Feishu2Md! This document provides
 
 ## Project Structure
 
+This is a **Kotlin Multiplatform** project supporting JVM, JS (Node.js), and Native platforms.
+
 ```
-feishu2md/
-├── src/main/kotlin/dev/yidafu/feishu2md/
-│   ├── Main.kt                      # CLI entry point
-│   ├── Feishu2Html.kt              # Main export class
-│   ├── api/                         # Feishu API layer
-│   │   ├── FeishuApiClient.kt      # API client
-│   │   ├── FeishuAuthService.kt    # Authentication service
-│   │   ├── RateLimiter.kt          # Rate limiting
-│   │   └── model/                   # Data models
-│   │       ├── Block.kt            # Block base class & serializer
-│   │       ├── TextBlocks.kt       # Page, Text blocks
-│   │       ├── HeadingBlocks.kt    # Heading1-9 blocks
-│   │       ├── ListBlocks.kt       # Bullet, Ordered blocks
-│   │       ├── ContentBlocks.kt    # Code, Quote, Equation, Todo, Divider
-│   │       ├── MediaBlocks.kt      # Image, File, Board, Diagram, Iframe
-│   │       ├── ContainerBlocks.kt  # Callout, Grid, Table, etc.
-│   │       ├── OtherBlocks.kt      # Bitable, ChatCard, Unknown
-│   │       ├── UnsupportedBlocks.kt # All unsupported types
-│   │       ├── BlockData.kt        # All BlockData classes
-│   │       ├── BlockColor.kt       # Color enums
-│   │       ├── CodeLanguage.kt     # Language enums
-│   │       ├── Emoji.kt            # Emoji mappings
-│   │       ├── IframeType.kt       # Iframe type enums
-│   │       ├── TextAlign.kt        # Text alignment
-│   │       ├── TextElement.kt      # Text element models
-│   │       └── Document.kt         # Document metadata
-│   └── converter/                   # HTML conversion layer
-│       ├── Renderable.kt           # Renderable interface
-│       ├── HtmlBuilder.kt          # HTML document builder
-│       ├── TextElementConverter.kt # Text element converter
-│       ├── FeishuStyles.kt         # Feishu-style CSS
-│       └── renderers/              # Block renderers (one per type)
-│           ├── TextBlockRenderer.kt
-│           ├── HeadingBlockRenderer.kt
-│           ├── ListBlockRenderer.kt
-│           ├── CodeBlockRenderer.kt
-│           ├── TableBlockRenderer.kt
-│           ├── CalloutBlockRenderer.kt
-│           ├── ImageBlockRenderer.kt
-│           ├── FileBlockRenderer.kt
-│           ├── BoardBlockRenderer.kt
-│           ├── IframeBlockRenderer.kt
-│           ├── ContainerBlockRenderer.kt
-│           ├── OtherBlocksRenderer.kt
-│           ├── UnsupportedBlocksRenderer.kt
-│           └── RenderHelpers.kt
-├── src/test/kotlin/                 # Test code
-│   └── dev/yidafu/feishu2md/
-│       ├── api/                     # API layer tests (27 tests)
-│       ├── model/                   # Model layer tests (85 tests)
-│       ├── converter/               # Converter layer tests (107 tests)
-│       └── *.kt                     # Integration tests (24 tests)
-├── src/test/resources/              # Test resources
-│   ├── test-document-1.json        # Sanitized test data from feishu.json
-│   ├── test-document-2.json        # Sanitized test data from feishu2.json
-│   └── test-document-minimal.json  # Minimal test document
-├── build.gradle.kts                 # Gradle build configuration
-├── MODULE.md                        # Module-level documentation
-├── README.md                        # User documentation
-└── CONTRIBUTING.md                  # This file
+feishu2html/
+├── src/
+│   ├── commonMain/kotlin/dev/yidafu/feishu2html/  # Shared code (95.5%)
+│   │   ├── Feishu2Html.kt              # Main export class
+│   │   ├── api/                         # Feishu API layer
+│   │   │   ├── FeishuApiClient.kt      # API client
+│   │   │   ├── FeishuAuthService.kt    # Authentication service
+│   │   │   ├── RateLimiter.kt          # Rate limiting
+│   │   │   └── model/                   # Data models (30+ files)
+│   │   │       ├── Block.kt            # Block base class & serializer
+│   │   │       ├── TextBlocks.kt       # Page, Text blocks
+│   │   │       ├── HeadingBlocks.kt    # Heading1-9 blocks
+│   │   │       ├── ListBlocks.kt       # Bullet, Ordered blocks
+│   │   │       ├── ContentBlocks.kt    # Code, Quote, Equation, etc.
+│   │   │       ├── MediaBlocks.kt      # Image, File, Board, etc.
+│   │   │       ├── ContainerBlocks.kt  # Callout, Grid, Table, etc.
+│   │   │       └── ... (more models)
+│   │   ├── converter/                   # HTML converter
+│   │   │   ├── HtmlBuilder.kt          # HTML builder
+│   │   │   ├── TextElementConverter.kt # Text element converter
+│   │   │   ├── FeishuStyles.kt         # Feishu styles
+│   │   │   ├── EmbeddedResources.kt    # Embedded CSS (16KB)
+│   │   │   ├── Renderable.kt           # Renderer interface
+│   │   │   └── renderers/              # Block renderers (13 files)
+│   │   └── platform/                    # Platform abstractions (expect)
+│   │       ├── HttpClientFactory.kt    # HTTP client factory
+│   │       ├── FileSystem.kt           # File system abstraction
+│   │       └── UrlUtils.kt             # URL utilities
+│   │
+│   ├── jvmMain/kotlin/dev/yidafu/feishu2html/  # JVM-specific (3%)
+│   │   ├── Main.kt                     # CLI tool (JVM only)
+│   │   └── platform/                   # JVM actual implementations
+│   │       ├── HttpClientFactory.kt    # CIO engine
+│   │       ├── FileSystem.kt           # java.io.File
+│   │       └── UrlUtils.kt             # URLDecoder
+│   │
+│   ├── jsMain/kotlin/dev/yidafu/feishu2html/platform/  # JS-specific
+│   │   ├── HttpClientFactory.kt        # Js engine
+│   │   ├── FileSystem.kt               # Node.js fs module
+│   │   └── UrlUtils.kt                 # decodeURIComponent
+│   │
+│   ├── nativeMain/kotlin/dev/yidafu/feishu2html/platform/  # Native shared
+│   │   ├── FileSystem.kt               # POSIX API
+│   │   └── UrlUtils.kt                 # Basic URL decode
+│   │
+│   ├── darwinMain/kotlin/dev/yidafu/feishu2html/platform/  # macOS/iOS
+│   │   └── HttpClientFactory.kt        # Darwin engine
+│   │
+│   ├── desktopNativeMain/kotlin/dev/yidafu/feishu2html/platform/  # Linux/Windows
+│   │   └── HttpClientFactory.kt        # Curl engine
+│   │
 ```
+
+**Key Points:**
+- **95.5% code sharing**: Most code is in `commonMain`, shared across all platforms
+- **Platform-specific implementations**: Only essential platform differences in separate source sets
+- **expect/actual mechanism**: Clean abstraction for platform-specific functionality
+
+---
+
+## Multiplatform Architecture
+
+### Platform Support
+
+Feishu2HTML supports multiple platforms through Kotlin Multiplatform:
+
+| Platform | Status | Source Set | Features |
+|----------|--------|------------|----------|
+| JVM | 🟢 Production Ready | jvmMain | CLI + Library |
+| JS (Node.js) | 🟢 Fully Supported | jsMain | Library |
+| macOS | 🟡 Experimental | darwinMain | Library |
+| Linux | 🟡 Experimental | desktopNativeMain | Library |
+| Windows | 🟡 Experimental | desktopNativeMain | Library |
+| iOS | 🟡 Experimental | iosMain | Library |
+| Android Native | 🟡 Experimental | androidNativeMain | Library |
+
+### Source Set Hierarchy
+
+```
+commonMain (95.5% shared code)
+    ↓
+├── jvmMain (JVM-specific: CLI tool)
+├── jsMain (JS-specific: Node.js fs integration)
+└── nativeMain (Native shared)
+    ├── darwinMain (macOS + iOS: Darwin HTTP engine)
+    ├── desktopNativeMain (Linux + Windows: Curl engine)
+    └── androidNativeMain (Android Native: Curl engine)
+```
+
+### Platform Abstractions (expect/actual)
+
+#### 1. HTTP Client Factory
+```kotlin
+// commonMain
+expect fun createHttpClient(): HttpClient
+
+// Implementations
+// jvmMain: CIO engine
+// jsMain: Js engine
+// darwinMain: Darwin engine (macOS/iOS)
+// desktopNativeMain: Curl engine (Linux/Windows)
+```
+
+#### 2. File System
+```kotlin
+// commonMain
+expect class PlatformFileSystem {
+    fun createDirectories(path: String)
+    fun exists(path: String): Boolean
+    fun writeText(path: String, content: String)
+    fun writeBytes(path: String, content: ByteArray)
+}
+
+// Implementations
+// jvmMain: java.io.File
+// jsMain: Node.js fs module
+// nativeMain: POSIX API
+```
+
+#### 3. URL Utilities
+```kotlin
+// commonMain
+expect fun decodeUrl(url: String): String
+
+// Implementations
+// jvmMain: URLDecoder
+// jsMain: decodeURIComponent
+// nativeMain: basic string replacement
+```
+
+### Embedded Resources
+
+CSS resources are embedded directly as Kotlin code constants:
+
+```kotlin
+// commonMain/converter/EmbeddedResources.kt
+object EmbeddedResources {
+    val FEISHU_STYLE_CSS = """
+        /* 16KB optimized CSS */
+    """.trimIndent()
+}
+```
+
+**Benefits:**
+- ✅ Fully cross-platform
+- ✅ No external resource libraries needed
+- ✅ Compile-time validation
+- ✅ No runtime I/O overhead
 
 ---
 
@@ -90,14 +181,16 @@ feishu2md/
 
 ### Overall Architecture
 
-Feishu2Md uses a **three-layer architecture + Renderable delegate pattern**:
+Feishu2HTML uses a **three-layer architecture + Renderable delegate pattern** in a **Kotlin Multiplatform** setup:
 
 ```
-API Layer (Feishu API interaction)
+API Layer (Feishu API interaction) - commonMain
   ↓
-Converter Layer (HTML transformation)
+Converter Layer (HTML transformation) - commonMain
   ↓
-Renderer Layer (Block-specific rendering)
+Renderer Layer (Block-specific rendering) - commonMain
+  ↓
+Platform Layer (expect/actual) - platform-specific
 ```
 
 ### Core Design Patterns
@@ -230,27 +323,38 @@ These are handled by `TextElementConverter.kt`.
 
 ## Tech Stack
 
-### Core Dependencies
+### Multiplatform Core Dependencies
 
-| Dependency | Version | Purpose |
-|------------|---------|---------|
-| Kotlin | 2.1.0 | Main language |
-| kotlinx.serialization | 1.6.2 | JSON serialization |
-| kotlinx.html | 0.11.0 | Type-safe HTML DSL |
-| kotlin-css | 2025.10.8 | CSS DSL |
-| Ktor Client | 2.3.7 | Async HTTP client |
-| kotlinx.coroutines | 1.7.3 | Coroutines |
-| SLF4J + Logback | 2.0.9 / 1.4.14 | Logging |
+| Dependency | Version | Purpose | Platforms |
+|------------|---------|---------|-----------|
+| Kotlin | 2.1.0 | Main language | All |
+| kotlinx-serialization-json | 1.6.3 | JSON serialization | All |
+| kotlinx-html | 0.11.0 | Type-safe HTML DSL | All |
+| kotlinx-coroutines-core | 1.8.0 | Coroutines | All |
+| kotlinx-datetime | 0.5.0 | Date/time handling | All |
+| kotlin-logging | 6.0.3 | Multiplatform logging | All |
+| Ktor Client Core | 2.3.7 | Async HTTP client | All |
+
+### Platform-Specific Dependencies
+
+| Dependency | Version | Purpose | Platform |
+|------------|---------|---------|----------|
+| ktor-client-cio | 2.3.7 | HTTP engine | JVM |
+| ktor-client-js | 2.3.7 | HTTP engine | JS |
+| ktor-client-darwin | 2.3.7 | HTTP engine | macOS/iOS |
+| ktor-client-curl | 2.3.7 | HTTP engine | Linux/Windows/Android |
+| logback-classic | 1.4.14 | Logging implementation | JVM |
 
 ### Test Dependencies
 
-| Dependency | Version | Purpose |
-|------------|---------|---------|
-| Kotest | 5.8.0 | BDD-style test framework |
-| MockK | 1.13.9 | Mocking for Kotlin |
-| JaCoCo | 0.8.11 | Code coverage |
-| Ktor Client Mock | 2.3.7 | HTTP mocking |
-| kotlinx-coroutines-test | 1.7.3 | Coroutine testing |
+| Dependency | Version | Purpose | Platform |
+|------------|---------|---------|----------|
+| kotlin-test | - | Test framework | All |
+| kotlinx-coroutines-test | 1.8.0 | Coroutine testing | All |
+| ktor-client-mock | 2.3.7 | HTTP mocking | All |
+| Kotest | 5.8.0 | BDD-style testing | JVM |
+| MockK | 1.13.9 | Mocking | JVM |
+| JaCoCo | 0.8.11 | Code coverage | JVM |
 
 ### Development Tools
 

@@ -1,122 +1,215 @@
-Feishu2Html 项目文件清单
+Feishu2Html Kotlin Multiplatform 项目文件清单
 ========================================
+
+项目信息
+----------------------------------------
+项目名称: Feishu2HTML
+版本: 1.0.0
+Kotlin 版本: 2.1.0
+架构: Kotlin Multiplatform
+支持平台: JVM, JS (Node.js), Native (macOS, Linux, Windows, iOS, Android)
 
 根目录文件
 ----------------------------------------
-├── build.gradle.kts                   # 根项目Gradle配置
-├── settings.gradle.kts                # 多模块设置
-├── gradle.properties                  # Gradle属性配置
-├── gradlew                           # Gradle Wrapper脚本（Unix）
-├── .gitignore                        # Git忽略规则
-├── LICENSE                           # GPL-3.0开源协议
+├── build.gradle.kts                   # Kotlin Multiplatform 配置
+├── settings.gradle.kts                # 项目设置（含多平台仓库）
+├── gradle.properties                  # Gradle 属性配置
+├── gradlew                           # Gradle Wrapper 脚本（Unix）
+├── gradlew.bat                       # Gradle Wrapper 脚本（Windows）
+├── .gitignore                        # Git 忽略规则
+├── LICENSE                           # MIT 开源协议
 
 文档文件
 ----------------------------------------
-├── README.md                         # 项目说明（英文）
-├── README.zh-CN.md                   # 项目说明（中文）
-├── QUICKSTART.md                     # 快速开始指南
-├── PROJECT_SUMMARY.md                # 项目技术总结
-├── IMPLEMENTATION_COMPLETE.md        # 项目完成报告
+├── README.md                         # 项目说明（已更新多平台支持）
+├── CONTRIBUTING.md                   # 贡献指南（已更新多平台架构）
+├── MODULE.md                         # API 文档说明
 └── FILES.txt                         # 本文件清单
 
 配置示例
 ----------------------------------------
-├── config.sample.kts                 # 配置文件示例
-└── run-example.sh                    # 快速运行脚本
+└── config.sample.kts                 # 配置文件示例
 
-Gradle配置
+Gradle 配置
 ----------------------------------------
 └── gradle/
     └── wrapper/
-        └── gradle-wrapper.properties # Gradle Wrapper配置
+        ├── gradle-wrapper.jar
+        └── gradle-wrapper.properties
 
-feishu-api模块
-----------------------------------------
-└── feishu-api/
-    ├── build.gradle.kts              # 模块构建配置
-    └── src/main/
-        ├── kotlin/com/feishu2html/api/
-        │   ├── FeishuAuthService.kt  # 飞书认证服务
-        │   ├── FeishuApiClient.kt    # 飞书API客户端
-        │   └── model/
-        │       ├── Block.kt          # 文档块模型（30+类型）
-        │       ├── TextElement.kt    # 文本元素模型
-        │       └── Document.kt       # 文档响应模型
-        └── resources/
-            └── logback.xml           # 日志配置
+源代码结构（Kotlin Multiplatform）
+========================================
 
-docx-to-html模块
+commonMain（共享代码 - 95.5%）
 ----------------------------------------
-└── docx-to-html/
-    ├── build.gradle.kts              # 模块构建配置
-    └── src/main/kotlin/com/feishu2html/converter/
-        ├── HtmlConverter.kt          # 块转HTML转换器
-        ├── TextElementConverter.kt   # 文本样式转换器
-        └── HtmlBuilder.kt            # HTML文档构建器
+└── src/commonMain/
+    ├── kotlin/dev/yidafu/feishu2html/
+    │   ├── Feishu2Html.kt            # 主入口类
+    │   ├── api/                       # Feishu API 层
+    │   │   ├── FeishuApiClient.kt    # API 客户端
+    │   │   ├── FeishuAuthService.kt  # 认证服务
+    │   │   ├── RateLimiter.kt        # 速率限制
+    │   │   └── model/                 # 数据模型
+    │   │       ├── Block.kt          # 块基类和序列化器
+    │   │       ├── TextBlocks.kt     # Page, Text 块
+    │   │       ├── HeadingBlocks.kt  # Heading1-9 块
+    │   │       ├── ListBlocks.kt     # 列表块
+    │   │       ├── ContentBlocks.kt  # 内容块
+    │   │       ├── MediaBlocks.kt    # 媒体块
+    │   │       ├── ContainerBlocks.kt # 容器块
+    │   │       ├── OtherBlocks.kt    # 其他块
+    │   │       ├── UnsupportedBlocks.kt # 不支持的块
+    │   │       ├── BlockData.kt      # 块数据类
+    │   │       ├── TextElement.kt    # 文本元素
+    │   │       └── Document.kt       # 文档模型
+    │   ├── converter/                 # HTML 转换器
+    │   │   ├── HtmlBuilder.kt        # HTML 构建器
+    │   │   ├── TextElementConverter.kt # 文本元素转换
+    │   │   ├── FeishuStyles.kt       # Feishu 样式
+    │   │   ├── Renderable.kt         # 渲染接口
+    │   │   ├── EmbeddedResources.kt  # 嵌入式资源（CSS）
+    │   │   └── renderers/             # 各类块渲染器
+    │   │       ├── TextBlockRenderer.kt
+    │   │       ├── HeadingBlockRenderer.kt
+    │   │       ├── ListBlockRenderer.kt
+    │   │       ├── CodeBlockRenderer.kt
+    │   │       ├── TableBlockRenderer.kt
+    │   │       ├── ImageBlockRenderer.kt
+    │   │       ├── FileBlockRenderer.kt
+    │   │       ├── CalloutBlockRenderer.kt
+    │   │       ├── IframeBlockRenderer.kt
+    │   │       ├── ContainerBlockRenderer.kt
+    │   │       ├── OtherBlocksRenderer.kt
+    │   │       ├── UnsupportedBlocksRenderer.kt
+    │   │       └── RenderHelpers.kt
+    │   └── platform/                  # 平台抽象（expect 声明）
+    │       ├── HttpClientFactory.kt  # HTTP 客户端工厂
+    │       ├── FileSystem.kt         # 文件系统抽象
+    │       └── UrlUtils.kt           # URL 工具
+    └── resources/
+        ├── feishu-style-optimized.css # 优化的 CSS（16KB）
+        └── logback.xml                # 日志配置
 
-feishu2html主模块
+commonTest（共享测试）
 ----------------------------------------
-└── feishu2html/
-    ├── build.gradle.kts              # 模块构建配置
-    └── src/main/kotlin/com/feishu2html/
-        ├── Feishu2Html.kt            # 主入口类
-        └── Main.kt                   # 命令行工具入口
+└── src/commonTest/
+    └── kotlin/dev/yidafu/feishu2html/
+        ├── Feishu2HtmlTest.kt
+        ├── EdgeCaseTest.kt
+        ├── api/                       # API 测试
+        ├── converter/                 # 转换器测试
+        └── model/                     # 模型测试
 
-示例代码
+jvmMain（JVM 平台特定 - 3%）
 ----------------------------------------
-└── example/
-    └── Example.kt                    # 使用示例代码
+└── src/jvmMain/
+    ├── kotlin/dev/yidafu/feishu2html/
+    │   ├── Main.kt                   # CLI 工具（仅 JVM）
+    │   └── platform/                 # JVM actual 实现
+    │       ├── HttpClientFactory.kt  # CIO 引擎
+    │       ├── FileSystem.kt         # java.io.File 实现
+    │       └── UrlUtils.kt           # URLDecoder
+    └── resources/
+        └── logback.xml               # Logback 配置
+
+jsMain（JS 平台特定 - Node.js）
+----------------------------------------
+└── src/jsMain/
+    └── kotlin/dev/yidafu/feishu2html/platform/
+        ├── HttpClientFactory.kt      # Js 引擎
+        ├── FileSystem.kt             # Node.js fs 模块
+        └── UrlUtils.kt               # decodeURIComponent
+
+nativeMain（Native 共享）
+----------------------------------------
+└── src/nativeMain/
+    └── kotlin/dev/yidafu/feishu2html/platform/
+        ├── FileSystem.kt             # POSIX API
+        └── UrlUtils.kt               # 基础 URL 解码
+
+darwinMain（macOS + iOS）
+----------------------------------------
+└── src/darwinMain/
+    └── kotlin/dev/yidafu/feishu2html/platform/
+        └── HttpClientFactory.kt      # Darwin 引擎
+
+desktopNativeMain（Linux + Windows）
+----------------------------------------
+└── src/desktopNativeMain/
+    └── kotlin/dev/yidafu/feishu2html/platform/
+        └── HttpClientFactory.kt      # Curl 引擎
+
+iosMain（iOS 特定）
+----------------------------------------
+└── src/iosMain/
+    └── kotlin/                       # iOS 特定代码
+
+androidNativeMain（Android Native）
+----------------------------------------
+└── src/androidNativeMain/
+    └── kotlin/dev/yidafu/feishu2html/platform/
+        └── HttpClientFactory.kt      # Curl 引擎
 
 代码统计
 ========================================
-- Kotlin源文件:     8个
-- 配置文件:         7个
-- 文档文件:         6个
-- 示例文件:         2个
-- 总代码行数:       约1500+行
+- Kotlin 源文件:     87个
+- 配置文件:          3个
+- 文档文件:          4个
+- 测试文件:          29个
+- 总代码行数:        约 5,000+ 行
 
-模块统计
+平台分布
 ========================================
-- feishu-api:       5个Kt文件 + 1个资源文件
-- docx-to-html:     3个Kt文件
-- feishu2html:      2个Kt文件
+- commonMain:        42个文件（95.5% 代码共享）
+- jvmMain:           4个文件
+- jsMain:            3个文件
+- nativeMain:        2个文件
+- darwinMain:        1个文件
+- desktopNativeMain: 1个文件
+- androidNativeMain: 1个文件
 
-支持的功能
+支持的平台
 ========================================
-✓ 30+ 种文档块类型
-✓ 完整的文本样式支持
-✓ 图片和附件自动下载
-✓ 异步并发处理
-✓ 批量导出支持
-✓ 自定义CSS样式
-✓ 命令行和编程两种使用方式
+✓ JVM (Java 17) - 生产就绪（CLI + Library）
+✓ JS (Node.js) - 完全支持（Library）
+✓ macOS (x64, ARM64) - 实验性
+✓ Linux (x64, ARM64) - 实验性
+✓ Windows (x64) - 实验性
+✓ iOS (ARM64, x64, Simulator) - 实验性
+✓ Android Native (4种架构) - 实验性
 
 技术栈
 ========================================
-- Kotlin 1.9.21
-- Ktor Client 2.3.7
-- kotlinx.coroutines 1.7.3
-- kotlinx.serialization 1.6.2
+- Kotlin Multiplatform 2.1.0
+- kotlinx-html 0.11.0 (多平台)
+- kotlin-logging 6.0.3 (多平台)
+- kotlinx-datetime 0.5.0 (多平台)
+- Ktor Client 2.3.7 (多平台)
+  - JVM: CIO 引擎
+  - JS: Js 引擎
+  - macOS/iOS: Darwin 引擎
+  - Linux/Windows: Curl 引擎
+- kotlinx-coroutines 1.8.0 (多平台)
+- kotlinx-serialization 1.6.3 (多平台)
 - Gradle 8.5
-- SLF4J + Logback
-
-项目位置
-========================================
-/Users/dovyih/feishu2html/
 
 快速开始
 ========================================
-# 运行示例
-./run-example.sh <app_id> <app_secret> <document_id>
+# JVM 平台（推荐）
+./gradlew compileKotlinJvm
+./gradlew jvmTest
+./gradlew runJvm --args="<app_id> <app_secret> <doc_id>"
 
-# 或使用Gradle
-./gradlew :feishu2html:run --args="<app_id> <app_secret> <doc_id>"
+# JS 平台
+./gradlew compileKotlinJs
 
-# 编译项目
+# Native 平台
+./gradlew compileKotlinMacosArm64
+
+# 编译所有平台
 ./gradlew build
 
 ========================================
-生成时间: 2025-10-18
-项目状态: ✅ 完成
+生成时间: 2025-10-19
+项目状态: ✅ Kotlin Multiplatform 改造完成
 ========================================
-

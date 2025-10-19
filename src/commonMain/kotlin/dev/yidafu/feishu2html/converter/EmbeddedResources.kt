@@ -1,0 +1,684 @@
+package dev.yidafu.feishu2html.converter
+
+/**
+ * Embedded resources for multiplatform support
+ */
+object EmbeddedResources {
+    /**
+     * Optimized Feishu style CSS content
+     * Extracted from official Feishu CSS, 16KB optimized version
+     */
+    val FEISHU_STYLE_CSS = """
+/* ========================================
+   Feishu2HTML Optimized Styles
+   Extracted from official Feishu CSS
+   Based on actual usage patterns
+   ======================================== */
+
+/* ==================== CSS Variables ==================== */
+:root {
+  /* Heading sizes and spacing (from feishu-style.css:38482) */
+  --h1-margin-top: 26px;
+  --h1-margin-bottom: 10px;
+  --h1-font-size: 26px;
+  --h2-margin-top: 22px;
+  --h2-margin-bottom: 8px;
+  --h2-font-size: 22px;
+  --h3-margin-top: 20px;
+  --h3-margin-bottom: 8px;
+  --h3-font-size: 20px;
+  --h4-margin-top: 18px;
+  --h4-margin-bottom: 8px;
+  --h4-font-size: 18px;
+  --h5-margin-top: 18px;
+  --h5-margin-bottom: 8px;
+  --h5-font-size: 16px;
+  --h6-margin-top: 16px;
+  --h6-margin-bottom: 8px;
+  --h6-font-size: 16px;
+  --h7-margin-top: 16px;
+  --h7-margin-bottom: 8px;
+  --h7-font-size: 16px;
+  --h8-margin-top: 16px;
+  --h8-margin-bottom: 8px;
+  --h8-font-size: 16px;
+  --h9-margin-top: 16px;
+  --h9-margin-bottom: 8px;
+  --h9-font-size: 16px;
+
+  /* Todo and table spacing */
+  --todo-font-size: 16px;
+  --todo-check-top: 2px;
+  --table-margin-bottom: 24px;
+  --table-cell-padding: 8px;
+  --table-cell-text-line-height: 23px;
+  --table-block-border-width: 1px;
+
+  /* Common spacing */
+  --common-row-margin-top: 8px;
+  --common-row-margin-bottom: 8px;
+  --common-row-font-size: 16px;
+  --common-row-line-height: 26px;
+  --common-block-margin-top: 16px;
+  --common-block-margin-bottom: 16px;
+
+  /* Colors */
+  --b3-theme-primary: #4a7fff;
+  --b3-theme-primary-light: rgba(58, 121, 243, 0.65);
+  --b3-theme-on-background: #1f2329;
+  --b3-theme-on-surface: #a6a6a6;
+  --b3-theme-background: #1a1a1a;
+  --b3-theme-surface: #262626;
+
+  /* Text colors */
+  --text-title: #1f2329;
+  --text-body: #1f2329;
+  --text-caption: #8f959e;
+
+  /* Backgrounds */
+  --bg-body: #ffffff;
+  --bg-body-overlay: #f7f8fa;
+  --fill-hover: rgba(31, 35, 41, 0.08);
+
+  /* Borders */
+  --line-border-card: #dee0e3;
+  --b3-border-radius: 8px;
+  --b3-border-radius-code: 4px;
+
+  /* Callout/Block background colors */
+  --ccmtoken-doc-blockbackground-red-solid: #f54a45;
+  --ccmtoken-doc-highlightcolor-bg-red-soft: #ffecea;
+  --ccmtoken-doc-blockbackground-yellow-solid: #ff8800;
+  --ccmtoken-doc-highlightcolor-bg-yellow-soft: #fff3e0;
+  --ccmtoken-doc-blockbackground-green-solid: #00b578;
+  --ccmtoken-doc-highlightcolor-bg-green-soft: #e6f7ed;
+  --ccmtoken-doc-blockbackground-blue-solid: #3370ff;
+  --ccmtoken-doc-highlightcolor-bg-blue-soft: #e8f3ff;
+  --ccmtoken-doc-block-bg-area: rgba(31, 35, 41, 0.04);
+  --ccmtoken-doc-block-bg-hover: rgba(31, 35, 41, 0.08);
+
+  /* Font */
+  --b3-font-size: 14px;
+  --b3-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+/* ==================== Base Styles ==================== */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-body);
+  color: var(--text-body);
+  font-family: var(--b3-font-family);
+  font-size: var(--b3-font-size);
+  line-height: 1.75;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-variant-numeric: normal;
+  -webkit-font-feature-settings: normal;
+  font-feature-settings: normal;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* ==================== Container Styles ==================== */
+.protyle-wysiwyg {
+  max-width: 920px;
+  margin: 24px auto;
+  padding: 48px 60px;
+  background: var(--bg-body);
+  border-radius: var(--b3-border-radius);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02);
+  line-height: var(--common-row-line-height);
+  font-size: var(--common-row-font-size);
+}
+
+/* Character spacing (from feishu-style.css:30) */
+.protyle-wysiwyg [data-node-id] [spellcheck] {
+  letter-spacing: 1px;
+}
+
+.b3-typography {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-body);
+}
+
+/* ==================== Heading Styles ==================== */
+.heading,
+.protyle-wysiwyg h1,
+.protyle-wysiwyg h2,
+.protyle-wysiwyg h3,
+.protyle-wysiwyg h4,
+.protyle-wysiwyg h5,
+.protyle-wysiwyg h6,
+.b3-typography h1,
+.b3-typography h2,
+.b3-typography h3,
+.b3-typography h4,
+.b3-typography h5,
+.b3-typography h6 {
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-title);
+}
+
+.heading-h1, .protyle-wysiwyg h1, .b3-typography h1 {
+  font-size: var(--h1-font-size);
+  margin-top: var(--h1-margin-top);
+  margin-bottom: var(--h1-margin-bottom);
+}
+
+.heading-h2, .protyle-wysiwyg h2, .b3-typography h2 {
+  font-size: var(--h2-font-size);
+  margin-top: var(--h2-margin-top);
+  margin-bottom: var(--h2-margin-bottom);
+}
+
+.heading-h3, .protyle-wysiwyg h3, .b3-typography h3 {
+  font-size: var(--h3-font-size);
+  margin-top: var(--h3-margin-top);
+  margin-bottom: var(--h3-margin-bottom);
+}
+
+.heading-h4, .protyle-wysiwyg h4, .b3-typography h4 {
+  font-size: var(--h4-font-size);
+  margin-top: var(--h4-margin-top);
+  margin-bottom: var(--h4-margin-bottom);
+}
+
+.heading-h5, .protyle-wysiwyg h5, .b3-typography h5 {
+  font-size: var(--h5-font-size);
+  margin-top: var(--h5-margin-top);
+  margin-bottom: var(--h5-margin-bottom);
+}
+
+.heading-h6, .protyle-wysiwyg h6, .b3-typography h6 {
+  font-size: var(--h6-font-size);
+  margin-top: var(--h6-margin-top);
+  margin-bottom: var(--h6-margin-bottom);
+}
+
+.heading-h7, .heading-h8, .heading-h9 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  color: var(--text-title);
+}
+
+/* ==================== Text Block Styles ==================== */
+.text-block,
+.protyle-wysiwyg p,
+.b3-typography p {
+  margin-top: var(--common-row-margin-top);
+  margin-bottom: var(--common-row-margin-bottom);
+  font-size: var(--common-row-font-size);
+  line-height: var(--common-row-line-height);
+  color: var(--text-body);
+}
+
+/* Text Alignment */
+.text-align-left { text-align: left; }
+.text-align-center { text-align: center; }
+.text-align-right { text-align: right; }
+
+/* ==================== Inline Text Styles ==================== */
+.protyle-wysiwyg strong,
+.b3-typography strong {
+  font-weight: 600;
+}
+
+.protyle-wysiwyg em,
+.b3-typography em {
+  font-style: italic;
+}
+
+.protyle-wysiwyg u,
+.b3-typography u {
+  text-decoration: underline;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 0.2em;
+}
+
+.protyle-wysiwyg del,
+.b3-typography del {
+  text-decoration: line-through;
+}
+
+/* Inline code (from feishu-style.css:15) */
+.fn__code,
+.b3-typography code:not(.hljs),
+.b3-typography span[data-type~=code],
+.protyle-wysiwyg code:not(.hljs),
+.protyle-wysiwyg span[data-type~=code] {
+  border: 1px solid #dee0e3;
+  border-radius: var(--b3-border-radius-code);
+  padding: 2px 6px;
+  margin: 0 4px;
+  background-color: #f2f3f5;
+  color: #1f2329;
+  font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+  font-size: 0.9em;
+  white-space: pre;
+}
+
+/* ==================== Link Styles ==================== */
+.protyle-wysiwyg a,
+.b3-typography a {
+  color: #3370ff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.protyle-wysiwyg a:hover,
+.b3-typography a:hover {
+  text-decoration: underline;
+}
+
+.mention-user,
+.mention-doc {
+  color: #3370ff;
+  text-decoration: none;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background-color: #e8f3ff;
+}
+
+/* ==================== List Styles ==================== */
+.list-wrapper {
+  margin: var(--common-row-margin-top) 0 var(--common-row-margin-bottom) 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+.bullet-list, .ordered-list {
+  width: 100%;
+}
+
+.list {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 24px;
+  line-height: var(--common-row-line-height);
+  font-size: var(--common-row-font-size);
+}
+
+.bullet {
+  flex-shrink: 0;
+  width: 20px;
+  color: var(--b3-theme-primary);
+  font-size: 14px;
+  line-height: 24px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.order {
+  flex-shrink: 0;
+  min-width: 28px;
+  color: var(--b3-theme-primary);
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 600;
+  text-align: right;
+  padding-right: 4px;
+}
+
+.list-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-content p {
+  margin: 0;
+}
+
+/* ==================== Code Block Styles ==================== */
+/* From feishu-style.css:34 */
+.code-block {
+  margin: var(--common-block-margin-top) 0 var(--common-block-margin-bottom) 0;
+  border: 1px solid var(--line-border-card, #dee0e3);
+  border-radius: var(--b3-border-radius);
+  overflow: hidden;
+  background-color: #f7f8fa;
+  transition: none !important;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.code-block pre {
+  margin: 0;
+  padding: 0;
+}
+
+.code-block code {
+  display: block;
+  padding: 16px;
+  background-color: #f7f8fa;
+  color: #1f2329;
+  font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* From feishu-style.css:76 */
+.b3-typography div.hljs,
+.protyle-wysiwyg div.hljs {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  position: relative;
+}
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  background: #f7f8fa;
+  color: #1f2329;
+}
+
+.protyle-wysiwyg .code-block,
+.b3-typography .code-block {
+  margin: var(--common-block-margin-top) 0 var(--common-block-margin-bottom) 0;
+}
+
+/* ==================== Table Styles ==================== */
+/* From feishu-style.css:31620 */
+.table-block {
+  position: relative;
+  margin: var(--table-margin-bottom) 0;
+}
+
+.protyle-wysiwyg table,
+.b3-typography table,
+.table-block table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--line-border-card);
+  border-radius: var(--b3-border-radius);
+  overflow: hidden;
+  word-break: break-word;
+  table-layout: fixed;
+}
+
+.protyle-wysiwyg table th,
+.protyle-wysiwyg table td,
+.b3-typography table th,
+.b3-typography table td {
+  padding: var(--table-cell-padding);
+  border: 1px solid var(--line-border-card);
+  text-align: left;
+  font-size: 14px;
+  line-height: var(--table-cell-text-line-height);
+}
+
+/* From feishu-style.css:42 */
+.b3-typography table thead th,
+.b3-typography table thead td,
+.protyle-wysiwyg table thead th,
+.protyle-wysiwyg table thead td {
+  font-weight: 600;
+  background: var(--bg-body-overlay);
+}
+
+/* ==================== Callout Block Styles ==================== */
+.callout-block {
+  margin: var(--common-block-margin-top) 0 var(--common-block-margin-bottom) 0;
+  padding: 16px;
+  border-radius: var(--b3-border-radius);
+  border-left: 4px solid;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.callout-red {
+  border-color: var(--ccmtoken-doc-blockbackground-red-solid);
+  background-color: var(--ccmtoken-doc-highlightcolor-bg-red-soft);
+}
+
+.callout-yellow {
+  border-color: var(--ccmtoken-doc-blockbackground-yellow-solid);
+  background-color: var(--ccmtoken-doc-highlightcolor-bg-yellow-soft);
+}
+
+.callout-green {
+  border-color: var(--ccmtoken-doc-blockbackground-green-solid);
+  background-color: var(--ccmtoken-doc-highlightcolor-bg-green-soft);
+}
+
+.callout-blue {
+  border-color: var(--ccmtoken-doc-blockbackground-blue-solid);
+  background-color: var(--ccmtoken-doc-highlightcolor-bg-blue-soft);
+}
+
+.callout-emoji-container {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.callout-block-emoji {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.callout-block-children {
+  flex: 1;
+  min-width: 0;
+}
+
+.callout-block-children p {
+  margin: 0;
+}
+
+/* ==================== Quote Styles ==================== */
+.quote-container-block,
+.protyle-wysiwyg blockquote,
+.b3-typography blockquote {
+  margin: var(--common-block-margin-top) 0 var(--common-block-margin-bottom) 0;
+  padding: 12px 16px;
+  padding-left: 20px;
+  border-left: 4px solid #e1e4e8;
+  background-color: var(--bg-body-overlay);
+  color: #646a73;
+}
+
+.quote-container-block p,
+.protyle-wysiwyg blockquote p,
+.b3-typography blockquote p {
+  margin: 4px 0;
+}
+
+/* ==================== Todo Block Styles ==================== */
+/* From feishu-style.css:38687 */
+.todo-block {
+  cursor: auto;
+  display: flex;
+  align-items: flex-start;
+  font-size: var(--todo-font-size);
+  line-height: var(--common-row-line-height);
+  border-radius: 2px;
+  margin: var(--common-row-margin-top) -2px var(--common-row-margin-bottom) -2px;
+  padding: 0 2px;
+  position: relative;
+}
+
+/* From feishu-style.css:38600 */
+.todo-block_content {
+  padding-left: 24px;
+  position: relative;
+  display: flex;
+  font-weight: 400;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  flex-direction: row;
+}
+
+.todo-block input[type="checkbox"] {
+  margin: 0;
+  margin-right: 8px;
+  margin-left: -24px;
+  margin-top: var(--todo-check-top);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.todo-block span {
+  flex: 1;
+}
+
+.todo-block.task-done .text-editor {
+  color: var(--text-caption);
+}
+
+/* ==================== Grid Layout Styles ==================== */
+.grid-layout {
+  display: grid;
+  gap: 16px;
+  margin: var(--common-block-margin-top) 0 var(--common-block-margin-bottom) 0;
+}
+
+.grid-column {
+  min-width: 0;
+}
+
+/* ==================== Divider Styles ==================== */
+.protyle-wysiwyg hr,
+.b3-typography hr {
+  margin: 24px 0;
+  border: none;
+  border-top: 1px solid var(--line-border-card);
+}
+
+/* ==================== Image Styles ==================== */
+.protyle-wysiwyg img,
+.b3-typography img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: var(--common-block-margin-top) 0 var(--common-block-margin-bottom) 0;
+  border-radius: var(--b3-border-radius);
+}
+
+img.text-align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+img.text-align-right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* ==================== Text Color Utilities ==================== */
+.text-red { color: #f54a45; }
+.text-yellow { color: #ff8800; }
+.text-green { color: #00b578; }
+.text-blue { color: #3370ff; }
+.text-indigo { color: #6366f1; }
+.text-purple { color: #8957e5; }
+.text-pink { color: #ec4899; }
+.text-gray { color: #646a73; }
+
+/* Text Background Colors */
+.bg-red { background-color: #ffecea; padding: 2px 6px; border-radius: 4px; }
+.bg-yellow { background-color: #fff3e0; padding: 2px 6px; border-radius: 4px; }
+.bg-green { background-color: #e6f7ed; padding: 2px 6px; border-radius: 4px; }
+.bg-blue { background-color: #e8f3ff; padding: 2px 6px; border-radius: 4px; }
+.bg-indigo { background-color: #eff0ff; padding: 2px 6px; border-radius: 4px; }
+.bg-purple { background-color: #f3ebff; padding: 2px 6px; border-radius: 4px; }
+.bg-pink { background-color: #ffe4e6; padding: 2px 6px; border-radius: 4px; }
+.bg-gray { background-color: #f2f3f5; padding: 2px 6px; border-radius: 4px; }
+
+/* ==================== Iframe & Embed Styles ==================== */
+/* From feishu-style.css:60 */
+.embed-generic iframe,
+iframe:only-of-type {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line-border-card);
+  border-radius: var(--b3-border-radius);
+  background: transparent;
+  position: relative;
+}
+
+video:only-of-type {
+  display: inline-block;
+  position: relative;
+  background: transparent;
+  border: 1px solid var(--line-border-card);
+  border-radius: var(--b3-border-radius);
+  padding: 0;
+}
+
+/* ==================== Unsupported Block Styles ==================== */
+.unsupported-block {
+  margin: var(--common-block-margin-top) 0 var(--common-block-margin-bottom) 0;
+  padding: 12px 16px;
+  background-color: var(--ccmtoken-doc-highlightcolor-bg-yellow-soft);
+  border-left: 4px solid var(--ccmtoken-doc-blockbackground-yellow-solid);
+  color: #8f5d00;
+  font-style: italic;
+  border-radius: 4px;
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 920px) {
+  .protyle-wysiwyg {
+    margin: 16px;
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .protyle-wysiwyg {
+    margin: 8px;
+    padding: 16px 12px;
+  }
+
+  :root {
+    --h1-font-size: 24px;
+    --h2-font-size: 20px;
+    --h3-font-size: 18px;
+    --h4-font-size: 16px;
+    --h5-font-size: 15px;
+    --h6-font-size: 14px;
+  }
+}
+
+/* ==================== Print Styles ==================== */
+@media print {
+  body {
+    background-color: white;
+  }
+
+  .protyle-wysiwyg {
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+  }
+}
+
+    """.trimIndent()
+}

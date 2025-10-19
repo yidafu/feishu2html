@@ -1,10 +1,12 @@
-# Module feishu2md
+# Module feishu2html
 
-Feishu2Md is a Kotlin library and CLI tool for converting Feishu (Lark) documents to HTML format.
+Feishu2HTML is a **Kotlin Multiplatform** library and CLI tool for converting Feishu (Lark) documents to HTML format.
 
 ## Overview
 
 This module provides a complete solution for exporting Feishu cloud documents to standalone HTML files, with automatic downloading of images and attachments.
+
+**Multiplatform Support**: Runs on JVM, JS (Node.js), and Native platforms (macOS, Linux, Windows, iOS, Android).
 
 ## Key Components
 
@@ -27,7 +29,14 @@ This module provides a complete solution for exporting Feishu cloud documents to
 - **Renderable**: Interface for block renderers
 - **TextElementConverter**: Converts text elements to HTML
 - **FeishuStyles**: Default CSS styles matching Feishu's visual design
+- **EmbeddedResources**: Embedded CSS resources (16KB optimized)
 - **renderers/**: Individual renderer objects for each block type
+
+### Platform Layer (`dev.yidafu.feishu2html.platform`)
+
+- **HttpClientFactory**: expect/actual for platform-specific HTTP engines
+- **PlatformFileSystem**: expect/actual for cross-platform file operations  
+- **UrlUtils**: expect/actual for URL decoding
 
 ## Architecture
 
