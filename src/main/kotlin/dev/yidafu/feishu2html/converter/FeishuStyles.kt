@@ -1,13 +1,13 @@
 package dev.yidafu.feishu2html.converter
 
 /**
- * 飞书文档风格的 CSS 样式定义
+ * Feishu document style CSS definitions
  */
-object FeishuStyles {
+internal object FeishuStyles {
     fun generateCSS(): String {
-        return """        /* ========== 飞书文档风格 ========== */
+        return """        /* ========== Feishu Document Styles ========== */
         
-        /* 基础样式 */
+        /* Base Styles */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
             line-height: 1.75;
@@ -26,7 +26,7 @@ object FeishuStyles {
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02);
         }
 
-        /* 标题样式 - 飞书风格 */
+        /* Heading Styles - Feishu Style */
         .heading,
         h1, h2, h3, h4, h5, h6 {
             margin-top: 28px;
@@ -47,7 +47,7 @@ object FeishuStyles {
             font-weight: 700;
         }
 
-        /* 段落和文本 */
+        /* Paragraph and Text */
         p {
             margin: 8px 0;
             font-size: 15px;
@@ -55,7 +55,7 @@ object FeishuStyles {
             color: #1f2329;
         }
 
-        /* 文本对齐 */
+        /* Text Alignment */
         .text-align-center {
             text-align: center;
         }
@@ -64,7 +64,7 @@ object FeishuStyles {
             text-align: right;
         }
 
-        /* 文本颜色 - 飞书风格 */
+        /* Text Color - Feishu Style */
         .text-red { color: #f54a45; }
         .text-yellow { color: #ff8800; }
         .text-green { color: #00b578; }
@@ -74,7 +74,7 @@ object FeishuStyles {
         .text-pink { color: #ec4899; }
         .text-gray { color: #646a73; }
 
-        /* 文本背景色 - 飞书风格 */
+        /* Text Background Color - Feishu Style */
         .bg-red { background-color: #ffecea; padding: 2px 6px; border-radius: 4px; }
         .bg-yellow { background-color: #fff3e0; padding: 2px 6px; border-radius: 4px; }
         .bg-green { background-color: #e6f7ed; padding: 2px 6px; border-radius: 4px; }
@@ -84,7 +84,7 @@ object FeishuStyles {
         .bg-pink { background-color: #ffe4e6; padding: 2px 6px; border-radius: 4px; }
         .bg-gray { background-color: #f2f3f5; padding: 2px 6px; border-radius: 4px; }
 
-        /* 链接 - 飞书风格 */
+        /* Links - Feishu Style */
         a {
             color: #3370ff;
             text-decoration: none;
@@ -96,7 +96,7 @@ object FeishuStyles {
             border-bottom-color: #3370ff;
         }
 
-        /* 列表 - 飞书风格 */
+        /* Lists - Feishu Style */
         ul, ol {
             padding-left: 28px;
             margin: 12px 0;
@@ -107,7 +107,7 @@ object FeishuStyles {
             line-height: 1.75;
         }
 
-        /* 代码 - 飞书风格 */
+        /* Code - Feishu Style */
         code {
             padding: 2px 6px;
             margin: 0 2px;
@@ -138,7 +138,7 @@ object FeishuStyles {
             font-size: inherit;
         }
 
-        /* 引用 - 飞书风格 */
+        /* Blockquote - Feishu Style */
         blockquote {
             padding: 12px 16px;
             color: #646a73;
@@ -148,7 +148,7 @@ object FeishuStyles {
             margin: 16px 0;
         }
 
-        /* 表格 - 飞书风格 */
+        /* Table - Feishu Style */
         table {
             border-spacing: 0;
             border-collapse: collapse;
@@ -182,7 +182,7 @@ object FeishuStyles {
             background-color: #f7f8fa;
         }
 
-        /* 分隔线 - 飞书风格 */
+        /* Divider - Feishu Style */
         hr {
             height: 1px;
             padding: 0;
@@ -191,7 +191,7 @@ object FeishuStyles {
             border: 0;
         }
 
-        /* 图片 - 飞书风格 */
+        /* Image - Feishu Style */
         img {
             max-width: 100%;
             height: auto;
@@ -210,7 +210,7 @@ object FeishuStyles {
             margin-right: 0;
         }
 
-        /* Todo - 飞书风格 */
+        /* Todo - Feishu Style */
         .todo {
             display: flex;
             align-items: flex-start;
@@ -231,7 +231,7 @@ object FeishuStyles {
             height: 16px;
         }
 
-        /* Callout - 飞书风格 */
+        /* Callout - Feishu Style */
         .callout {
             padding: 16px 20px;
             margin: 16px 0;
@@ -292,7 +292,7 @@ object FeishuStyles {
             vertical-align: middle;
         }
 
-        /* 公式 - 飞书风格 */
+        /* Equation - Feishu Style */
         .equation {
             overflow-x: auto;
             margin: 20px 0;
@@ -302,7 +302,7 @@ object FeishuStyles {
             border-radius: 8px;
         }
 
-        /* 流程图 - 飞书风格 */
+        /* Diagram - Feishu Style */
         .diagram {
             margin: 16px 0;
             padding: 20px;
@@ -312,7 +312,7 @@ object FeishuStyles {
             overflow-x: auto;
         }
 
-        /* iframe - 飞书风格 */
+        /* iframe - Feishu Style */
         iframe {
             width: 100%;
             height: 400px;
@@ -321,7 +321,7 @@ object FeishuStyles {
             margin: 16px 0;
         }
 
-        /* Quote Container - 飞书风格 */
+        /* Quote Container - Feishu Style */
         .quote-container {
             padding: 16px 20px;
             margin: 16px 0;
@@ -331,7 +331,7 @@ object FeishuStyles {
             color: #646a73;
         }
 
-        /* Mention - 飞书风格 */
+        /* Mention - Feishu Style */
         .mention-user, .mention-doc {
             color: #3370ff;
             background-color: #e8f3ff;
@@ -340,13 +340,13 @@ object FeishuStyles {
             font-weight: 500;
         }
 
-        /* 内联文件 */
+        /* Inline File */
         .inline-file {
             color: #646a73;
             font-style: italic;
         }
 
-        /* Grid 分栏布局 - 飞书风格 */
+        /* Grid Column Layout - Feishu Style */
         .grid-layout {
             margin: 20px 0;
             gap: 20px;
@@ -359,7 +359,7 @@ object FeishuStyles {
             border-radius: 8px;
         }
 
-        /* 内嵌 Block - 飞书风格 */
+        /* Embedded Block - Feishu Style */
         .embed-container {
             margin: 20px 0;
             border: 1px solid #e7e9ed;
@@ -389,7 +389,7 @@ object FeishuStyles {
             width: 100%;
         }
 
-        /* 视频嵌入 - 16:9 响应式 */
+        /* Video Embed - 16:9 Responsive */
         .embed-video .embed-content {
             padding-bottom: 56.25%; /* 16:9 */
             height: 0;
@@ -403,7 +403,7 @@ object FeishuStyles {
             height: 100%;
         }
 
-        /* 设计工具嵌入 */
+        /* Design Tool Embed */
         .embed-design .embed-content {
             height: 600px;
         }
@@ -413,7 +413,7 @@ object FeishuStyles {
             height: 100%;
         }
 
-        /* 飞书内容嵌入 */
+        /* Feishu Content Embed */
         .embed-feishu .embed-content {
             height: 500px;
         }
@@ -423,7 +423,7 @@ object FeishuStyles {
             height: 100%;
         }
 
-        /* 通用嵌入 */
+        /* Generic Embed */
         .embed-generic {
             width: 100%;
             height: 400px;
@@ -432,7 +432,7 @@ object FeishuStyles {
             margin: 16px 0;
         }
 
-        /* 响应式 */
+        /* Responsive */
         @media (max-width: 768px) {
             .container {
                 padding: 32px 24px;

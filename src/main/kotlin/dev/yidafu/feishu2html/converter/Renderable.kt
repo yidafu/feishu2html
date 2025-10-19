@@ -4,11 +4,11 @@ import dev.yidafu.feishu2html.api.model.Block
 import kotlinx.html.FlowContent
 
 /**
- * 可渲染接口 - 所有Block Renderer必须实现
+ * Renderable interface - must be implemented by all Block Renderers
  *
- * 定义了Block渲染器的统一接口。每个Block类型都有对应的Renderer对象实现此接口。
+ * Defines a unified interface for Block renderers. Each Block type has a corresponding Renderer object implementing this interface.
  *
- * ## 实现示例
+ * ## Implementation Example
  * ```kotlin
  * object TextBlockRenderer : Renderable {
  *     override fun <T> render(parent: FlowContent, block: T, allBlocks: Map<String, Block>, context: RenderContext) {
@@ -20,14 +20,14 @@ import kotlinx.html.FlowContent
  *
  * @see RenderContext
  */
-interface Renderable {
+internal interface Renderable {
     /**
-     * 渲染Block为HTML
+     * Render Block as HTML
      *
-     * @param parent kotlinx.html的FlowContent对象，用于构建HTML
-     * @param block 要渲染的Block对象（需要在实现中进行类型转换）
-     * @param allBlocks 文档中所有Block的映射表（blockId -> Block），用于渲染子块
-     * @param context 渲染上下文，包含共享的转换器和已处理Block集合
+     * @param parent kotlinx.html FlowContent object for building HTML
+     * @param block Block object to render (requires type casting in implementation)
+     * @param allBlocks Mapping of all blocks in document (blockId -> Block) for rendering child blocks
+     * @param context Rendering context containing shared converters and processed block set
      */
     fun <T> render(
         parent: FlowContent,
@@ -38,12 +38,12 @@ interface Renderable {
 }
 
 /**
- * 渲染上下文 - 携带渲染过程中需要的共享资源
+ * Rendering context - carries shared resources needed during rendering
  *
- * @property textConverter 文本元素转换器，用于将TextElement转换为HTML
- * @property processedBlocks 已处理的Block ID集合，用于避免重复渲染
+ * @property textConverter Text element converter for converting TextElement to HTML
+ * @property processedBlocks Set of processed Block IDs to avoid duplicate rendering
  */
-data class RenderContext(
+internal data class RenderContext(
     val textConverter: TextElementConverter,
     val processedBlocks: MutableSet<String>,
 )
