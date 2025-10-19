@@ -4,12 +4,61 @@ import dev.yidafu.feishu2html.api.FeishuApiClient
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.HtmlBuilder
 import dev.yidafu.feishu2html.converter.CssMode
+import dev.yidafu.feishu2html.converter.HtmlTemplate
 import dev.yidafu.feishu2html.platform.getPlatformFileSystem
 import dev.yidafu.feishu2html.converter.EmbeddedResources
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
+import kotlinx.html.*
 
 private val logger = KotlinLogging.logger {}
+
+/**
+ * Create HtmlTemplate based on TemplateMode
+ *
+ * This function creates predefined templates for CLI usage:
+ * - DEFAULT: Uses the standard Feishu template
+ * - FRAGMENT: Uses a minimal fragment template with simple wrapper
+ * - FULL: Uses a minimal full template with basic HTML structure
+ */
+private fun createHtmlTemplate(mode: TemplateMode): HtmlTemplate {
+    return when (mode) {
+        TemplateMode.DEFAULT -> HtmlTemplate.Default
+        
+        TemplateMode.FRAGMENT -> HtmlTemplate.Fragment { content ->
+            // Simple fragment template: just a wrapper div
+            div(classes = "feishu-document") {
+                content()
+            }
+        }
+        
+        TemplateMode.FULL -> HtmlTemplate.Full { content ->
+            // Minimal full template with basic structure
+            lang = "zh-CN"
+            head {
+                meta(charset = "UTF-8")
+                meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
+                title("Feishu Document")
+                style {
+                    unsafe {
+                        raw("""
+                            body {
+                                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+                                line-height: 1.6;
+                                max-width: 900px;
+                                margin: 0 auto;
+                                padding: 20px;
+                            }
+                        """.trimIndent())
+                    }
+                }
+            }
+            body {
+                content()
+            }
+        }
+    }
+}
 
 /**
  * Main class for converting Feishu documents to HTML
@@ -104,12 +153,14 @@ class Feishu2Html(
             logger.debug { "Output file path: $htmlPath" }
 
             logger.info { "Building HTML for document: ${document.title}" }
+            val template = createHtmlTemplate(options.templateMode)
             val htmlBuilder =
                 HtmlBuilder(
                     title = document.title,
                     cssMode = if (options.externalCss) CssMode.EXTERNAL else CssMode.INLINE,
                     cssFileName = options.cssFileName,
                     customCss = options.customCss,
+                    template = template,
                 )
             val html = htmlBuilder.build(orderedBlocks, blocks)
 
@@ -276,6 +327,20 @@ class Feishu2Html(
 }
 
 /**
+ * HTML template mode for command-line interface
+ */
+enum class TemplateMode {
+    /** Use the default built-in template */
+    DEFAULT,
+    
+    /** Use a minimal fragment template (custom body structure) */
+    FRAGMENT,
+    
+    /** Use a minimal full template (custom HTML structure) */
+    FULL
+}
+
+/**
  * Configuration options for Feishu document to HTML conversion
  *
  * @property appId Feishu app ID, obtained from Feishu Open Platform
@@ -286,6 +351,7 @@ class Feishu2Html(
  * @property imagePath Relative path for images in HTML, defaults to "images"
  * @property filePath Relative path for attachments in HTML, defaults to "files"
  * @property customCss Custom CSS styles, overrides default styles if provided
+ * @property templateMode HTML template mode (for CLI usage), defaults to DEFAULT
  *
  * @see Feishu2Html
  */
@@ -300,6 +366,7 @@ data class Feishu2HtmlOptions(
     val customCss: String? = null,
     val externalCss: Boolean = true, // true = external file, false = inline
     val cssFileName: String = "feishu-style-optimized.css", // Use optimized CSS with official Feishu rules
+    val templateMode: TemplateMode = TemplateMode.DEFAULT,
 ) {
     init {
         // Create output directories

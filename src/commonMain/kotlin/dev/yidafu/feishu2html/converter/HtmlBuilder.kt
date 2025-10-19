@@ -86,6 +86,67 @@ internal fun renderBlock(
 }
 
 /**
+ * HTML template type for customizing HTML output structure
+ *
+ * Supports three template modes:
+ * - Default: Uses the built-in template
+ * - Full: User has full control over the entire HTML document structure
+ * - Fragment: Only replaces body content, head section is managed by HtmlBuilder
+ */
+sealed interface HtmlTemplate {
+    /**
+     * Full HTML template - user has complete control over the entire document structure
+     *
+     * The builder function receives:
+     * - HTML context (this)
+     * - content: FlowContent builder for rendering the document blocks
+     *
+     * Example:
+     * ```kotlin
+     * HtmlTemplate.Full { content ->
+     *     lang = "en"
+     *     head {
+     *         title("My Custom Title")
+     *         // Add custom head elements
+     *     }
+     *     body {
+     *         content()
+     *     }
+     * }
+     * ```
+     */
+    class Full(
+        val builder: HTML.(content: FlowContent.() -> Unit) -> Unit,
+    ) : HtmlTemplate
+
+    /**
+     * Fragment template - only replaces body content
+     *
+     * The head section (CSS, MathJax, etc.) is still managed by HtmlBuilder.
+     * The builder function receives:
+     * - BODY context (this)
+     * - content: FlowContent builder for rendering the document blocks
+     *
+     * Example:
+     * ```kotlin
+     * HtmlTemplate.Fragment { content ->
+     *     div(classes = "my-custom-wrapper") {
+     *         content()
+     *     }
+     * }
+     * ```
+     */
+    class Fragment(
+        val builder: BODY.(content: FlowContent.() -> Unit) -> Unit,
+    ) : HtmlTemplate
+
+    /**
+     * Default template - uses the built-in template
+     */
+    data object Default : HtmlTemplate
+}
+
+/**
  * CSS mode for HTML generation
  */
 internal enum class CssMode {
@@ -106,15 +167,18 @@ internal enum class CssMode {
  * @property cssMode CSS inclusion mode (inline or external)
  * @property cssFileName CSS file name when using external mode
  * @property customCss Custom CSS styles, overrides default Feishu styles if provided
+ * @property template HTML template for customizing output structure
  *
  * @see renderBlock
  * @see FeishuStyles
+ * @see HtmlTemplate
  */
 internal class HtmlBuilder(
     private val title: String,
     private val cssMode: CssMode = CssMode.EXTERNAL,
     private val cssFileName: String = "feishu-style.css",
     private val customCss: String? = null,
+    private val template: HtmlTemplate = HtmlTemplate.Default,
 ) {
     private val builderLogger = KotlinLogging.logger {}
 
@@ -135,61 +199,22 @@ internal class HtmlBuilder(
         builderLogger.info { "Starting HTML build for document: $title" }
         builderLogger.debug { "Building with ${blocks.size} blocks (total ${allBlocks.size} in map)" }
         builderLogger.debug { "Using ${if (customCss != null) "custom" else "default"} CSS" }
+        builderLogger.debug { "Using template mode: ${template::class.simpleName}" }
 
         try {
+            // Create content builder that will be passed to templates
+            val contentBuilder: FlowContent.() -> Unit = {
+                div(classes = "protyle-wysiwyg b3-typography") {
+                    attributes["data-node-id"] = "root"
+                    buildBody(blocks, allBlocks, this)
+                }
+            }
+
             val html =
-                createHTML().html {
-                    lang = "zh-CN"
-
-                    head {
-                        meta(charset = "UTF-8")
-                        meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
-                        title(this@HtmlBuilder.title)
-
-                        if (cssMode == CssMode.INLINE) {
-                            style {
-                                unsafe {
-                                    raw(customCss ?: FeishuStyles.generateCSS())
-                                }
-                            }
-                        } else {
-                            link(rel = "stylesheet", href = cssFileName)
-                        }
-
-                        // MathJax 支持数学公式渲染
-                        script {
-                            src = "https://polyfill.io/v3/polyfill.min.js?features=es6"
-                        }
-                        script {
-                            attributes["id"] = "MathJax-script"
-                            async = true
-                            src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-                        }
-                        script {
-                            unsafe {
-                                raw(
-                                    """
-                                    window.MathJax = {
-                                        tex: {
-                                            inlineMath: [['$', '$'], ['\\(', '\\)']],
-                                            displayMath: [['$$', '$$'], ['\\[', '\\]']]
-                                        },
-                                        svg: {
-                                            fontCache: 'global'
-                                        }
-                                    };
-                                    """.trimIndent(),
-                                )
-                            }
-                        }
-                    }
-
-                    body {
-                        div(classes = "protyle-wysiwyg b3-typography") {
-                            attributes["data-node-id"] = "root"
-                            buildBody(blocks, allBlocks, this)
-                        }
-                    }
+                when (template) {
+                    is HtmlTemplate.Full -> buildWithFullTemplate(contentBuilder)
+                    is HtmlTemplate.Fragment -> buildWithFragmentTemplate(contentBuilder)
+                    HtmlTemplate.Default -> buildWithDefaultTemplate(contentBuilder)
                 }
 
             builderLogger.info { "HTML build completed successfully for document: $title" }
@@ -198,6 +223,144 @@ internal class HtmlBuilder(
         } catch (e: Exception) {
             builderLogger.error(e) { "Failed to build HTML for document $title: ${e.message}" }
             throw e
+        }
+    }
+
+    /**
+     * Build HTML with default template
+     *
+     * Uses the built-in template with standard head (CSS, MathJax) and body structure.
+     *
+     * @param content Content builder for document blocks
+     * @return HTML string
+     */
+    private fun buildWithDefaultTemplate(content: FlowContent.() -> Unit): String {
+        return createHTML().html {
+            lang = "zh-CN"
+
+            head {
+                meta(charset = "UTF-8")
+                meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
+                title(this@HtmlBuilder.title)
+
+                if (cssMode == CssMode.INLINE) {
+                    style {
+                        unsafe {
+                            raw(customCss ?: FeishuStyles.generateCSS())
+                        }
+                    }
+                } else {
+                    link(rel = "stylesheet", href = cssFileName)
+                }
+
+                // MathJax 支持数学公式渲染
+                script {
+                    src = "https://polyfill.io/v3/polyfill.min.js?features=es6"
+                }
+                script {
+                    attributes["id"] = "MathJax-script"
+                    async = true
+                    src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+                }
+                script {
+                    unsafe {
+                        raw(
+                            """
+                            window.MathJax = {
+                                tex: {
+                                    inlineMath: [['$', '$'], ['\\(', '\\)']],
+                                    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+                                },
+                                svg: {
+                                    fontCache: 'global'
+                                }
+                            };
+                            """.trimIndent(),
+                        )
+                    }
+                }
+            }
+
+            body {
+                content()
+            }
+        }
+    }
+
+    /**
+     * Build HTML with full custom template
+     *
+     * User has complete control over the entire HTML document structure.
+     * CSS, MathJax, and other head elements must be configured by the user.
+     *
+     * @param content Content builder for document blocks
+     * @return HTML string
+     */
+    private fun buildWithFullTemplate(content: FlowContent.() -> Unit): String {
+        return createHTML().html {
+            (template as HtmlTemplate.Full).builder(this, content)
+        }
+    }
+
+    /**
+     * Build HTML with fragment template
+     *
+     * Preserves the default head section (CSS, MathJax, etc.) but allows
+     * customization of the body structure.
+     *
+     * @param content Content builder for document blocks
+     * @return HTML string
+     */
+    private fun buildWithFragmentTemplate(content: FlowContent.() -> Unit): String {
+        return createHTML().html {
+            lang = "zh-CN"
+
+            head {
+                meta(charset = "UTF-8")
+                meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
+                title(this@HtmlBuilder.title)
+
+                if (cssMode == CssMode.INLINE) {
+                    style {
+                        unsafe {
+                            raw(customCss ?: FeishuStyles.generateCSS())
+                        }
+                    }
+                } else {
+                    link(rel = "stylesheet", href = cssFileName)
+                }
+
+                // MathJax 支持数学公式渲染
+                script {
+                    src = "https://polyfill.io/v3/polyfill.min.js?features=es6"
+                }
+                script {
+                    attributes["id"] = "MathJax-script"
+                    async = true
+                    src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+                }
+                script {
+                    unsafe {
+                        raw(
+                            """
+                            window.MathJax = {
+                                tex: {
+                                    inlineMath: [['$', '$'], ['\\(', '\\)']],
+                                    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+                                },
+                                svg: {
+                                    fontCache: 'global'
+                                }
+                            };
+                            """.trimIndent(),
+                        )
+                    }
+                }
+            }
+
+            body {
+                (template as HtmlTemplate.Fragment).builder(this, content)
+            }
         }
     }
 
