@@ -495,4 +495,287 @@ class FeishuApiClientMockTest : FunSpec({
         // 应该只访问每个块一次
         ordered shouldHaveSize 2
     }
+
+    test("getOrderedBlocks应该处理只有Page块的文档") {
+        val pageBlock =
+            PageBlock(
+                blockId = "page1",
+                blockType = BlockType.PAGE,
+                children = emptyList(),
+                parentId = null,
+                page =
+                    PageBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Empty Page"))),
+                        style = TextStyle(align = 1),
+                    ),
+            )
+
+        val content =
+            DocumentRawContent(
+                document = Document(documentId = "doc1", revisionId = 1, title = "Empty"),
+                blocks = mapOf("page1" to pageBlock),
+            )
+
+        val ordered = apiClient.getOrderedBlocks(content)
+
+        ordered shouldHaveSize 0 // Page块不包含在结果中
+    }
+
+    test("getOrderedBlocks应该处理包含图片块的文档") {
+        val pageBlock =
+            PageBlock(
+                blockId = "page1",
+                blockType = BlockType.PAGE,
+                children = listOf("img1", "text1"),
+                parentId = null,
+                page =
+                    PageBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Page"))),
+                        style = TextStyle(align = 1),
+                    ),
+            )
+
+        val imageBlock =
+            ImageBlock(
+                blockId = "img1",
+                blockType = BlockType.IMAGE,
+                children = emptyList(),
+                parentId = "page1",
+                image =
+                    ImageBlockData(
+                        token = "img_token_123",
+                        width = 800,
+                        height = 600,
+                    ),
+            )
+
+        val textBlock =
+            TextBlock(
+                blockId = "text1",
+                blockType = BlockType.TEXT,
+                children = emptyList(),
+                parentId = "page1",
+                text =
+                    TextBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Caption"))),
+                        style = TextStyle(align = 1),
+                    ),
+            )
+
+        val content =
+            DocumentRawContent(
+                document = Document(documentId = "doc1", revisionId = 1, title = "With Image"),
+                blocks =
+                    mapOf(
+                        "page1" to pageBlock,
+                        "img1" to imageBlock,
+                        "text1" to textBlock,
+                    ),
+            )
+
+        val ordered = apiClient.getOrderedBlocks(content)
+
+        ordered shouldHaveSize 2
+        ordered[0].blockId shouldBe "img1"
+        ordered[1].blockId shouldBe "text1"
+    }
+
+    test("getOrderedBlocks应该处理包含代码块的文档") {
+        val pageBlock =
+            PageBlock(
+                blockId = "page1",
+                blockType = BlockType.PAGE,
+                children = listOf("code1"),
+                parentId = null,
+                page =
+                    PageBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Page"))),
+                        style = TextStyle(align = 1),
+                    ),
+            )
+
+        val codeBlock =
+            CodeBlockItem(
+                blockId = "code1",
+                blockType = BlockType.CODE,
+                children = emptyList(),
+                parentId = "page1",
+                code =
+                    CodeBlockData(
+                        language = 1,
+                        elements = listOf(TextElement(textRun = TextRun(content = "println(\"Hello\")"))),
+                    ),
+            )
+
+        val content =
+            DocumentRawContent(
+                document = Document(documentId = "doc1", revisionId = 1, title = "With Code"),
+                blocks =
+                    mapOf(
+                        "page1" to pageBlock,
+                        "code1" to codeBlock,
+                    ),
+            )
+
+        val ordered = apiClient.getOrderedBlocks(content)
+
+        ordered shouldHaveSize 1
+        ordered[0].blockId shouldBe "code1"
+    }
+
+    test("getOrderedBlocks应该处理包含文件块的文档") {
+        val pageBlock =
+            PageBlock(
+                blockId = "page1",
+                blockType = BlockType.PAGE,
+                children = listOf("file1"),
+                parentId = null,
+                page =
+                    PageBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Page"))),
+                        style = TextStyle(align = 1),
+                    ),
+            )
+
+        val fileBlock =
+            FileBlock(
+                blockId = "file1",
+                blockType = BlockType.FILE,
+                children = emptyList(),
+                parentId = "page1",
+                file =
+                    FileBlockData(
+                        token = "file_token_456",
+                        name = "document.pdf",
+                    ),
+            )
+
+        val content =
+            DocumentRawContent(
+                document = Document(documentId = "doc1", revisionId = 1, title = "With File"),
+                blocks =
+                    mapOf(
+                        "page1" to pageBlock,
+                        "file1" to fileBlock,
+                    ),
+            )
+
+        val ordered = apiClient.getOrderedBlocks(content)
+
+        ordered shouldHaveSize 1
+        ordered[0].blockId shouldBe "file1"
+    }
+
+    test("getOrderedBlocks应该处理有序列表和无序列表混合") {
+        val pageBlock =
+            PageBlock(
+                blockId = "page1",
+                blockType = BlockType.PAGE,
+                children = listOf("bullet1", "ordered1"),
+                parentId = null,
+                page =
+                    PageBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Page"))),
+                        style = TextStyle(align = 1),
+                    ),
+            )
+
+        val bulletBlock =
+            BulletBlock(
+                blockId = "bullet1",
+                blockType = BlockType.BULLET,
+                children = emptyList(),
+                parentId = "page1",
+                bullet =
+                    BulletBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Bullet item"))),
+                        style = TextStyle(align = 1),
+                    ),
+            )
+
+        val orderedBlock =
+            OrderedBlock(
+                blockId = "ordered1",
+                blockType = BlockType.ORDERED,
+                children = emptyList(),
+                parentId = "page1",
+                ordered =
+                    OrderedBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Numbered item"))),
+                        style = TextStyle(align = 1),
+                    ),
+            )
+
+        val content =
+            DocumentRawContent(
+                document = Document(documentId = "doc1", revisionId = 1, title = "Mixed Lists"),
+                blocks =
+                    mapOf(
+                        "page1" to pageBlock,
+                        "bullet1" to bulletBlock,
+                        "ordered1" to orderedBlock,
+                    ),
+            )
+
+        val ordered = apiClient.getOrderedBlocks(content)
+
+        ordered shouldHaveSize 2
+        ordered[0].blockId shouldBe "bullet1"
+        ordered[1].blockId shouldBe "ordered1"
+    }
+
+    test("API客户端应该支持不同的凭证") {
+        val client1 = FeishuApiClient("app1", "secret1")
+        val client2 = FeishuApiClient("app2", "secret2")
+
+        client1 shouldNotBe null
+        client2 shouldNotBe null
+
+        client1.close()
+        client2.close()
+    }
+
+    test("getOrderedBlocks应该保持文档原有的块顺序") {
+        val pageBlock =
+            PageBlock(
+                blockId = "page1",
+                blockType = BlockType.PAGE,
+                children = listOf("text1", "text2", "text3", "text4", "text5"),
+                parentId = null,
+                page =
+                    PageBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Page"))),
+                        style = TextStyle(align = 1),
+                    ),
+            )
+
+        val blocks =
+            (1..5).map { i ->
+                "text$i" to
+                    TextBlock(
+                        blockId = "text$i",
+                        blockType = BlockType.TEXT,
+                        children = emptyList(),
+                        parentId = "page1",
+                        text =
+                            TextBlockData(
+                                elements = listOf(TextElement(textRun = TextRun(content = "Text $i"))),
+                                style = TextStyle(align = 1),
+                            ),
+                    )
+            }.toMap()
+
+        val content =
+            DocumentRawContent(
+                document = Document(documentId = "doc1", revisionId = 1, title = "Order Test"),
+                blocks = mapOf("page1" to pageBlock) + blocks,
+            )
+
+        val ordered = apiClient.getOrderedBlocks(content)
+
+        ordered shouldHaveSize 5
+        ordered.forEachIndexed { index, block ->
+            block.blockId shouldBe "text${index + 1}"
+        }
+    }
 })

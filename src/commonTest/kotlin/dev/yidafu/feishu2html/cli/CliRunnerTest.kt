@@ -87,6 +87,138 @@ class CliRunnerTest : FunSpec({
         result.documentIds shouldBe listOf("doc1", "doc2", "doc3", "doc4")
     }
 
+    test("should parse --inline-images option") {
+        val args = arrayOf("--inline-images", "app_id", "app_secret", "doc1")
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldNotBeNull()
+        result.inlineImages shouldBe true
+    }
+
+    test("should default --inline-images to false when not specified") {
+        val args = arrayOf("app_id", "app_secret", "doc1")
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldNotBeNull()
+        result.inlineImages shouldBe false
+    }
+
+    test("should parse --inline-css option") {
+        val args = arrayOf("--inline-css", "app_id", "app_secret", "doc1")
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldNotBeNull()
+        result.inlineCss shouldBe true
+    }
+
+    test("should default --inline-css to false when not specified") {
+        val args = arrayOf("app_id", "app_secret", "doc1")
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldNotBeNull()
+        result.inlineCss shouldBe false
+    }
+
+    test("should parse --hide-unsupported option") {
+        val args = arrayOf("--hide-unsupported", "app_id", "app_secret", "doc1")
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldNotBeNull()
+        result.hideUnsupported shouldBe true
+    }
+
+    test("should default --hide-unsupported to false when not specified") {
+        val args = arrayOf("app_id", "app_secret", "doc1")
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldNotBeNull()
+        result.hideUnsupported shouldBe false
+    }
+
+    test("should parse all options combined") {
+        val args = arrayOf(
+            "--template", "fragment",
+            "--inline-images",
+            "--inline-css",
+            "--hide-unsupported",
+            "my_app_id",
+            "my_secret",
+            "doc1",
+            "doc2"
+        )
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldNotBeNull()
+        result.templateMode shouldBe TemplateMode.FRAGMENT
+        result.inlineImages shouldBe true
+        result.inlineCss shouldBe true
+        result.hideUnsupported shouldBe true
+        result.appId shouldBe "my_app_id"
+        result.appSecret shouldBe "my_secret"
+        result.documentIds shouldBe listOf("doc1", "doc2")
+    }
+
+    test("should parse options in any order") {
+        val args = arrayOf(
+            "--inline-images",
+            "--template", "full",
+            "app_id",
+            "app_secret",
+            "doc1"
+        )
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldNotBeNull()
+        result.appId shouldBe "app_id"
+        result.appSecret shouldBe "app_secret"
+        result.documentIds shouldBe listOf("doc1")
+        result.inlineImages shouldBe true
+        result.templateMode shouldBe TemplateMode.FULL
+    }
+
+    test("should handle --help flag") {
+        val args = arrayOf("--help")
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldBeNull()
+    }
+
+    test("should handle -h flag") {
+        val args = arrayOf("-h")
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldBeNull()
+    }
+
+    test("should parse short and long options together") {
+        val args = arrayOf(
+            "-t", "fragment",
+            "--inline-images",
+            "app_id",
+            "app_secret",
+            "doc1"
+        )
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldNotBeNull()
+        result.templateMode shouldBe TemplateMode.FRAGMENT
+        result.inlineImages shouldBe true
+    }
+
+    test("should handle complex document IDs") {
+        val args = arrayOf(
+            "app_id",
+            "app_secret",
+            "doxcnABCDEFG123456",
+            "doxcnXYZ789",
+            "wikicnTest123"
+        )
+        val result = CliRunner.parseArguments(args)
+
+        result.shouldNotBeNull()
+        result.documentIds shouldBe listOf("doxcnABCDEFG123456", "doxcnXYZ789", "wikicnTest123")
+    }
+
     // Note: The following tests are commented out because kotlinx-cli may call exitProcess()
     // which terminates the test process. These edge cases are better tested manually.
 
