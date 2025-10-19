@@ -290,7 +290,7 @@ If you previously used OSSRH, here's what changed:
 - [ ] Namespace verified and approved
 - [ ] GPG key pair generated
 - [ ] Public key uploaded to keyserver
-- [ ] `local.properties` configured with Portal token
+- [ ] `local.properties` configured with `centralUsername`/`centralPassword`
 - [ ] Test local publishing: `./gradlew publishToMavenLocal`
 
 ### Every Release
