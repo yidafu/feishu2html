@@ -15,7 +15,7 @@ object BitableBlockRenderer : Renderable {
         context: RenderContext,
     ) {
         logger.warn("Rendering partially supported block: Bitable (block_id: {})", (block as Block).blockId)
-        // Bitable暂不支持
+        // Bitable not yet supported
     }
 }
 
@@ -27,7 +27,7 @@ object ChatCardBlockRenderer : Renderable {
         context: RenderContext,
     ) {
         logger.warn("Rendering partially supported block: ChatCard (block_id: {})", (block as Block).blockId)
-        // ChatCard暂不支持
+        // ChatCard not yet supported
     }
 }
 
@@ -40,7 +40,7 @@ object UnknownBlockRenderer : Renderable {
     ) {
         val unknownBlock = block as UnknownBlock
         logger.warn("Rendering unknown block type: UNDEFINED (block_id: {})", unknownBlock.blockId)
-        // UNDEFINED 可能是其他未知块类型
+        // UNDEFINED may be other unknown block types
         val quoteData = unknownBlock.quote
         if (quoteData != null) {
             logger.debug("Unknown block contains quote data, rendering as blockquote")

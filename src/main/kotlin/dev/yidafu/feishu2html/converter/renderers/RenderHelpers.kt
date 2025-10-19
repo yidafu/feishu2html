@@ -3,7 +3,7 @@ package dev.yidafu.feishu2html.converter.renderers
 import dev.yidafu.feishu2html.api.model.*
 
 /**
- * 渲染辅助函数 - 所有Renderer共享
+ * Rendering helper functions - shared by all Renderers
  */
 
 fun getAlignClass(align: Int?): String {

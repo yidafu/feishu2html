@@ -16,7 +16,7 @@ object FileBlockRenderer : Renderable {
     ) {
         val fileBlock = block as FileBlock
         val token = fileBlock.file?.token ?: return
-        val name = fileBlock.file?.name ?: "下载文件"
+        val name = fileBlock.file?.name ?: "Download File"
         logger.debug("Rendering file block: name={}, token={}", name, token)
 
         parent.a(href = "files/$token") {

@@ -10,7 +10,7 @@ private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.r
 private fun renderUnsupportedBlock(parent: FlowContent, blockType: String, block: Block) {
     logger.warn("Rendering unsupported block type: {} (block_id: {})", blockType, block.blockId)
     parent.div(classes = "unsupported-block") {
-        +"[暂不支持的Block类型: $blockType]"
+        +"[Unsupported block type: $blockType]"
     }
 }
 
@@ -65,7 +65,7 @@ object TaskBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "任务", block as Block)
+        renderUnsupportedBlock(parent, "Task", block as Block)
     }
 }
 
@@ -120,7 +120,7 @@ object AddOnsBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "新版文档小组件", block as Block)
+        renderUnsupportedBlock(parent, "Add-ons", block as Block)
     }
 }
 
@@ -131,7 +131,7 @@ object JiraIssueBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Jira问题", block as Block)
+        renderUnsupportedBlock(parent, "Jira Issue", block as Block)
     }
 }
 
@@ -142,7 +142,7 @@ object WikiCatalogBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Wiki子页面列表(旧版)", block as Block)
+        renderUnsupportedBlock(parent, "Wiki Catalog (Legacy)", block as Block)
     }
 }
 
@@ -153,7 +153,7 @@ object AgendaBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "议程", block as Block)
+        renderUnsupportedBlock(parent, "Agenda", block as Block)
     }
 }
 
@@ -164,7 +164,7 @@ object AgendaItemBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "议程项", block as Block)
+        renderUnsupportedBlock(parent, "Agenda Item", block as Block)
     }
 }
 
@@ -175,7 +175,7 @@ object AgendaItemTitleBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "议程项标题", block as Block)
+        renderUnsupportedBlock(parent, "Agenda Item Title", block as Block)
     }
 }
 
@@ -186,7 +186,7 @@ object AgendaItemContentBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "议程项内容", block as Block)
+        renderUnsupportedBlock(parent, "Agenda Item Content", block as Block)
     }
 }
 
@@ -197,7 +197,7 @@ object LinkPreviewBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "链接预览", block as Block)
+        renderUnsupportedBlock(parent, "Link Preview", block as Block)
     }
 }
 
@@ -208,7 +208,7 @@ object SourceSyncedBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "源同步块", block as Block)
+        renderUnsupportedBlock(parent, "Source Synced", block as Block)
     }
 }
 
@@ -219,7 +219,7 @@ object ReferenceSyncedBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "引用同步块", block as Block)
+        renderUnsupportedBlock(parent, "Reference Synced", block as Block)
     }
 }
 
@@ -230,7 +230,7 @@ object SubPageListBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Wiki子页面列表(新版)", block as Block)
+        renderUnsupportedBlock(parent, "Sub Page List", block as Block)
     }
 }
 
@@ -241,6 +241,6 @@ object AiTemplateBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "AI模板", block as Block)
+        renderUnsupportedBlock(parent, "AI Template", block as Block)
     }
 }
