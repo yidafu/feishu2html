@@ -306,7 +306,8 @@ tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml").configure {
     outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
     dokkaSourceSets {
         configureEach {
-            includes.from("MODULE.md")
+            // Temporarily disable MODULE.md due to Dokka parsing issues
+            // includes.from("MODULE.md")
             suppressInheritedMembers.set(false)
         }
     }

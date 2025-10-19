@@ -6,24 +6,30 @@ Feishu2HTML is a **Kotlin Multiplatform** library and CLI tool for converting Fe
 
 This module provides a complete solution for exporting Feishu cloud documents to standalone HTML files, with automatic downloading of images and attachments.
 
-**Multiplatform Support**: Runs on JVM, JS (Node.js), and Native platforms (macOS, Linux, Windows, iOS, Android).
+**Multiplatform Support**: Runs on JVM, JS (Node.js), and Native platforms (macOS, Linux, Windows, iOS).
 
 ## Key Components
 
-### API Layer (`dev.yidafu.feishu2html.api`)
+### API Layer
+
+Package: `dev.yidafu.feishu2html.api`
 
 - **FeishuApiClient**: Main API client for interacting with Feishu Open Platform
 - **FeishuAuthService**: Handles authentication and token management
 - **RateLimiter**: Prevents API rate limit violations
 
-### Data Models (`dev.yidafu.feishu2html.api.model`)
+### Data Models
+
+Package: `dev.yidafu.feishu2html.api.model`
 
 - **Block**: Sealed class hierarchy representing all 52 Feishu document block types
 - **Document**: Document metadata and structure
 - **TextElement**: Rich text elements with styling
 - Various enums for colors, languages, alignments, etc.
 
-### Converter Layer (`dev.yidafu.feishu2html.converter`)
+### Converter Layer
+
+Package: `dev.yidafu.feishu2html.converter`
 
 - **HtmlBuilder**: Orchestrates HTML document generation
 - **Renderable**: Interface for block renderers
@@ -32,7 +38,9 @@ This module provides a complete solution for exporting Feishu cloud documents to
 - **EmbeddedResources**: Embedded CSS resources (16KB optimized)
 - **renderers/**: Individual renderer objects for each block type
 
-### Platform Layer (`dev.yidafu.feishu2html.platform`)
+### Platform Layer
+
+Package: `dev.yidafu.feishu2html.platform`
 
 - **HttpClientFactory**: expect/actual for platform-specific HTTP engines
 - **PlatformFileSystem**: expect/actual for cross-platform file operations  
@@ -42,18 +50,21 @@ This module provides a complete solution for exporting Feishu cloud documents to
 
 The project uses a **Renderable + Delegate** pattern:
 
-1. Each `Block` type is a pure data class
-2. Each `Renderer` is a stateless singleton object
-3. The `renderBlock()` function dispatches blocks to appropriate renderers
+1. Each Block type is a pure data class
+2. Each Renderer is a stateless singleton object
+3. The renderBlock() function dispatches blocks to appropriate renderers
 4. Renderers use kotlinx.html DSL for type-safe HTML generation
 
 This design provides:
+
 - Separation of concerns (data vs. rendering logic)
 - Easy extensibility (add new block types)
 - Type safety (sealed classes + smart casts)
 - Testability (stateless renderers)
 
 ## Usage Example
+
+Basic usage example:
 
 ```kotlin
 import dev.yidafu.feishu2html.Feishu2Html
@@ -78,6 +89,8 @@ fun main() = runBlocking {
 
 ## Package Structure
 
+Main packages:
+
 - `dev.yidafu.feishu2html` - Main classes (Feishu2Html, Feishu2HtmlOptions)
 - `dev.yidafu.feishu2html.api` - Feishu API integration
 - `dev.yidafu.feishu2html.api.model` - Data models
@@ -85,6 +98,8 @@ fun main() = runBlocking {
 - `dev.yidafu.feishu2html.converter.renderers` - Block renderers
 
 ## Dependencies
+
+Core dependencies:
 
 - Kotlin 2.1.0
 - kotlinx.html 0.11.0
@@ -95,4 +110,3 @@ fun main() = runBlocking {
 ## License
 
 MIT License
-
