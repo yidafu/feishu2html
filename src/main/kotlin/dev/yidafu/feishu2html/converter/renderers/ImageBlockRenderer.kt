@@ -45,11 +45,9 @@ internal object BoardBlockRenderer : Renderable {
     ) {
         val boardBlock = block as BoardBlock
         val token = boardBlock.board?.token ?: return
-        val width = boardBlock.board?.width ?: 820
-        val height = boardBlock.board?.height ?: 400
 
         parent.img(src = "images/$token.png", alt = "电子画板") {
-            style = "width: ${width}px; height: ${height}px; display: block; margin: 0 auto; object-fit: contain; overflow: hidden;"
+            style = "width: 820px; height: 400px; display: block; margin: 0 auto; margin-top: 0;"
         }
     }
 }
