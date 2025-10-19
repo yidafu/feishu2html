@@ -62,7 +62,12 @@ class MediaBlockRendererTest : FunSpec({
 
         html shouldContain "document.pdf"
         html shouldContain "<a"
-        html shouldContain "href=\"files/file_token_456"
+        html shouldContain "href=\"files/document.pdf"  // Use filename, not token
+        html shouldContain "file-card"  // Check for official Feishu card structure
+        html shouldContain "file-icon"  // Check for file icon
+        html shouldContain "file-name"  // Check for file name
+        html shouldContain "btn-preview"  // Check for download button
+        html shouldContain "下载"  // Check for download text
     }
 
     test("应该正确渲染Board块") {

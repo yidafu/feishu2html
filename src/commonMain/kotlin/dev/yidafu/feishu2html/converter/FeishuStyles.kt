@@ -362,6 +362,142 @@ internal object FeishuStyles {
             font-style: italic;
         }
 
+        /* File Attachment - Official Feishu Styles */
+        .docx-file-block-container {
+            border-radius: 8px;
+        }
+
+        .docx-file-block-container.docx-view-type-Card {
+            position: relative;
+            max-width: 400px;
+        }
+
+        .docx-file-block-container.docx-view-type-Card .docx-file-block-inner-container {
+            border-radius: 8px;
+        }
+
+        .file-card {
+            display: flex;
+            width: 400px;
+            max-width: 100%;
+            font-size: 16px;
+            position: relative;
+            background-color: var(--bg-body);
+            border-radius: 8px;
+            border: 1px solid var(--line-border-card);
+            box-sizing: border-box;
+            cursor: pointer;
+            font-weight: 400;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .file-card .file-btn {
+            padding-right: 4px;
+            margin-top: 8px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+        }
+
+        .file-card .file-desc,
+        .file-card .file-icon,
+        .file-card .file-name {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .file-card .file-icon {
+            width: 48px;
+            height: 48px;
+            margin: 8px 12px 8px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .file-card .file-name {
+            max-height: 44px;
+            line-height: 22px;
+            color: var(--text-title);
+            -webkit-user-select: none;
+            user-select: none;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+        }
+
+        .file-card .file-desc {
+            height: 17px;
+            white-space: nowrap;
+            font-size: 12px;
+            color: var(--text-caption);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+        }
+
+        .file-card .btn-preview {
+            text-decoration: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--icon-n2);
+            height: 34px;
+            width: 34px;
+            text-align: center;
+            position: relative;
+            overflow: unset;
+            margin: 0 16px;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .file-card .btn-preview:hover {
+            border-radius: 6px;
+            background-color: var(--fill-hover);
+        }
+
+        .docx-file-block .file-card {
+            min-width: 200px;
+            overflow: hidden;
+        }
+
+        .file-card:hover {
+            border-color: var(--primary-fill-solid-03, #3370ff);
+            box-shadow: 0 0 0 1px var(--primary-fill-solid-03, #3370ff);
+        }
+
+        /* Layout helpers for file cards */
+        .layout-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .layout-row {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .layout-main-center {
+            justify-content: center;
+        }
+
+        .flex {
+            flex: 1;
+        }
+
+        .download-icon {
+            font-size: 18px;
+        }
+
         /* Grid Column Layout - Feishu Style */
         .grid-layout {
             margin: 20px 0;
