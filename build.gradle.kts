@@ -211,6 +211,7 @@ publishing {
             // Dokka HTML is available separately via dokkaHtml task
             val javadocJar =
                 tasks.register("${name}JavadocJar", Jar::class) {
+                    archiveBaseName.set("${project.name}-${name}")
                     archiveClassifier.set("javadoc")
                     // Empty JAR is acceptable for Central Portal
                 }
