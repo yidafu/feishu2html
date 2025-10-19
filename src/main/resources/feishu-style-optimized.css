@@ -34,7 +34,7 @@
   --h9-margin-top: 16px;
   --h9-margin-bottom: 8px;
   --h9-font-size: 16px;
-  
+
   /* Todo and table spacing */
   --todo-font-size: 16px;
   --todo-check-top: 2px;
@@ -42,7 +42,7 @@
   --table-cell-padding: 8px;
   --table-cell-text-line-height: 23px;
   --table-block-border-width: 1px;
-  
+
   /* Common spacing */
   --common-row-margin-top: 8px;
   --common-row-margin-bottom: 8px;
@@ -50,7 +50,7 @@
   --common-row-line-height: 26px;
   --common-block-margin-top: 16px;
   --common-block-margin-bottom: 16px;
-  
+
   /* Colors */
   --b3-theme-primary: #4a7fff;
   --b3-theme-primary-light: rgba(58, 121, 243, 0.65);
@@ -58,22 +58,22 @@
   --b3-theme-on-surface: #a6a6a6;
   --b3-theme-background: #1a1a1a;
   --b3-theme-surface: #262626;
-  
+
   /* Text colors */
   --text-title: #1f2329;
   --text-body: #1f2329;
   --text-caption: #8f959e;
-  
+
   /* Backgrounds */
   --bg-body: #ffffff;
   --bg-body-overlay: #f7f8fa;
   --fill-hover: rgba(31, 35, 41, 0.08);
-  
+
   /* Borders */
   --line-border-card: #dee0e3;
   --b3-border-radius: 8px;
   --b3-border-radius-code: 4px;
-  
+
   /* Callout/Block background colors */
   --ccmtoken-doc-blockbackground-red-solid: #f54a45;
   --ccmtoken-doc-highlightcolor-bg-red-soft: #ffecea;
@@ -85,7 +85,7 @@
   --ccmtoken-doc-highlightcolor-bg-blue-soft: #e8f3ff;
   --ccmtoken-doc-block-bg-area: rgba(31, 35, 41, 0.04);
   --ccmtoken-doc-block-bg-hover: rgba(31, 35, 41, 0.08);
-  
+
   /* Font */
   --b3-font-size: 14px;
   --b3-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -644,7 +644,7 @@ video:only-of-type {
     margin: 8px;
     padding: 16px 12px;
   }
-  
+
   :root {
     --h1-font-size: 24px;
     --h2-font-size: 20px;
@@ -660,7 +660,7 @@ video:only-of-type {
   body {
     background-color: white;
   }
-  
+
   .protyle-wysiwyg {
     box-shadow: none;
     padding: 0;
