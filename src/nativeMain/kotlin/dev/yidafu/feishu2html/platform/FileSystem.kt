@@ -6,7 +6,7 @@ import platform.posix.*
 /**
  * Native implementation of file system operations
  */
-@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class)
 actual class PlatformFileSystem {
     actual fun createDirectories(path: String) {
         // TODO: Implement Native file system operations
@@ -15,7 +15,7 @@ actual class PlatformFileSystem {
 
     actual fun exists(path: String): Boolean {
         // TODO: Implement Native file system operations
-        return platform.posix.access(path, platform.posix.F_OK) == 0
+        return access(path, platform.posix.F_OK) == 0
     }
 
     actual fun writeText(path: String, content: String) {
@@ -23,14 +23,14 @@ actual class PlatformFileSystem {
     }
 
     actual fun writeBytes(path: String, content: ByteArray) {
-        val file = platform.posix.fopen(path, "wb")
+        val file = fopen(path, "wb")
         if (file != null) {
             try {
                 content.usePinned { pinned ->
-                    platform.posix.fwrite(pinned.addressOf(0), 1.toULong(), content.size.toULong(), file)
+                    fwrite(pinned.addressOf(0), 1.toULong(), content.size.toULong(), file)
                 }
             } finally {
-                platform.posix.fclose(file)
+                fclose(file)
             }
         }
     }

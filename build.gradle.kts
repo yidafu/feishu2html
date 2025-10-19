@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dokka)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.nexus.publish)
     `maven-publish`
     signing
     jacoco
@@ -201,28 +202,45 @@ publishing {
         }
     }
 
-    repositories {
-        maven {
-            name = "central"
-            // Central Portal Publisher API (replaces OSSRH since June 2025)
-            // See: https://central.sonatype.org/pages/ossrh-eol/
-            url = uri("https://central.sonatype.com/api/v1/publisher/upload")
+    // Note: Repository configuration moved to nexusPublishing block below
+}
 
-            credentials {
-                username = localProperties.getProperty("centralUsername")
+// Nexus Publishing Plugin 配置 - 简化 Central Portal 发布流程
+// See: https://github.com/gradle-nexus/publish-plugin
+nexusPublishing {
+    repositories {
+        sonatype {
+            // Central Portal endpoints (replaces OSSRH)
+            nexusUrl.set(uri("https://central.sonatype.com/api/v1/publisher"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/api/v1/publisher"))
+
+            username.set(
+                localProperties.getProperty("centralUsername")
                     ?: localProperties.getProperty("ossrhUsername")
                     ?: project.findProperty("centralUsername") as String?
                     ?: project.findProperty("ossrhUsername") as String?
                     ?: System.getenv("CENTRAL_USERNAME")
                     ?: System.getenv("OSSRH_USERNAME")
-                password = localProperties.getProperty("centralPassword")
+            )
+            password.set(
+                localProperties.getProperty("centralPassword")
                     ?: localProperties.getProperty("ossrhPassword")
                     ?: project.findProperty("centralPassword") as String?
                     ?: project.findProperty("ossrhPassword") as String?
                     ?: System.getenv("CENTRAL_PASSWORD")
                     ?: System.getenv("OSSRH_PASSWORD")
-            }
+            )
         }
+    }
+
+    // Configure timeouts and retry
+    connectTimeout.set(java.time.Duration.ofMinutes(3))
+    clientTimeout.set(java.time.Duration.ofMinutes(3))
+
+    // Transition from OSSRH to Central Portal
+    transitionCheckOptions {
+        maxRetries.set(40)
+        delayBetween.set(java.time.Duration.ofSeconds(10))
     }
 }
 
