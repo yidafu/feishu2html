@@ -467,10 +467,10 @@ data class NewBlockData(
 Create `NewBlockRenderer.kt` in `converter/renderers/`:
 
 ```kotlin
-package dev.yidafu.feishu2md.converter.renderers
+package dev.yidafu.feishu2html.converter.renderers
 
-import dev.yidafu.feishu2md.api.model.*
-import dev.yidafu.feishu2md.converter.*
+import dev.yidafu.feishu2html.api.model.*
+import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
 
 object NewBlockRenderer : Renderable {
@@ -579,7 +579,7 @@ The project has comprehensive test coverage using **Kotest + MockK + JaCoCo**.
 ./gradlew test
 
 # Run specific test class
-./gradlew test --tests "dev.yidafu.feishu2md.api.RateLimiterTest"
+./gradlew test --tests "dev.yidafu.feishu2html.api.RateLimiterTest"
 
 # Generate coverage report
 ./gradlew testCoverage
@@ -751,7 +751,7 @@ ktlint_standard_value-parameter-comment = disabled
 - **Renderer objects**: `XxxBlockRenderer` (e.g., `TextBlockRenderer`)
 - **Data classes**: `XxxBlockData` (e.g., `TextBlockData`)
 - **Enum values**: `UPPER_SNAKE_CASE` (e.g., `BLOCK_TYPE`)
-- **Package names**: lowercase (e.g., `dev.yidafu.feishu2md`)
+- **Package names**: lowercase (e.g., `dev.yidafu.feishu2html`)
 
 ### File Organization
 
@@ -775,7 +775,7 @@ ktlint_standard_value-parameter-comment = disabled
 
 - Ensure the Block class is added to `BlockSerializer.selectDeserializer`
 - Ensure the Block class is added to `HtmlBuilder.renderBlock`
-- Check that all imports are correct (`import dev.yidafu.feishu2md.api.model.*`)
+- Check that all imports are correct (`import dev.yidafu.feishu2html.api.model.*`)
 - Verify the `@SerialName` annotation matches the BlockType code
 
 ### 2. Serialization Issues

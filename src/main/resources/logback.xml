@@ -6,8 +6,8 @@
         </encoder>
     </appender>
 
-    <!-- 设置 dev.yidafu.feishu2md 包为 DEBUG 级别以查看详细日志 -->
-    <logger name="dev.yidafu.feishu2md" level="DEBUG"/>
+    <!-- 设置 dev.yidafu.feishu2html 包为 DEBUG 级别以查看详细日志 -->
+    <logger name="dev.yidafu.feishu2html" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />

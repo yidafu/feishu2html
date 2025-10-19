@@ -162,15 +162,15 @@ In your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("dev.yidafu.feishu2md:feishu2md:1.0.0")
+    implementation("dev.yidafu.feishu2html:feishu2md:1.0.0")
 }
 ```
 
 #### Basic Example
 
 ```kotlin
-import dev.yidafu.feishu2md.Feishu2Html
-import dev.yidafu.feishu2md.Feishu2HtmlOptions
+import dev.yidafu.feishu2html.Feishu2Html
+import dev.yidafu.feishu2html.Feishu2HtmlOptions
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
@@ -194,8 +194,8 @@ fun main() = runBlocking {
 #### Advanced Example with Custom Options
 
 ```kotlin
-import dev.yidafu.feishu2md.Feishu2Html
-import dev.yidafu.feishu2md.Feishu2HtmlOptions
+import dev.yidafu.feishu2html.Feishu2Html
+import dev.yidafu.feishu2html.Feishu2HtmlOptions
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {

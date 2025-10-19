@@ -7,7 +7,7 @@ plugins {
     application
 }
 
-group = "dev.yidafu.feishu2md"
+group = "dev.yidafu.feishu2html"
 version = "1.0.0"
 
 repositories {
@@ -49,7 +49,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("dev.yidafu.feishu2md.MainKt")
+    mainClass.set("dev.yidafu.feishu2html.MainKt")
 }
 
 kotlin {

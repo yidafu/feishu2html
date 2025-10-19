@@ -1,0 +1,10 @@
+# ktlint配置文件
+
+[*.{kt,kts}]
+# 禁用的规则
+disabled_rules = no-wildcard-imports
+
+# 允许通配符导入
+ij_kotlin_imports_layout = *,java.**,javax.**,kotlin.**,^
+
+

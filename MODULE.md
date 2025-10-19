@@ -8,20 +8,20 @@ This module provides a complete solution for exporting Feishu cloud documents to
 
 ## Key Components
 
-### API Layer (`dev.yidafu.feishu2md.api`)
+### API Layer (`dev.yidafu.feishu2html.api`)
 
 - **FeishuApiClient**: Main API client for interacting with Feishu Open Platform
 - **FeishuAuthService**: Handles authentication and token management
 - **RateLimiter**: Prevents API rate limit violations
 
-### Data Models (`dev.yidafu.feishu2md.api.model`)
+### Data Models (`dev.yidafu.feishu2html.api.model`)
 
 - **Block**: Sealed class hierarchy representing all 52 Feishu document block types
 - **Document**: Document metadata and structure
 - **TextElement**: Rich text elements with styling
 - Various enums for colors, languages, alignments, etc.
 
-### Converter Layer (`dev.yidafu.feishu2md.converter`)
+### Converter Layer (`dev.yidafu.feishu2html.converter`)
 
 - **HtmlBuilder**: Orchestrates HTML document generation
 - **Renderable**: Interface for block renderers
@@ -47,8 +47,8 @@ This design provides:
 ## Usage Example
 
 ```kotlin
-import dev.yidafu.feishu2md.Feishu2Html
-import dev.yidafu.feishu2md.Feishu2HtmlOptions
+import dev.yidafu.feishu2html.Feishu2Html
+import dev.yidafu.feishu2html.Feishu2HtmlOptions
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
@@ -69,11 +69,11 @@ fun main() = runBlocking {
 
 ## Package Structure
 
-- `dev.yidafu.feishu2md` - Main classes (Feishu2Html, Feishu2HtmlOptions)
-- `dev.yidafu.feishu2md.api` - Feishu API integration
-- `dev.yidafu.feishu2md.api.model` - Data models
-- `dev.yidafu.feishu2md.converter` - HTML conversion logic
-- `dev.yidafu.feishu2md.converter.renderers` - Block renderers
+- `dev.yidafu.feishu2html` - Main classes (Feishu2Html, Feishu2HtmlOptions)
+- `dev.yidafu.feishu2html.api` - Feishu API integration
+- `dev.yidafu.feishu2html.api.model` - Data models
+- `dev.yidafu.feishu2html.converter` - HTML conversion logic
+- `dev.yidafu.feishu2html.converter.renderers` - Block renderers
 
 ## Dependencies
 
