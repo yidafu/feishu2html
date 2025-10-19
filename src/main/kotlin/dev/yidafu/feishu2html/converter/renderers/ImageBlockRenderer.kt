@@ -48,7 +48,7 @@ internal object BoardBlockRenderer : Renderable {
 
         parent.div(classes = "board-container") {
             style = "width: 820px; height: 400px; overflow: hidden; display: block; margin: 0 auto; margin-top: 0;"
-            img(src = "images/$token.png", alt = "电子画板") {
+            img(src = "images/$token.png", alt = "Electronic Whiteboard") {
                 style = "display: block; margin: 0 auto;"
             }
         }

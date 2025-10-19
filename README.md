@@ -21,33 +21,33 @@ A powerful Kotlin library and CLI tool to convert Feishu (Lark) documents to bea
 - 🛡️ **Type Safety** - Type-safe HTML generation using kotlinx.html DSL
 - 🎭 **Clean Architecture** - Elegant Renderer delegation pattern
 
-## 🎨 效果展示
+## 🎨 Visual Comparison
 
-Feishu2HTML 能够高度还原飞书文档的原始样式和布局。以下是飞书在线版本与本地生成 HTML 的效果对比：
+Feishu2HTML faithfully recreates the original styling and layout of Feishu documents. Here's a side-by-side comparison between the online Feishu version and the locally generated HTML:
 
 <table>
   <tr>
-    <th align="center">飞书在线效果</th>
-    <th align="center">本地生成 HTML 效果</th>
+    <th align="center">Feishu Online</th>
+    <th align="center">Local HTML Output</th>
   </tr>
   <tr>
-    <td><img src="docs/feishu-online.png" alt="飞书在线效果" height="400" /></td>
-    <td><img src="docs/feishu-local.png" alt="本地生成 HTML 效果" height="400" /></td>
+    <td><img src="docs/feishu-online.png" alt="Feishu Online" height="400" /></td>
+    <td><img src="docs/feishu-local.png" alt="Local HTML Output" height="400" /></td>
   </tr>
 </table>
 
-从对比可以看出，本地生成的 HTML 完美保留了飞书文档的视觉风格，包括：
+As you can see, the locally generated HTML perfectly preserves the visual style of Feishu documents, including:
 
-- ✨ 一致的排版和间距
-- 🎨 原汁原味的颜色和样式
-- 📐 精确的布局和对齐
-- 🖼️ 完整的图片和媒体内容
+- ✨ Consistent typography and spacing
+- 🎨 Authentic colors and styling
+- 📐 Precise layout and alignment
+- 🖼️ Complete images and media content
 
 ## 📋 Table of Contents
 
 - [Feishu2HTML](#feishu2html)
   - [✨ Features](#-features)
-  - [🎨 效果展示](#-效果展示)
+  - [🎨 Visual Comparison](#-visual-comparison)
   - [📋 Table of Contents](#-table-of-contents)
   - [📊 Supported Block Types](#-supported-block-types)
   - [🚀 Quick Start](#-quick-start)
