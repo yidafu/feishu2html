@@ -121,14 +121,9 @@ dependencies {
             }
         }
 
-        // Native 共享依赖
-        val nativeMain by creating {
-            dependsOn(commonMain)
-        }
-
-        // macOS 和 iOS 使用 Darwin 引擎
+        // Darwin (macOS/iOS) 平台
         val darwinMain by creating {
-            dependsOn(nativeMain)
+            dependsOn(commonMain)
             dependencies {
                 implementation(libs.ktor.client.darwin)
             }
@@ -136,29 +131,35 @@ dependencies {
 
         val macosX64Main by getting { dependsOn(darwinMain) }
         val macosArm64Main by getting { dependsOn(darwinMain) }
-        val iosX64Main by getting { dependsOn(darwinMain) }
-        val iosArm64Main by getting { dependsOn(darwinMain) }
-        val iosSimulatorArm64Main by getting { dependsOn(darwinMain) }
 
         // iOS 平台
         val iosMain by creating {
             dependsOn(darwinMain)
         }
 
-        iosX64Main.dependsOn(iosMain)
-        iosArm64Main.dependsOn(iosMain)
-        iosSimulatorArm64Main.dependsOn(iosMain)
+        val iosX64Main by getting { dependsOn(iosMain) }
+        val iosArm64Main by getting { dependsOn(iosMain) }
+        val iosSimulatorArm64Main by getting { dependsOn(iosMain) }
 
-        // 桌面 Native 平台（Linux/Windows）
-        val desktopNativeMain by creating {
-            dependsOn(nativeMain)
+        // Linux 平台 (POSIX mkdir)
+        val linuxMain by creating {
+            dependsOn(commonMain)
             dependencies {
                 implementation(libs.ktor.client.curl)
             }
         }
 
-        val linuxX64Main by getting { dependsOn(desktopNativeMain) }
-        val mingwX64Main by getting { dependsOn(desktopNativeMain) }
+        val linuxX64Main by getting { dependsOn(linuxMain) }
+
+        // Windows 平台 (Windows API mkdir)
+        val mingwMain by creating {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.ktor.client.curl)
+            }
+        }
+
+        val mingwX64Main by getting { dependsOn(mingwMain) }
     }
 
     // 配置所有 Native 平台使用新的内存管理器
