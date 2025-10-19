@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dokka)
     alias(libs.plugins.ktlint)
-    alias(libs.plugins.nexus.publish)
+    alias(libs.plugins.nmcp)
     `maven-publish`
     signing
     jacoco
@@ -65,11 +65,11 @@ kotlin {
     sourceSets {
         // Common 依赖
         val commonMain by getting {
-            dependencies {
+dependencies {
                 // Kotlin 核心
                 implementation(libs.kotlinx.coroutines.core)
 
-                // 序列化
+    // 序列化
                 implementation(libs.kotlinx.serialization.json)
 
                 // HTTP 客户端
@@ -205,42 +205,37 @@ publishing {
     // Note: Repository configuration moved to nexusPublishing block below
 }
 
-// Nexus Publishing Plugin 配置 - 简化 Central Portal 发布流程
-// See: https://github.com/gradle-nexus/publish-plugin
-nexusPublishing {
-    repositories {
-        sonatype {
-            // Central Portal endpoints (replaces OSSRH)
-            nexusUrl.set(uri("https://central.sonatype.com/api/v1/publisher"))
-            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/api/v1/publisher"))
+// NMCP Plugin 配置 - Modern plugin for Central Portal
+// See: https://github.com/GradleUp/nmcp
+nmcp {
+    // Publish automatically to Central Portal
+    publishAllPublications {
+        // Central Portal credentials (Portal user token)
+        username.set(
+            localProperties.getProperty("centralUsername")
+                ?: localProperties.getProperty("ossrhUsername")
+                ?: project.findProperty("centralUsername") as String?
+                ?: project.findProperty("ossrhUsername") as String?
+                ?: System.getenv("CENTRAL_USERNAME")
+                ?: System.getenv("OSSRH_USERNAME")
+        )
+        password.set(
+            localProperties.getProperty("centralPassword")
+                ?: localProperties.getProperty("ossrhPassword")
+                ?: project.findProperty("centralPassword") as String?
+                ?: project.findProperty("ossrhPassword") as String?
+                ?: System.getenv("CENTRAL_PASSWORD")
+                ?: System.getenv("OSSRH_PASSWORD")
+        )
 
-            username.set(
-                localProperties.getProperty("centralUsername")
-                    ?: localProperties.getProperty("ossrhUsername")
-                    ?: project.findProperty("centralUsername") as String?
-                    ?: project.findProperty("ossrhUsername") as String?
-                    ?: System.getenv("CENTRAL_USERNAME")
-                    ?: System.getenv("OSSRH_USERNAME")
-            )
-            password.set(
-                localProperties.getProperty("centralPassword")
-                    ?: localProperties.getProperty("ossrhPassword")
-                    ?: project.findProperty("centralPassword") as String?
-                    ?: project.findProperty("ossrhPassword") as String?
-                    ?: System.getenv("CENTRAL_PASSWORD")
-                    ?: System.getenv("OSSRH_PASSWORD")
-            )
-        }
-    }
-
-    // Configure timeouts and retry
-    connectTimeout.set(java.time.Duration.ofMinutes(3))
-    clientTimeout.set(java.time.Duration.ofMinutes(3))
-
-    // Transition from OSSRH to Central Portal
-    transitionCheckOptions {
-        maxRetries.set(40)
-        delayBetween.set(java.time.Duration.ofSeconds(10))
+        // Automatically publish to Maven Central after validation
+        publicationType.set(
+            if (version.toString().endsWith("SNAPSHOT")) {
+                "AUTOMATIC"  // Automatic for SNAPSHOT
+            } else {
+                "USER_MANAGED"  // Manual approval for releases via Portal UI
+            }
+        )
     }
 }
 
@@ -328,21 +323,21 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 
     // 排除数据类和模型类
     classDirectories.setFrom(
-        classDirectories.files.map {
-            fileTree(it) {
-                exclude(
-                    "**/model/**Data.class",
-                    "**/model/Block.class",
-                    "**/model/Document.class",
-                    "**/model/BlockType.class",
-                    "**/model/Emoji.class",
-                    "**/model/TextAlign.class",
-                    "**/model/BlockColor.class",
-                    "**/model/CodeLanguage.class",
-                    "**/model/IframeType.class",
-                    "**/MainKt.class",
-                )
-            }
+            classDirectories.files.map {
+                fileTree(it) {
+                    exclude(
+                        "**/model/**Data.class",
+                        "**/model/Block.class",
+                        "**/model/Document.class",
+                        "**/model/BlockType.class",
+                        "**/model/Emoji.class",
+                        "**/model/TextAlign.class",
+                        "**/model/BlockColor.class",
+                        "**/model/CodeLanguage.class",
+                        "**/model/IframeType.class",
+                        "**/MainKt.class",
+                    )
+                }
         }
     )
 }
