@@ -24,4 +24,3 @@ out/
 /output/
 config.kts
 !README.md
-*.md
