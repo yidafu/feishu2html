@@ -86,6 +86,14 @@ internal fun renderBlock(
 }
 
 /**
+ * CSS mode for HTML generation
+ */
+internal enum class CssMode {
+    INLINE,    // <style> tag with CSS content
+    EXTERNAL   // <link> tag referencing external file
+}
+
+/**
  * HTML document builder
  *
  * Generates complete HTML documents using kotlinx.html DSL, including:
@@ -95,6 +103,8 @@ internal fun renderBlock(
  * Uses Renderable + Delegate pattern, delegating each Block's rendering logic to a specialized Renderer.
  *
  * @property title HTML document title
+ * @property cssMode CSS inclusion mode (inline or external)
+ * @property cssFileName CSS file name when using external mode
  * @property customCss Custom CSS styles, overrides default Feishu styles if provided
  *
  * @see renderBlock
@@ -102,6 +112,8 @@ internal fun renderBlock(
  */
 internal class HtmlBuilder(
     private val title: String,
+    private val cssMode: CssMode = CssMode.EXTERNAL,
+    private val cssFileName: String = "feishu-style.css",
     private val customCss: String? = null,
 ) {
     private val builderLogger = LoggerFactory.getLogger(HtmlBuilder::class.java)
@@ -132,11 +144,17 @@ internal class HtmlBuilder(
                 meta(charset = "UTF-8")
                 meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
                 title(this@HtmlBuilder.title)
-                style {
-                    unsafe {
-                        raw(customCss ?: FeishuStyles.generateCSS())
+
+                if (cssMode == CssMode.INLINE) {
+                    style {
+                        unsafe {
+                            raw(customCss ?: FeishuStyles.generateCSS())
+                        }
                     }
+                } else {
+                    link(rel = "stylesheet", href = cssFileName)
                 }
+
                 // MathJax 支持数学公式渲染
                 script {
                     src = "https://polyfill.io/v3/polyfill.min.js?features=es6"
@@ -166,7 +184,8 @@ internal class HtmlBuilder(
             }
 
             body {
-                div(classes = "container") {
+                div(classes = "protyle-wysiwyg b3-typography") {
+                    attributes["data-node-id"] = "root"
                     buildBody(blocks, allBlocks, this)
                 }
             }

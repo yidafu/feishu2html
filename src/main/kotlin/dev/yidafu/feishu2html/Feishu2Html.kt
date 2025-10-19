@@ -3,6 +3,7 @@ package dev.yidafu.feishu2html
 import dev.yidafu.feishu2html.api.FeishuApiClient
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.HtmlBuilder
+import dev.yidafu.feishu2html.converter.CssMode
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -84,6 +85,17 @@ class Feishu2Html(
             logger.info("Starting asset download for document: {}", documentId)
             downloadAssets(orderedBlocks)
 
+            // Copy CSS file if external mode enabled
+            if (options.externalCss) {
+                val cssContent = this::class.java.getResourceAsStream("/feishu-style.css")
+                    ?.bufferedReader()?.readText()
+                    ?: throw java.io.IOException("feishu-style.css not found in resources")
+
+                val cssFile = File(options.outputDir, options.cssFileName)
+                cssFile.writeText(cssContent)
+                logger.info("CSS file written: {}", cssFile.absolutePath)
+            }
+
             // Generate HTML
             val fileName = outputFileName ?: "${document.title}.html"
             val htmlFile = File(options.outputDir, fileName)
@@ -91,7 +103,12 @@ class Feishu2Html(
             logger.debug("Output file path: {}", htmlFile.absolutePath)
 
             logger.info("Building HTML for document: {}", document.title)
-            val htmlBuilder = HtmlBuilder(document.title, options.customCss)
+            val htmlBuilder = HtmlBuilder(
+                title = document.title,
+                cssMode = if (options.externalCss) CssMode.EXTERNAL else CssMode.INLINE,
+                cssFileName = options.cssFileName,
+                customCss = options.customCss
+            )
             val html = htmlBuilder.build(orderedBlocks, blocks)
 
             htmlFile.writeText(html)
@@ -275,6 +292,8 @@ data class Feishu2HtmlOptions(
     val imagePath: String = "images",
     val filePath: String = "files",
     val customCss: String? = null,
+    val externalCss: Boolean = true,  // true = external file, false = inline
+    val cssFileName: String = "feishu-style.css",
 ) {
     init {
         // Create output directories
