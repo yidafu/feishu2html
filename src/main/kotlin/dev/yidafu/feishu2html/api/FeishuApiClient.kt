@@ -165,7 +165,8 @@ class FeishuApiClient(
      * 参考: https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/list
      */
     suspend fun getDocumentRawContent(documentId: String): DocumentRawContent {
-        logger.info("获取文档块列表: $documentId")
+        logger.info("Starting to fetch document blocks for: {}", documentId)
+        logger.debug("Will fetch blocks with page_size=500")
 
         val token = authService.getAccessToken()
         val allBlocks = mutableListOf<Block>()
@@ -314,33 +315,42 @@ class FeishuApiClient(
     ): File =
         withContext(Dispatchers.IO) {
             rateLimiter.execute {
-                logger.info("下载文件: $fileToken")
+                logger.info("Downloading file: {}", fileToken)
+                logger.debug("Output path: {}", outputPath)
 
-                val token = authService.getAccessToken()
+                try {
+                    val token = authService.getAccessToken()
 
-                val response: HttpResponse =
-                    httpClient.get("https://open.feishu.cn/open-apis/drive/v1/medias/$fileToken/download") {
-                        header("Authorization", "Bearer $token")
+                    val response: HttpResponse =
+                        httpClient.get("https://open.feishu.cn/open-apis/drive/v1/medias/$fileToken/download") {
+                            header("Authorization", "Bearer $token")
+                        }
+
+                    // 检查限频
+                    if (response.status == HttpStatusCode.BadRequest) {
+                        logger.warn("API rate limit hit while downloading file: {}", fileToken)
+                        throw FeishuApiException("API限频", code = 99991400)
                     }
 
-                // 检查限频
-                if (response.status == HttpStatusCode.BadRequest) {
-                    // 下载API可能返回不同的错误格式，直接抛出限频异常
-                    throw FeishuApiException("API限频", code = 99991400)
+                    if (!response.status.isSuccess()) {
+                        logger.error("File download failed with status: {} for token: {}",
+                            response.status, fileToken)
+                        throw FeishuApiException("下载文件失败: ${response.status}")
+                    }
+
+                    val file = outputPath.toFile()
+                    file.parentFile?.mkdirs()
+
+                    val bytes = response.body<ByteArray>()
+                    file.writeBytes(bytes)
+
+                    logger.info("File downloaded successfully: {} ({} bytes)",
+                        file.absolutePath, bytes.size)
+                    file
+                } catch (e: Exception) {
+                    logger.error("Failed to download file {}: {}", fileToken, e.message, e)
+                    throw e
                 }
-
-                if (!response.status.isSuccess()) {
-                    throw FeishuApiException("下载文件失败: ${response.status}")
-                }
-
-                val file = outputPath.toFile()
-                file.parentFile?.mkdirs()
-
-                val bytes = response.body<ByteArray>()
-                file.writeBytes(bytes)
-
-                logger.info("文件已保存: ${file.absolutePath}, 大小: ${bytes.size} bytes")
-                file
             }
         }
 
@@ -363,7 +373,8 @@ class FeishuApiClient(
     ): File =
         withContext(Dispatchers.IO) {
             rateLimiter.execute {
-                logger.info("导出电子画板: $boardToken")
+                logger.info("Exporting board as image: {}", boardToken)
+                logger.debug("Output path: {}", outputPath)
 
                 val token = authService.getAccessToken()
 

@@ -3,6 +3,16 @@ package dev.yidafu.feishu2html.converter.renderers
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.UnsupportedBlocksRenderer")
+
+private fun renderUnsupportedBlock(parent: FlowContent, blockType: String, block: Block) {
+    logger.warn("Rendering unsupported block type: {} (block_id: {})", blockType, block.blockId)
+    parent.div(classes = "unsupported-block") {
+        +"[暂不支持的Block类型: $blockType]"
+    }
+}
 
 object IsvBlockRenderer : Renderable {
     override fun <T> render(
@@ -11,9 +21,7 @@ object IsvBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: ISV]"
-        }
+        renderUnsupportedBlock(parent, "ISV", block as Block)
     }
 }
 
@@ -24,9 +32,7 @@ object MindnoteBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: Mindnote]"
-        }
+        renderUnsupportedBlock(parent, "Mindnote", block as Block)
     }
 }
 
@@ -37,9 +43,7 @@ object SheetBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: Sheet]"
-        }
+        renderUnsupportedBlock(parent, "Sheet", block as Block)
     }
 }
 
@@ -50,9 +54,7 @@ object ViewBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: View]"
-        }
+        renderUnsupportedBlock(parent, "View", block as Block)
     }
 }
 
@@ -63,9 +65,7 @@ object TaskBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: 任务]"
-        }
+        renderUnsupportedBlock(parent, "任务", block as Block)
     }
 }
 
@@ -76,9 +76,7 @@ object OkrBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: OKR]"
-        }
+        renderUnsupportedBlock(parent, "OKR", block as Block)
     }
 }
 
@@ -89,9 +87,7 @@ object OkrObjectiveBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: OKR Objective]"
-        }
+        renderUnsupportedBlock(parent, "OKR Objective", block as Block)
     }
 }
 
@@ -102,9 +98,7 @@ object OkrKeyResultBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: OKR Key Result]"
-        }
+        renderUnsupportedBlock(parent, "OKR Key Result", block as Block)
     }
 }
 
@@ -115,9 +109,7 @@ object OkrProgressBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: OKR Progress]"
-        }
+        renderUnsupportedBlock(parent, "OKR Progress", block as Block)
     }
 }
 
@@ -128,9 +120,7 @@ object AddOnsBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: 新版文档小组件]"
-        }
+        renderUnsupportedBlock(parent, "新版文档小组件", block as Block)
     }
 }
 
@@ -141,9 +131,7 @@ object JiraIssueBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: Jira问题]"
-        }
+        renderUnsupportedBlock(parent, "Jira问题", block as Block)
     }
 }
 
@@ -154,9 +142,7 @@ object WikiCatalogBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: Wiki子页面列表(旧版)]"
-        }
+        renderUnsupportedBlock(parent, "Wiki子页面列表(旧版)", block as Block)
     }
 }
 
@@ -167,9 +153,7 @@ object AgendaBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: 议程]"
-        }
+        renderUnsupportedBlock(parent, "议程", block as Block)
     }
 }
 
@@ -180,9 +164,7 @@ object AgendaItemBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: 议程项]"
-        }
+        renderUnsupportedBlock(parent, "议程项", block as Block)
     }
 }
 
@@ -193,9 +175,7 @@ object AgendaItemTitleBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: 议程项标题]"
-        }
+        renderUnsupportedBlock(parent, "议程项标题", block as Block)
     }
 }
 
@@ -206,9 +186,7 @@ object AgendaItemContentBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: 议程项内容]"
-        }
+        renderUnsupportedBlock(parent, "议程项内容", block as Block)
     }
 }
 
@@ -219,9 +197,7 @@ object LinkPreviewBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: 链接预览]"
-        }
+        renderUnsupportedBlock(parent, "链接预览", block as Block)
     }
 }
 
@@ -232,9 +208,7 @@ object SourceSyncedBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: 源同步块]"
-        }
+        renderUnsupportedBlock(parent, "源同步块", block as Block)
     }
 }
 
@@ -245,9 +219,7 @@ object ReferenceSyncedBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: 引用同步块]"
-        }
+        renderUnsupportedBlock(parent, "引用同步块", block as Block)
     }
 }
 
@@ -258,9 +230,7 @@ object SubPageListBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: Wiki子页面列表(新版)]"
-        }
+        renderUnsupportedBlock(parent, "Wiki子页面列表(新版)", block as Block)
     }
 }
 
@@ -271,8 +241,6 @@ object AiTemplateBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        parent.div(classes = "unsupported-block") {
-            +"[暂不支持的Block类型: AI模板]"
-        }
+        renderUnsupportedBlock(parent, "AI模板", block as Block)
     }
 }

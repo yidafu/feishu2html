@@ -3,6 +3,9 @@ package dev.yidafu.feishu2html.converter.renderers
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.HeadingBlockRenderer")
 
 object Heading1BlockRenderer : Renderable {
     override fun <T> render(
@@ -119,6 +122,7 @@ private fun renderHeading(
     context: RenderContext,
 ) {
     val elements = headingData?.elements ?: return
+    logger.debug("Rendering heading level {} with {} elements", level, elements.size)
     val alignClass = getAlignClass(headingData.style?.align)
 
     when (level) {

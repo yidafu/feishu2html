@@ -59,36 +59,50 @@ class Feishu2Html(
         documentId: String,
         outputFileName: String? = null,
     ) {
-        logger.info("开始导出文档: $documentId")
+        logger.info("Starting export for document: {}", documentId)
+        logger.debug("Export options - outputDir: {}, imageDir: {}, fileDir: {}",
+            options.outputDir, options.imageDir, options.fileDir)
 
-        // 先获取文档基本信息（包括标题、封面等）
-        val documentInfo = apiClient.getDocumentInfo(documentId)
-        logger.info("文档标题: ${documentInfo.title}")
-        logger.info("文档版本: ${documentInfo.revisionId}")
+        try {
+            // 先获取文档基本信息（包括标题、封面等）
+            logger.debug("Fetching document info for: {}", documentId)
+            val documentInfo = apiClient.getDocumentInfo(documentId)
+            logger.info("Document info retrieved - Title: {}, Version: {}",
+                documentInfo.title, documentInfo.revisionId)
 
-        // 获取文档内容
-        val content = apiClient.getDocumentRawContent(documentId)
-        val document = content.document
-        val blocks = content.blocks
+            // 获取文档内容
+            logger.debug("Fetching document content for: {}", documentId)
+            val content = apiClient.getDocumentRawContent(documentId)
+            val document = content.document
+            val blocks = content.blocks
 
-        logger.info("文档块数量: ${blocks.size}")
+            logger.info("Document content loaded - Total blocks: {}", blocks.size)
+            logger.debug("Document has {} top-level children", document.body?.children?.size ?: 0)
 
-        // 获取有序的文档块列表
-        val orderedBlocks = apiClient.getOrderedBlocks(content)
+            // 获取有序的文档块列表
+            val orderedBlocks = apiClient.getOrderedBlocks(content)
+            logger.debug("Ordered blocks count: {}", orderedBlocks.size)
 
-        // 下载图片和文件
-        downloadAssets(orderedBlocks)
+            // 下载图片和文件
+            logger.info("Starting asset download for document: {}", documentId)
+            downloadAssets(orderedBlocks)
 
-        // 生成HTML
-        val fileName = outputFileName ?: "${document.title}.html"
-        val htmlFile = File(options.outputDir, fileName)
-        htmlFile.parentFile?.mkdirs()
+            // 生成HTML
+            val fileName = outputFileName ?: "${document.title}.html"
+            val htmlFile = File(options.outputDir, fileName)
+            htmlFile.parentFile?.mkdirs()
+            logger.debug("Output file path: {}", htmlFile.absolutePath)
 
-        val htmlBuilder = HtmlBuilder(document.title, options.customCss)
-        val html = htmlBuilder.build(orderedBlocks, blocks)
+            logger.info("Building HTML for document: {}", document.title)
+            val htmlBuilder = HtmlBuilder(document.title, options.customCss)
+            val html = htmlBuilder.build(orderedBlocks, blocks)
 
-        htmlFile.writeText(html)
-        logger.info("HTML文件已保存: ${htmlFile.absolutePath}")
+            htmlFile.writeText(html)
+            logger.info("Document export completed successfully - File: {}", htmlFile.absolutePath)
+        } catch (e: Exception) {
+            logger.error("Failed to export document {}: {}", documentId, e.message, e)
+            throw e
+        }
     }
 
     /**
@@ -103,21 +117,32 @@ class Feishu2Html(
      */
     suspend fun exportBatch(documentIds: List<String>) =
         coroutineScope {
-            logger.info("开始批量导出 ${documentIds.size} 个文档")
+            logger.info("Starting batch export for {} documents", documentIds.size)
+            logger.debug("Document IDs: {}", documentIds.joinToString(", "))
 
-            documentIds.forEach { documentId ->
+            var successCount = 0
+            var failureCount = 0
+
+            documentIds.forEachIndexed { index, documentId ->
+                logger.info("Processing document {}/{}: {}", index + 1, documentIds.size, documentId)
                 try {
                     export(documentId)
+                    successCount++
+                    logger.debug("Document {}/{} exported successfully", index + 1, documentIds.size)
                 } catch (e: Exception) {
-                    logger.error("导出文档失败: $documentId", e)
+                    failureCount++
+                    logger.error("Failed to export document {}/{} ({}): {}",
+                        index + 1, documentIds.size, documentId, e.message, e)
                 }
             }
 
-            logger.info("批量导出完成")
+            logger.info("Batch export completed - Success: {}, Failed: {}, Total: {}",
+                successCount, failureCount, documentIds.size)
         }
 
     private suspend fun downloadAssets(blocks: List<Block>) =
         coroutineScope {
+            logger.debug("Scanning {} blocks for downloadable assets", blocks.size)
             val imageJobs = mutableListOf<Deferred<Unit>>()
             val fileJobs = mutableListOf<Deferred<Unit>>()
 
@@ -191,10 +216,13 @@ class Feishu2Html(
             }
 
             // 等待所有下载完成
+            logger.debug("Waiting for {} image downloads and {} file downloads",
+                imageJobs.size, fileJobs.size)
             imageJobs.awaitAll()
             fileJobs.awaitAll()
 
-            logger.info("资源下载完成: ${imageJobs.size} 张图片, ${fileJobs.size} 个文件")
+            logger.info("Asset download completed - Images: {}, Files: {}",
+                imageJobs.size, fileJobs.size)
         }
 
     /**
@@ -214,7 +242,9 @@ class Feishu2Html(
      * ```
      */
     fun close() {
+        logger.debug("Closing Feishu2Html and releasing resources")
         apiClient.close()
+        logger.debug("Feishu2Html closed successfully")
     }
 }
 

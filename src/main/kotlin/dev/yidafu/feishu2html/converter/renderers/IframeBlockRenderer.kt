@@ -3,9 +3,12 @@ package dev.yidafu.feishu2html.converter.renderers
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
+import org.slf4j.LoggerFactory
 import java.net.URLDecoder
 
 object IframeBlockRenderer : Renderable {
+    private val logger = LoggerFactory.getLogger(IframeBlockRenderer::class.java)
+    
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -20,6 +23,8 @@ object IframeBlockRenderer : Renderable {
             } ?: IframeType.GENERIC
 
         if (url.isNullOrEmpty()) return
+        
+        logger.debug("Rendering iframe: type={}, url={}", iframeType.displayName, url)
 
         val decodedUrl = URLDecoder.decode(url, "UTF-8")
 
@@ -95,6 +100,7 @@ object DiagramBlockRenderer : Renderable {
         val diagramBlock = block as DiagramBlock
         val content = diagramBlock.diagram?.content ?: return
         val type = diagramBlock.diagram?.diagramType
+        logger.debug("Rendering diagram block: type={}, content length={}", type, content.length)
 
         parent.div(classes = "diagram") {
             attributes["data-type"] = type?.toString() ?: ""

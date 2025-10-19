@@ -30,37 +30,49 @@ class FeishuAuthService(
      */
     suspend fun getAccessToken(): String =
         mutex.withLock {
+            logger.debug("Checking access token validity")
             val cached = cachedToken
             if (cached != null && cached.isValid()) {
-                logger.debug("使用缓存的access token")
+                logger.debug("Using cached access token (expires at: {})", cached.expiresAt)
                 return@withLock cached.token
             }
 
-            logger.info("请求新的tenant_access_token")
-            val response =
-                httpClient.post("https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal") {
-                    contentType(ContentType.Application.Json)
-                    setBody(TenantAccessTokenRequest(appId, appSecret))
+            logger.info("Requesting new tenant_access_token")
+            logger.debug("App ID: {}", appId)
+            
+            try {
+                val response =
+                    httpClient.post("https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal") {
+                        contentType(ContentType.Application.Json)
+                        setBody(TenantAccessTokenRequest(appId, appSecret))
+                    }
+
+                val result: TenantAccessTokenResponse = response.body()
+                logger.debug("Token request response - code: {}, msg: {}", result.code, result.msg)
+
+                if (result.code != 0) {
+                    logger.error("Failed to get access token - code: {}, msg: {}", result.code, result.msg)
+                    throw FeishuApiException("获取token失败: ${result.msg}")
                 }
 
-            val result: TenantAccessTokenResponse = response.body()
+                val token =
+                    result.tenantAccessToken
+                        ?: throw FeishuApiException("返回的token为空")
 
-            if (result.code != 0) {
-                throw FeishuApiException("获取token失败: ${result.msg}")
+                val expiresAt = Instant.now().plusSeconds(result.expire.toLong() - 60)
+                cachedToken =
+                    TokenCache(
+                        token = token,
+                        expiresAt = expiresAt, // 提前60秒过期
+                    )
+
+                logger.info("Successfully obtained new access token (expires at: {}, valid for {} seconds)", 
+                    expiresAt, result.expire - 60)
+                token
+            } catch (e: Exception) {
+                logger.error("Failed to request access token: {}", e.message, e)
+                throw e
             }
-
-            val token =
-                result.tenantAccessToken
-                    ?: throw FeishuApiException("返回的token为空")
-
-            cachedToken =
-                TokenCache(
-                    token = token,
-                    expiresAt = Instant.now().plusSeconds(result.expire.toLong() - 60), // 提前60秒过期
-                )
-
-            logger.info("成功获取新的access token, 过期时间: ${cachedToken?.expiresAt}")
-            token
         }
 
     private data class TokenCache(

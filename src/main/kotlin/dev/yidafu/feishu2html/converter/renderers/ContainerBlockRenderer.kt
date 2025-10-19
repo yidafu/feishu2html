@@ -3,6 +3,9 @@ package dev.yidafu.feishu2html.converter.renderers
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.ContainerBlockRenderer")
 
 object QuoteContainerBlockRenderer : Renderable {
     override fun <T> render(
@@ -12,6 +15,7 @@ object QuoteContainerBlockRenderer : Renderable {
         context: RenderContext,
     ) {
         val quoteContainer = block as QuoteContainerBlock
+        logger.debug("Rendering quote container with {} children", quoteContainer.children?.size ?: 0)
         parent.div(classes = "quote-container") {
             quoteContainer.children?.forEach { childId ->
                 val childBlock = allBlocks[childId]
@@ -32,6 +36,7 @@ object GridBlockRenderer : Renderable {
         context: RenderContext,
     ) {
         val gridBlock = block as GridBlock
+        logger.debug("Rendering grid layout with {} children", gridBlock.children?.size ?: 0)
         val columns = mutableListOf<Pair<GridColumnBlock, Int>>()
         gridBlock.children?.forEach { childId ->
             val childBlock = allBlocks[childId]
@@ -41,6 +46,8 @@ object GridBlockRenderer : Renderable {
             }
         }
 
+        logger.debug("Grid has {} columns with template: {}", columns.size, 
+            columns.joinToString(" ") { "${it.second}fr" })
         val gridTemplate = columns.joinToString(" ") { "${it.second}fr" }
 
         parent.div(classes = "grid-layout") {

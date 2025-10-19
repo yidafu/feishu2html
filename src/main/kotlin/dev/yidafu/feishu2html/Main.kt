@@ -1,6 +1,9 @@
 package dev.yidafu.feishu2html
 
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.Main")
 
 /**
  * 命令行入口
@@ -9,7 +12,11 @@ import kotlinx.coroutines.runBlocking
  * ./gradlew :feishu2html:run --args="<app_id> <app_secret> <document_id>"
  */
 fun main(args: Array<String>) {
+    logger.info("Feishu2HTML application started")
+    logger.debug("Received {} command line arguments", args.size)
+
     if (args.size < 3) {
+        logger.error("Insufficient arguments provided: expected at least 3, got {}", args.size)
         println("使用方式: feishu2html <app_id> <app_secret> <document_id> [document_id2] [document_id3] ...")
         println()
         println("参数说明:")
@@ -25,6 +32,9 @@ fun main(args: Array<String>) {
     val appId = args[0]
     val appSecret = args[1]
     val documentIds = args.drop(2)
+
+    logger.info("Parsed arguments - App ID: {}, Document count: {}", appId, documentIds.size)
+    logger.debug("Document IDs to export: {}", documentIds.joinToString(", "))
 
     println("=".repeat(60))
     println("飞书文档转HTML工具")
@@ -44,28 +54,36 @@ fun main(args: Array<String>) {
         )
 
     val feishu2Html = Feishu2Html(options)
+    logger.info("Feishu2Html instance created with output directory: {}", options.outputDir)
 
     try {
+        logger.info("Starting document export process")
         runBlocking {
             if (documentIds.size == 1) {
+                logger.info("Exporting single document: {}", documentIds[0])
                 feishu2Html.export(documentIds[0])
             } else {
+                logger.info("Batch exporting {} documents", documentIds.size)
                 feishu2Html.exportBatch(documentIds)
             }
         }
 
+        logger.info("Export process completed successfully")
         println()
         println("=".repeat(60))
         println("导出完成！")
         println("输出目录: ${options.outputDir}")
         println("=".repeat(60))
     } catch (e: Exception) {
+        logger.error("Export process failed: {}", e.message, e)
         println()
         println("=".repeat(60))
         println("错误: ${e.message}")
         e.printStackTrace()
         println("=".repeat(60))
     } finally {
+        logger.debug("Closing Feishu2Html instance")
         feishu2Html.close()
+        logger.info("Feishu2HTML application terminated")
     }
 }

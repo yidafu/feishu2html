@@ -2,11 +2,14 @@ package dev.yidafu.feishu2html.converter
 
 import dev.yidafu.feishu2html.api.model.*
 import kotlinx.html.*
+import org.slf4j.LoggerFactory
 
 /**
  * 文本元素转换器 - 使用 kotlinx.html DSL
  */
 class TextElementConverter {
+    private val logger = LoggerFactory.getLogger(TextElementConverter::class.java)
+    
     /**
      * 将文本元素列表转换为HTML (DSL方式)
      */
@@ -14,6 +17,7 @@ class TextElementConverter {
         elements: List<TextElement>,
         parent: FlowContent,
     ) {
+        logger.debug("Converting {} text elements", elements.size)
         elements.forEach { convertElement(it, parent) }
     }
 

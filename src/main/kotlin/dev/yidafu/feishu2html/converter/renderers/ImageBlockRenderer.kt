@@ -3,6 +3,9 @@ package dev.yidafu.feishu2html.converter.renderers
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.ImageBlockRenderer")
 
 object ImageBlockRenderer : Renderable {
     override fun <T> render(
@@ -13,6 +16,7 @@ object ImageBlockRenderer : Renderable {
     ) {
         val imageBlock = block as ImageBlock
         val token = imageBlock.image?.token ?: return
+        logger.debug("Rendering image: token={}", token)
         val width = imageBlock.image?.width
         val height = imageBlock.image?.height
         val alignClass = getAlignClass(imageBlock.image?.align)

@@ -4,6 +4,9 @@ import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.renderers.*
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.HtmlBuilder")
 
 /**
  * 全局Block渲染函数 - 根据Block类型分发到对应的Renderer
@@ -24,6 +27,7 @@ fun renderBlock(
     allBlocks: Map<String, Block>,
     context: RenderContext,
 ) {
+    logger.debug("Rendering block: type={}, id={}", block::class.simpleName, block.blockId)
     when (block) {
         is PageBlock -> { /* Page块通常不需要渲染 */ }
         is TextBlock -> TextBlockRenderer.render(parent, block, allBlocks, context)
@@ -100,6 +104,8 @@ class HtmlBuilder(
     private val title: String,
     private val customCss: String? = null,
 ) {
+    private val builderLogger = LoggerFactory.getLogger(HtmlBuilder::class.java)
+    
     /**
      * 构建完整的HTML文档
      *
@@ -114,7 +120,12 @@ class HtmlBuilder(
         blocks: List<Block>,
         allBlocks: Map<String, Block>,
     ): String {
-        return createHTML().html {
+        builderLogger.info("Starting HTML build for document: {}", title)
+        builderLogger.debug("Building with {} blocks (total {} in map)", blocks.size, allBlocks.size)
+        builderLogger.debug("Using {} CSS", if (customCss != null) "custom" else "default")
+        
+        try {
+            val html = createHTML().html {
             lang = "zh-CN"
 
             head {
@@ -159,6 +170,14 @@ class HtmlBuilder(
                     buildBody(blocks, allBlocks, this)
                 }
             }
+            }
+            
+            builderLogger.info("HTML build completed successfully for document: {}", title)
+            builderLogger.debug("Generated HTML size: {} characters", html.length)
+            return html
+        } catch (e: Exception) {
+            builderLogger.error("Failed to build HTML for document {}: {}", title, e.message, e)
+            throw e
         }
     }
 
