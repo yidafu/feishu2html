@@ -28,7 +28,7 @@ A powerful **Kotlin Multiplatform** library and CLI tool to convert Feishu (Lark
 
 ## 🎨 Visual Comparison
 
-Feishu2HTML faithfully recreates the original styling and layout of Feishu documents. Here's a side-by-side comparison between the online Feishu version and the locally generated HTML:
+Feishu2HTML faithfully recreates the original styling and layout. Side-by-side comparison:
 
 <table>
   <tr>
@@ -41,68 +41,30 @@ Feishu2HTML faithfully recreates the original styling and layout of Feishu docum
   </tr>
 </table>
 
-As you can see, the locally generated HTML perfectly preserves the visual style of Feishu documents, including:
-
-- ✨ Consistent typography and spacing
-- 🎨 Authentic colors and styling
-- 📐 Precise layout and alignment
-- 🖼️ Complete images and media content
+The generated HTML preserves typography, colors, layout, and all media content with 100% authentic Feishu appearance.
 
 ## 📋 Table of Contents
 
-- [Feishu2HTML](#feishu2html)
-  - [✨ Features](#-features)
-  - [🎨 Visual Comparison](#-visual-comparison)
-  - [📋 Table of Contents](#-table-of-contents)
-  - [🚀 Quick Start](#-quick-start)
-    - [Prerequisites](#prerequisites)
-    - [1. Get Feishu App Credentials](#1-get-feishu-app-credentials)
-    - [2. Grant Document Access](#2-grant-document-access)
-    - [3. CLI Usage](#3-cli-usage)
-    - [4. Library Usage](#4-library-usage)
-      - [Add to Your Project](#add-to-your-project)
-      - [Basic Example](#basic-example)
-      - [Advanced Example with Custom Options](#advanced-example-with-custom-options)
-    - [5. CSS Styling Options](#5-css-styling-options)
-      - [Using Official Feishu Styles (Default)](#using-official-feishu-styles-default)
-      - [Inline CSS Mode](#inline-css-mode)
-      - [Custom CSS Styling](#custom-css-styling)
-  - [🌐 Multiplatform Support](#-multiplatform-support)
-    - [Supported Platforms](#supported-platforms)
-    - [Platform-Specific Notes](#platform-specific-notes)
-    - [Build Targets](#build-targets)
-    - [Platform-Specific Usage Examples](#platform-specific-usage-examples)
-  - [🔍 Getting Document ID](#-getting-document-id)
-  - [🔧 Troubleshooting](#-troubleshooting)
-    - [1. Token Acquisition Failure](#1-token-acquisition-failure)
-    - [2. Document Access Failure](#2-document-access-failure)
-    - [3. Image Download Failure](#3-image-download-failure)
-  - [⚠️ Known Limitations](#️-known-limitations)
-    - [1. External Document References](#1-external-document-references)
-    - [2. Real-time Collaboration Content](#2-real-time-collaboration-content)
-    - [3. Unsupported Block Types](#3-unsupported-block-types)
-    - [4. API Rate Limiting](#4-api-rate-limiting)
-  - [📚 API Documentation](#-api-documentation)
-  - [📊 Supported Block Types](#-supported-block-types)
-  - [📖 References](#-references)
-  - [📄 License](#-license)
-  - [🤝 Contributing](#-contributing)
-  - [🙏 Acknowledgments](#-acknowledgments)
+- [✨ Features](#-features)
+- [🎨 Visual Comparison](#-visual-comparison)
+- [🚀 Quick Start](#-quick-start)
+- [🌐 Multiplatform Support](#-multiplatform-support)
+- [🔍 Getting Document ID](#-getting-document-id)
+- [🔧 Troubleshooting](#-troubleshooting)
+- [⚠️ Known Limitations](#️-known-limitations)
+- [📊 Supported Block Types](#-supported-block-types)
+- [📚 API Documentation](#-api-documentation)
+- [📖 References](#-references)
+- [📄 License](#-license)
+- [🤝 Contributing](#-contributing)
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-**For JVM:**
-- JDK 17 or higher
-- Gradle 8.0 or higher (or use the included Gradle wrapper)
-
-**For JS:**
-- Node.js 16+ (for Node.js usage)
-- Modern browser (for browser usage)
-
-**For Native:**
-- Platform-specific toolchain (XCode for macOS/iOS, GCC/Clang for Linux, MinGW for Windows)
+- **JVM**: JDK 17+, Gradle 8.0+ (or use included wrapper)
+- **JS**: Node.js 16+ (browser not supported)
+- **Native**: Platform toolchain (XCode/GCC/MinGW)
 
 ### 1. Get Feishu App Credentials
 
@@ -259,19 +221,7 @@ Feishu2Html(options).use { converter ->
 //   - feishu-style-optimized.css (optimized styles, only 16KB!)
 ```
 
-**Why Optimized CSS?**
-- 98.4% smaller than full CSS (16KB vs 1MB)
-- Uses official Feishu CSS variables and rules
-- Only includes selectors needed for our generated HTML
-- Faster page load times
-- 100% authentic Feishu appearance
-
-**Comparison:**
-| Version | Size | Lines | Source |
-|---------|------|-------|--------|
-| Optimized (default) | 16KB | 671 | Extracted from official CSS |
-| Full Official | 1MB | 40,566 | Complete feishu-style.css |
-| Reduction | **98.4%** | **98.3%** | - |
+**Why Optimized CSS?** 98.4% smaller (16KB vs 1MB), faster load times, only needed selectors, 100% authentic appearance.
 
 #### Inline CSS Mode
 
@@ -291,49 +241,18 @@ Override with your own CSS (requires inline mode):
 
 ```kotlin
 val customCss = """
-    /* Custom fonts and colors */
-    .protyle-wysiwyg {
-        font-family: "Inter", "Segoe UI", sans-serif;
-        background-color: #f8f9fa;
-        line-height: 1.8;
-    }
-    
-    /* Heading styles */
-    .heading-h1 {
-        color: #2c3e50;
-        border-bottom: 3px solid #3498db;
-        padding-bottom: 10px;
-    }
-    
-    /* Code block customization */
-    .code-block pre {
-        background-color: #1e1e1e;
-        border-radius: 8px;
-        padding: 20px;
-    }
-    
-    /* Link styles */
-    a {
-        color: #3498db;
-        text-decoration: none;
-        border-bottom: 1px solid transparent;
-        transition: border-color 0.3s;
-    }
-    
-    a:hover {
-        border-bottom-color: #3498db;
-    }
+    .protyle-wysiwyg { font-family: "Inter", sans-serif; }
+    .heading-h1 { color: #2c3e50; border-bottom: 3px solid #3498db; }
+    /* Add more custom styles... */
 """.trimIndent()
 
 val options = Feishu2HtmlOptions(
     appId = "your_app_id",
     appSecret = "your_app_secret",
-    externalCss = false,  // Must use inline mode for custom CSS
+    externalCss = false,  // Must use inline mode
     customCss = customCss
 )
 ```
-
-
 
 ## 🌐 Multiplatform Support
 
@@ -352,22 +271,9 @@ Feishu2HTML is built with **Kotlin Multiplatform**, enabling it to run on multip
 
 ### Platform-Specific Notes
 
-**JVM Platform (Fully Supported)**
-- ✅ CLI tool available
-- ✅ All features supported
-- ✅ Logback logging
-- ✅ File I/O fully implemented
-
-**JS Platform (Node.js - Fully Supported)**
-- ✅ File system operations using Node.js fs module
-- ✅ HTTP client with Ktor Js engine
-- ✅ Core conversion logic supported
-- ⚠️ Note: Browser environment not supported (Node.js only)
-
-**Native Platform (Experimental)**
-- 🔄 File system operations use POSIX API
-- ✅ HTTP client with platform-specific engines (Darwin/Curl)
-- ✅ Core conversion logic supported
+- **JVM**: Full support including CLI tool, Logback logging, and complete file I/O
+- **JS (Node.js)**: File system via Node.js fs module, Ktor client, browser not supported  
+- **Native**: POSIX file I/O, platform-specific HTTP engines (Darwin/Curl)
 
 ### Build Targets
 
@@ -389,64 +295,12 @@ Build for specific platforms:
 ./gradlew build
 ```
 
-### Platform-Specific Usage Examples
+### Platform-Specific Usage
 
-**JVM (Recommended):**
-```kotlin
-import dev.yidafu.feishu2html.Feishu2Html
-import dev.yidafu.feishu2html.Feishu2HtmlOptions
-import kotlinx.coroutines.runBlocking
-
-fun main() = runBlocking {
-    val options = Feishu2HtmlOptions(
-        appId = "your_app_id",
-        appSecret = "your_app_secret"
-    )
-    
-    Feishu2Html(options).use { converter ->
-        converter.export("document_id")
-    }
-}
-```
-
-**JS (Node.js):**
-```kotlin
-import dev.yidafu.feishu2html.Feishu2Html
-import dev.yidafu.feishu2html.Feishu2HtmlOptions
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.promise
-
-fun main() {
-    GlobalScope.promise {
-        val options = Feishu2HtmlOptions(
-            appId = "your_app_id",
-            appSecret = "your_app_secret"
-        )
-        
-        Feishu2Html(options).use { converter ->
-            converter.export("document_id")
-        }
-    }
-}
-```
-
-**Native (macOS/Linux/Windows):**
-```kotlin
-import dev.yidafu.feishu2html.Feishu2Html
-import dev.yidafu.feishu2html.Feishu2HtmlOptions
-import kotlinx.coroutines.runBlocking
-
-fun main() = runBlocking {
-    val options = Feishu2HtmlOptions(
-        appId = "your_app_id",
-        appSecret = "your_app_secret"
-    )
-    
-    Feishu2Html(options).use { converter ->
-        converter.export("document_id")
-    }
-}
-```
+All platforms use the same API (see [Library Usage](#4-library-usage) for examples):
+- **JVM**: Use `runBlocking` coroutine scope
+- **JS (Node.js)**: Use `GlobalScope.promise` for async execution
+- **Native**: Use `runBlocking` coroutine scope
 
 ## 🔍 Getting Document ID
 
@@ -503,32 +357,9 @@ Content from real-time collaboration features (e.g., comments, suggestions) is n
 
 ### 3. Unsupported Block Types
 
-The following block types are currently not supported and will display a placeholder message:
+Some advanced block types are not yet supported (ISV, Mindnote, Sheet, Task, OKR, Wiki Catalog, Agenda, Link Preview, etc.). These will display a placeholder message: `[暂不支持的Block类型: XXX]`
 
-**Confirmed in API but not yet supported:**
-- ISV (Type 28) - Third-party integrations
-- Mindnote (Type 29) - Mind maps
-- Sheet (Type 30) - Spreadsheet blocks
-- View (Type 33) - Database views
-- Task (Type 35) - Task blocks
-- OKR (Type 36) - OKR blocks
-- OKR Objective (Type 37) - OKR objectives
-- OKR Key Result (Type 38) - OKR key results
-- OKR Progress (Type 39) - OKR progress tracking
-- Add-ons (Type 40) - Plugin/Extension components (observed in documents)
-- Jira Issue (Type 41) - Jira issue integration
-- Wiki Catalog (Type 42) - Legacy wiki subpage list
-- Agenda (Type 44) - Meeting agenda
-- Agenda Item (Type 45) - Agenda items
-- Agenda Item Title (Type 46) - Agenda item titles
-- Agenda Item Content (Type 47) - Agenda item content
-- Link Preview (Type 48) - Link preview cards
-- Source Synced (Type 49) - Source synchronization blocks
-- Reference Synced (Type 50) - Reference synchronization blocks
-- Sub Page List (Type 51) - Wiki subpage list (new version)
-- AI Template (Type 52) - AI template blocks
-
-These blocks will be rendered with a placeholder: `[暂不支持的Block类型: XXX]`
+See the [Supported Block Types](#-supported-block-types) table for a complete list.
 
 ### 4. API Rate Limiting
 
@@ -594,10 +425,9 @@ The documentation is automatically updated on every push to the `main` branch.
 
 ## 📖 References
 
-- [Feishu Open Platform Docs](https://open.feishu.cn/document/home/index) - Official Feishu API documentation
-- [Document Block API](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/list) - Block API reference
-- [Block Type Reference](https://open.feishu.cn/document/docs/docs/data-structure/block) - All available block types
-- [API Documentation](build/dokka/html/index.html) - Generated KDoc (run `./gradlew dokkaHtml`)
+- [Feishu Open Platform Docs](https://open.feishu.cn/document/home/index)
+- [Document Block API](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/list)
+- [Block Type Reference](https://open.feishu.cn/document/docs/docs/data-structure/block)
 
 ## 📄 License
 
@@ -605,14 +435,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
-
-- 🏗️ Project architecture and structure
-- 🧩 How to add support for new block types
-- 📝 Coding standards and best practices
-- 🔄 Pull request process
-
-Issues and Pull Requests are always welcome!
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for architecture, coding standards, and PR guidelines.
 
 ## 🙏 Acknowledgments
 

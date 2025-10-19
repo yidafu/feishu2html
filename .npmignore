@@ -1,0 +1,61 @@
+# Source files - not needed in npm package
+src/
+*.kt
+
+# Build files - keep only JS output
+build/
+!build/compileSync/js/main/productionExecutable/
+
+# Gradle files
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+build.gradle.kts
+settings.gradle.kts
+gradle.properties
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.editorconfig
+
+# Test files
+test-*.mjs
+*Test.kt
+*Spec.kt
+
+# Documentation (except README and LICENSE)
+CONTRIBUTING.md
+MODULE.md
+CHANGELOG.md
+FILES.txt
+JS_TESTING.md
+NPM_PUBLISH.md
+*.plan.md
+
+# Config files
+.kotlintest
+.kt lint
+local.properties
+local.properties.example
+config.sample.kts
+
+# Backup and output
+backup/
+output/
+feishu-*.css
+feishu-*.html
+
+# CI/CD
+.github/
+
+# Misc
+.DS_Store
+*.log

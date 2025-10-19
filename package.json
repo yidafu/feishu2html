@@ -1,20 +1,34 @@
 {
-  "name": "@yidafu/feishu2html-test",
+  "name": "feishu2html",
   "version": "1.0.0",
-  "description": "Test scripts for Feishu2HTML Kotlin/JS output",
+  "description": "Convert Feishu (Lark) documents to beautiful, standalone HTML files - Kotlin Multiplatform library and CLI tool",
   "type": "module",
+  "main": "./build/compileSync/js/main/productionExecutable/kotlin/feishu2html.js",
+  "bin": {
+    "feishu2html": "./bin/feishu2html"
+  },
+  "files": [
+    "bin/",
+    "build/compileSync/js/main/productionExecutable/kotlin/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
+    "build": "./gradlew compileKotlinJs",
+    "prepublishOnly": "npm run build",
     "test:js": "node test-js.mjs",
-    "example:js": "node test-js-example.mjs",
-    "build:js": "./gradlew compileKotlinJs",
-    "test": "npm run build:js && npm run test:js"
+    "test:example": "node test-js-example.mjs",
+    "test": "npm run build && npm run test:js"
   },
   "keywords": [
     "feishu",
     "lark",
     "html",
     "converter",
-    "kotlin-js"
+    "cli",
+    "kotlin-js",
+    "multiplatform",
+    "document-converter"
   ],
   "author": "YidaFu <yidafu90@qq.com>",
   "license": "MIT",
@@ -24,6 +38,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/yidafu/feishu2html.git"
+  },
+  "homepage": "https://github.com/yidafu/feishu2html#readme",
+  "bugs": {
+    "url": "https://github.com/yidafu/feishu2html/issues"
   }
 }
 

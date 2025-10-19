@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+
+/**
+ * Feishu2HTML CLI wrapper for Node.js
+ *
+ * This script loads the Kotlin/JS compiled output and executes the main function.
+ *
+ * Installation:
+ *   npm install -g feishu2html
+ *
+ * Usage:
+ *   feishu2html <app_id> <app_secret> <document_id> [more_doc_ids...]
+ */
+
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Path to compiled Kotlin/JS output (relative to bin/)
+const jsModulePath = join(__dirname, '..', 'build', 'compileSync', 'js', 'main', 'productionExecutable', 'kotlin', 'feishu2html.js');
+
+try {
+    // Import and run the Kotlin/JS module
+    const module = await import('file://' + jsModulePath);
+
+    // The main function is automatically called when module loads in Kotlin/JS
+    // If it returns a promise, wait for it
+    if (module.default && typeof module.default.then === 'function') {
+        await module.default;
+    }
+} catch (error) {
+    console.error('Failed to load Feishu2HTML module:', error.message);
+    console.error('');
+    console.error('Make sure to build the JS module first:');
+    console.error('  npm run build');
+    console.error('');
+    process.exit(1);
+}
+
