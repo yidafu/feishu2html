@@ -400,13 +400,13 @@ open build/reports/jacoco/test/html/index.html
 The project uses [Dokka](https://kotlin.github.io/dokka/) to generate API documentation from KDoc comments.
 
 ```bash
-# Generate HTML documentation
-./gradlew dokkaHtml
+# Generate HTML documentation (Dokka V2)
+./gradlew dokkaGenerateHtml
 
-# Generate Markdown documentation
-./gradlew dokkaGfm
+# Generate all documentation formats
+./gradlew dokkaGenerate
 
-# Generate both formats
+# Or use the convenient docs task
 ./gradlew docs
 
 # Open HTML documentation
