@@ -318,7 +318,7 @@ data class Feishu2HtmlOptions(
     val filePath: String = "files",
     val customCss: String? = null,
     val externalCss: Boolean = true, // true = external file, false = inline
-    val cssFileName: String = "feishu-style-minimal.css", // Use minimal optimized CSS by default
+    val cssFileName: String = "feishu-style-optimized.css", // Use optimized CSS with official Feishu rules
 ) {
     init {
         // Create output directories

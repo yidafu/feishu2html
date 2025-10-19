@@ -228,14 +228,14 @@ fun main() = runBlocking {
 
 #### Using Official Feishu Styles (Default)
 
-By default, exported HTML uses an optimized version of official Feishu styles:
+By default, exported HTML uses an optimized version extracted from official Feishu CSS:
 
 ```kotlin
 val options = Feishu2HtmlOptions(
     appId = "your_app_id",
     appSecret = "your_app_secret",
-    externalCss = true,                      // Use external CSS file (default)
-    cssFileName = "feishu-style-minimal.css" // Optimized CSS (default, 11KB)
+    externalCss = true,                        // Use external CSS file (default)
+    cssFileName = "feishu-style-optimized.css" // Optimized CSS (default, 16KB)
 )
 
 Feishu2Html(options).use { converter ->
@@ -243,26 +243,22 @@ Feishu2Html(options).use { converter ->
 }
 // Output: 
 //   - document.html (with <link> to CSS)
-//   - feishu-style-minimal.css (optimized styles, only 11KB!)
+//   - feishu-style-optimized.css (optimized styles, only 16KB!)
 ```
 
-**Why Minimal CSS?**
-- 98.8% smaller than full CSS (11KB vs 1MB)
-- Only includes rules needed for our generated HTML
+**Why Optimized CSS?**
+- 98.4% smaller than full CSS (16KB vs 1MB)
+- Uses official Feishu CSS variables and rules
+- Only includes selectors needed for our generated HTML
 - Faster page load times
-- Still maintains authentic Feishu appearance
+- 100% authentic Feishu appearance
 
-**Using Full Official CSS:**
-
-If you need the complete Feishu CSS (for advanced features):
-
-```kotlin
-val options = Feishu2HtmlOptions(
-    appId = "your_app_id",
-    appSecret = "your_app_secret",
-    cssFileName = "feishu-style.css"  // Full official CSS (1MB)
-)
-```
+**Comparison:**
+| Version | Size | Lines | Source |
+|---------|------|-------|--------|
+| Optimized (default) | 16KB | 671 | Extracted from official CSS |
+| Full Official | 1MB | 40,566 | Complete feishu-style.css |
+| Reduction | **98.4%** | **98.3%** | - |
 
 #### Inline CSS Mode
 
