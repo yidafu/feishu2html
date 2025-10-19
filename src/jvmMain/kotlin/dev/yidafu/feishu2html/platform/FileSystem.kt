@@ -14,13 +14,19 @@ actual class PlatformFileSystem {
         return File(path).exists()
     }
 
-    actual fun writeText(path: String, content: String) {
+    actual fun writeText(
+        path: String,
+        content: String,
+    ) {
         val file = File(path)
         file.parentFile?.mkdirs()
         file.writeText(content)
     }
 
-    actual fun writeBytes(path: String, content: ByteArray) {
+    actual fun writeBytes(
+        path: String,
+        content: ByteArray,
+    ) {
         val file = File(path)
         file.parentFile?.mkdirs()
         file.writeBytes(content)
@@ -28,4 +34,3 @@ actual class PlatformFileSystem {
 }
 
 actual fun getPlatformFileSystem(): PlatformFileSystem = PlatformFileSystem()
-

@@ -21,4 +21,3 @@ actual fun createHttpClient(): HttpClient =
             )
         }
     }
-

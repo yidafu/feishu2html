@@ -1,16 +1,23 @@
 package dev.yidafu.feishu2html.platform
 
-import kotlin.js.Promise
-
 /**
  * Node.js fs module for ES Module
  */
 @JsModule("fs")
 @JsNonModule
 external object NodeFs {
-    fun mkdirSync(path: String, options: dynamic): dynamic
+    fun mkdirSync(
+        path: String,
+        options: dynamic,
+    ): dynamic
+
     fun existsSync(path: String): Boolean
-    fun writeFileSync(path: String, data: dynamic, encoding: String? = definedExternally): Unit
+
+    fun writeFileSync(
+        path: String,
+        data: dynamic,
+        encoding: String? = definedExternally,
+    ): Unit
 }
 
 /**
@@ -51,7 +58,10 @@ actual class PlatformFileSystem {
         }
     }
 
-    actual fun writeText(path: String, content: String) {
+    actual fun writeText(
+        path: String,
+        content: String,
+    ) {
         // Ensure parent directory exists
         val dirname = NodePath.dirname(path)
         createDirectories(dirname)
@@ -60,7 +70,10 @@ actual class PlatformFileSystem {
         NodeFs.writeFileSync(path, content, "utf8")
     }
 
-    actual fun writeBytes(path: String, content: ByteArray) {
+    actual fun writeBytes(
+        path: String,
+        content: ByteArray,
+    ) {
         // Ensure parent directory exists
         val dirname = NodePath.dirname(path)
         createDirectories(dirname)

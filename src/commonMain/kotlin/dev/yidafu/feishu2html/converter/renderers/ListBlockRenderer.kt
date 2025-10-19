@@ -48,11 +48,12 @@ internal object OrderedBlockRenderer : Renderable {
         val sequence = orderedBlock.ordered?.style?.sequence
 
         // Reset or increment counter based on sequence
-        listCounter = when (sequence) {
-            "1" -> 1
-            "auto" -> listCounter + 1
-            else -> listCounter + 1
-        }
+        listCounter =
+            when (sequence) {
+                "1" -> 1
+                "auto" -> listCounter + 1
+                else -> listCounter + 1
+            }
 
         logger.debug("Rendering ordered list item with {} elements", elements.size)
 

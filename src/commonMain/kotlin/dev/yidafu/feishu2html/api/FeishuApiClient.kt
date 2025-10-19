@@ -103,30 +103,31 @@ internal class FeishuApiClient(
                 }
 
             if (result.code != 0) {
-                val errorMsg = buildString {
-                    append("Failed to get document info\n")
-                    append("  Error code: ${result.code}\n")
-                    append("  Error message: ${result.msg}\n")
-                    append("  Document ID: $documentId\n")
-                    append("\nCommon causes:\n")
-                    when (result.code) {
-                        99991663 -> {
-                            append("  - App does not have permission to access this document\n")
-                            append("  - Please share the document with the app or move it to an accessible space\n")
-                        }
-                        99991668, 1770032 -> {
-                            append("  - App is missing required permissions\n")
-                            append("  - Please add 'docx:document' permission in Open Platform and publish the app\n")
-                            append("  - Please ensure the document is shared with the app\n")
-                        }
-                        else -> {
-                            append("  - Check if app has 'docx:document' permission\n")
-                            append("  - Check if app is published/enabled\n")
-                            append("  - Check if document ID is correct\n")
-                            append("  - Check if app has permission to access the document\n")
+                val errorMsg =
+                    buildString {
+                        append("Failed to get document info\n")
+                        append("  Error code: ${result.code}\n")
+                        append("  Error message: ${result.msg}\n")
+                        append("  Document ID: $documentId\n")
+                        append("\nCommon causes:\n")
+                        when (result.code) {
+                            99991663 -> {
+                                append("  - App does not have permission to access this document\n")
+                                append("  - Please share the document with the app or move it to an accessible space\n")
+                            }
+                            99991668, 1770032 -> {
+                                append("  - App is missing required permissions\n")
+                                append("  - Please add 'docx:document' permission in Open Platform and publish the app\n")
+                                append("  - Please ensure the document is shared with the app\n")
+                            }
+                            else -> {
+                                append("  - Check if app has 'docx:document' permission\n")
+                                append("  - Check if app is published/enabled\n")
+                                append("  - Check if document ID is correct\n")
+                                append("  - Check if app has permission to access the document\n")
+                            }
                         }
                     }
-                }
                 logger.error { errorMsg }
                 throw FeishuApiException(errorMsg, code = result.code)
             }
@@ -139,7 +140,8 @@ internal class FeishuApiClient(
                     )
 
             logger.info {
-                "Successfully fetched document info: ${documentInfo.title} (ID: ${documentInfo.documentId}, Revision: ${documentInfo.revisionId})"
+                "Successfully fetched document info: ${documentInfo.title} " +
+                    "(ID: ${documentInfo.documentId}, Revision: ${documentInfo.revisionId})"
             }
             documentInfo
         }
@@ -222,30 +224,31 @@ internal class FeishuApiClient(
                 }
 
             if (result.code != 0) {
-                val errorMsg = buildString {
-                    append("Failed to get document blocks\n")
-                    append("  Error code: ${result.code}\n")
-                    append("  Error message: ${result.msg}\n")
-                    append("  Document ID: $documentId\n")
-                    append("\nCommon causes:\n")
-                    when (result.code) {
-                        99991663 -> {
-                            append("  - App does not have permission to access this document\n")
-                            append("  - Please share the document with the app or move it to an accessible space\n")
-                        }
-                        99991668, 1770032 -> {
-                            append("  - App is missing required permissions\n")
-                            append("  - Please add 'docx:document' permission in Open Platform and publish the app\n")
-                            append("  - Please ensure the document is shared with the app\n")
-                        }
-                        else -> {
-                            append("  - Check if app has 'docx:document' permission\n")
-                            append("  - Check if app is published/enabled\n")
-                            append("  - Check if document ID is correct\n")
-                            append("  - Check if app has permission to access the document\n")
+                val errorMsg =
+                    buildString {
+                        append("Failed to get document blocks\n")
+                        append("  Error code: ${result.code}\n")
+                        append("  Error message: ${result.msg}\n")
+                        append("  Document ID: $documentId\n")
+                        append("\nCommon causes:\n")
+                        when (result.code) {
+                            99991663 -> {
+                                append("  - App does not have permission to access this document\n")
+                                append("  - Please share the document with the app or move it to an accessible space\n")
+                            }
+                            99991668, 1770032 -> {
+                                append("  - App is missing required permissions\n")
+                                append("  - Please add 'docx:document' permission in Open Platform and publish the app\n")
+                                append("  - Please ensure the document is shared with the app\n")
+                            }
+                            else -> {
+                                append("  - Check if app has 'docx:document' permission\n")
+                                append("  - Check if app is published/enabled\n")
+                                append("  - Check if document ID is correct\n")
+                                append("  - Check if app has permission to access the document\n")
+                            }
                         }
                     }
-                }
                 logger.error { errorMsg }
                 throw FeishuApiException(errorMsg, code = result.code)
             }

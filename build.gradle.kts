@@ -284,18 +284,22 @@ nmcp {
 // Signing 配置 (发布到 Maven Central 需要)
 // Patch compiled JS files: Replace eval('require') with require
 // This runs after JS compilation tasks
-tasks.matching { it.name == "compileProductionExecutableKotlinJs" || it.name == "jsProductionExecutableCompileSync" }.configureEach {
+tasks.matching {
+    it.name == "compileProductionExecutableKotlinJs" || it.name == "jsProductionExecutableCompileSync"
+}.configureEach {
     doLast {
-        val outputDirs = listOf(
-            File(project.buildDir, "compileSync/js/main/productionExecutable/kotlin"),
-            File(project.buildDir, "js/packages/feishu2html/kotlin")
-        )
+        val outputDirs =
+            listOf(
+                File(project.buildDir, "compileSync/js/main/productionExecutable/kotlin"),
+                File(project.buildDir, "js/packages/feishu2html/kotlin"),
+            )
 
         outputDirs.forEach { outputDir ->
             if (outputDir.exists()) {
-                val jsFiles = outputDir.listFiles { file ->
-                    file.extension == "mjs"
-                }
+                val jsFiles =
+                    outputDir.listFiles { file ->
+                        file.extension == "mjs"
+                    }
 
                 jsFiles?.forEach { file ->
                     var content = file.readText()

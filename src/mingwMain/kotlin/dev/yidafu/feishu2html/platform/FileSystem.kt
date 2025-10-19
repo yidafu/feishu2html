@@ -25,11 +25,17 @@ actual class PlatformFileSystem {
         return attrs != INVALID_FILE_ATTRIBUTES
     }
 
-    actual fun writeText(path: String, content: String) {
+    actual fun writeText(
+        path: String,
+        content: String,
+    ) {
         writeBytes(path, content.encodeToByteArray())
     }
 
-    actual fun writeBytes(path: String, content: ByteArray) {
+    actual fun writeBytes(
+        path: String,
+        content: ByteArray,
+    ) {
         val file = fopen(path, "wb")
         if (file != null) {
             try {
@@ -44,4 +50,3 @@ actual class PlatformFileSystem {
 }
 
 actual fun getPlatformFileSystem(): PlatformFileSystem = PlatformFileSystem()
-

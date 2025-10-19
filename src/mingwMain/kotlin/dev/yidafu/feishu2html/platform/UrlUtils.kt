@@ -22,4 +22,3 @@ actual fun decodeUrl(url: String): String {
         .replace("%3F", "?")
         .replace("%40", "@")
 }
-

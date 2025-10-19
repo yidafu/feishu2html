@@ -51,13 +51,14 @@ fun main() {
     println("=".repeat(60))
     println()
 
-    val options = Feishu2HtmlOptions(
-        appId = appId,
-        appSecret = appSecret,
-        outputDir = "./output",
-        imageDir = "./output/images",
-        fileDir = "./output/files",
-    )
+    val options =
+        Feishu2HtmlOptions(
+            appId = appId,
+            appSecret = appSecret,
+            outputDir = "./output",
+            imageDir = "./output/images",
+            fileDir = "./output/files",
+        )
 
     println("Initializing Feishu2Html with output directory: ${options.outputDir}")
 
@@ -91,4 +92,3 @@ fun main() {
         }
     }
 }
-

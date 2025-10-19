@@ -6,4 +6,3 @@ import io.ktor.client.*
  * Platform-specific HTTP client factory
  */
 expect fun createHttpClient(): HttpClient
-
