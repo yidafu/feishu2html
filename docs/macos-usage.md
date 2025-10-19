@@ -10,52 +10,46 @@ Feishu2HTML provides native macOS executable support, allowing you to run the co
 ## Prerequisites
 
 - **macOS**: 10.15 (Catalina) or higher
-- **Xcode**: Latest version with Command Line Tools installed
 - **Architecture**: Supports both Intel (x64) and Apple Silicon (ARM64)
 
-### Install Xcode Command Line Tools
+## Installation
 
+### Download Pre-built Binary
+
+Download the appropriate binary for your Mac from the [latest release](https://github.com/yidafu/feishu2html/releases/latest):
+
+#### For Apple Silicon (M1/M2/M3/M4)
 ```bash
-# Check if already installed
-xcode-select -p
+# Download macOS ARM64 binary
+curl -LO https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-macosArm64.tar.gz
 
-# Install if needed
-xcode-select --install
+# Extract
+tar -xzf feishu2html-1.0.1-macosArm64.tar.gz
 
-# Verify installation
-xcodebuild -version
+# Make executable
+chmod +x feishu2html.kexe
 ```
 
-## Building the Executable
-
-### For Apple Silicon (M1/M2/M3)
-
+#### For Intel Macs
 ```bash
-# Build release executable
-./gradlew linkReleaseExecutableMacosArm64
+# Download macOS x64 binary
+curl -LO https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-macosX64.tar.gz
 
-# The executable will be at:
-# build/bin/macosArm64/releaseExecutable/feishu2html.kexe
+# Extract
+tar -xzf feishu2html-1.0.1-macosX64.tar.gz
+
+# Make executable
+chmod +x feishu2html.kexe
 ```
 
-### For Intel Macs
+### Optional: Install to System Path
 
 ```bash
-# Build release executable
-./gradlew linkReleaseExecutableMacosX64
+# Move to /usr/local/bin for system-wide access
+sudo mv feishu2html.kexe /usr/local/bin/feishu2html
 
-# The executable will be at:
-# build/bin/macosX64/releaseExecutable/feishu2html.kexe
-```
-
-### Debug Build
-
-```bash
-# Build debug executable (with debug symbols)
-./gradlew linkDebugExecutableMacosArm64
-
-# Located at:
-# build/bin/macosArm64/debugExecutable/feishu2html.kexe
+# Now you can run from anywhere
+feishu2html <app_id> <app_secret> <document_id>
 ```
 
 ## Running the Application
@@ -64,29 +58,29 @@ xcodebuild -version
 
 ```bash
 # Export a single document
-./build/bin/macosArm64/releaseExecutable/feishu2html.kexe <app_id> <app_secret> <document_id>
+./feishu2html.kexe <app_id> <app_secret> <document_id>
 
 # Export multiple documents
-./build/bin/macosArm64/releaseExecutable/feishu2html.kexe <app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>
+./feishu2html.kexe <app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>
+
+# If installed to system path
+feishu2html <app_id> <app_secret> <document_id>
 ```
 
 ### Example
 
 ```bash
-./build/bin/macosArm64/releaseExecutable/feishu2html.kexe \
+# Using local binary
+./feishu2html.kexe \
     cli_a1234567890abcde \
     your_app_secret_here \
     doxcnABC123XYZ456
-```
 
-### Create Symlink for Easy Access
-
-```bash
-# Create symlink to /usr/local/bin
-sudo ln -s "$(pwd)/build/bin/macosArm64/releaseExecutable/feishu2html.kexe" /usr/local/bin/feishu2html
-
-# Now you can run from anywhere
-feishu2html <app_id> <app_secret> <document_id>
+# Using system-installed binary
+feishu2html \
+    cli_a1234567890abcde \
+    your_app_secret_here \
+    doxcnABC123XYZ456
 ```
 
 ## Verification
@@ -94,20 +88,14 @@ feishu2html <app_id> <app_secret> <document_id>
 ### Test Installation
 
 ```bash
-# 1. Build the executable
-./gradlew linkReleaseExecutableMacosArm64
+# 1. Check the file exists
+ls -lh feishu2html.kexe
 
-# 2. Check the file exists
-ls -lh build/bin/macosArm64/releaseExecutable/feishu2html.kexe
+# 2. Run without arguments (should show help)
+./feishu2html.kexe
 
-# 3. Make it executable (should already be)
-chmod +x build/bin/macosArm64/releaseExecutable/feishu2html.kexe
-
-# 4. Run without arguments (should show help)
-./build/bin/macosArm64/releaseExecutable/feishu2html.kexe
-
-# 5. Test with real credentials
-./build/bin/macosArm64/releaseExecutable/feishu2html.kexe \
+# 3. Test with real credentials
+./feishu2html.kexe \
     <your_app_id> \
     <your_app_secret> \
     <your_document_id>
@@ -136,66 +124,7 @@ Output directory: ./output
 Feishu2HTML application terminated
 ```
 
-## Build Commands Reference
-
-| Command | Description | Output Path |
-|---------|-------------|-------------|
-| `linkReleaseExecutableMacosArm64` | Build ARM64 release | `build/bin/macosArm64/releaseExecutable/feishu2html.kexe` |
-| `linkDebugExecutableMacosArm64` | Build ARM64 debug | `build/bin/macosArm64/debugExecutable/feishu2html.kexe` |
-| `linkReleaseExecutableMacosX64` | Build x64 release | `build/bin/macosX64/releaseExecutable/feishu2html.kexe` |
-| `linkDebugExecutableMacosX64` | Build x64 debug | `build/bin/macosX64/debugExecutable/feishu2html.kexe` |
-
-## File Locations
-
-```
-project/
-└── build/
-    └── bin/
-        ├── macosArm64/
-        │   ├── releaseExecutable/
-        │   │   └── feishu2html.kexe    # ARM64 release binary
-        │   └── debugExecutable/
-        │       └── feishu2html.kexe    # ARM64 debug binary
-        └── macosX64/
-            ├── releaseExecutable/
-            │   └── feishu2html.kexe    # Intel release binary
-            └── debugExecutable/
-                └── feishu2html.kexe    # Intel debug binary
-```
-
-## Configuration Options
-
-The macOS executable uses the same `Feishu2HtmlOptions` as other platforms:
-
-```kotlin
-val options = Feishu2HtmlOptions(
-    appId = "your_app_id",
-    appSecret = "your_app_secret",
-    outputDir = "./output",          // HTML output directory
-    imageDir = "./output/images",    // Image save directory
-    fileDir = "./output/files",      // Attachment save directory
-    imagePath = "images",            // Relative path for images in HTML
-    filePath = "files",              // Relative path for files in HTML
-)
-```
-
 ## Troubleshooting
-
-### Xcode Command Line Tools Not Found
-
-**Error**: `An error occurred during an xcrun execution`
-
-**Solution**:
-```bash
-# Install Xcode Command Line Tools
-xcode-select --install
-
-# If already installed, reset the path
-sudo xcode-select --reset
-
-# Verify
-xcodebuild -version
-```
 
 ### Permission Denied
 
@@ -203,16 +132,16 @@ xcodebuild -version
 
 **Solution**:
 ```bash
-chmod +x build/bin/macosArm64/releaseExecutable/feishu2html.kexe
+chmod +x feishu2html.kexe
 ```
 
 ### Wrong Architecture
 
 **Error**: `Bad CPU type in executable`
 
-**Solution**: Build for the correct architecture:
-- Apple Silicon (M1/M2/M3): Use `macosArm64`
-- Intel: Use `macosX64`
+**Solution**: Download the correct binary for your Mac:
+- Apple Silicon (M1/M2/M3/M4): Download `macosArm64` version
+- Intel: Download `macosX64` version
 
 Check your architecture:
 ```bash
@@ -221,24 +150,17 @@ uname -m
 # x86_64 = Intel
 ```
 
-### Linker Errors
+### Gatekeeper Warning
 
-**Error**: Various linker errors during build
+**Error**: macOS blocks the executable with "unidentified developer" warning
 
 **Solution**:
 ```bash
-# Clean and rebuild
-./gradlew clean
-./gradlew linkReleaseExecutableMacosArm64
-```
+# Remove quarantine attribute
+xattr -d com.apple.quarantine feishu2html.kexe
 
-### Memory Issues
-
-If building fails with out-of-memory errors:
-
-```bash
-# Increase Gradle memory
-./gradlew linkReleaseExecutableMacosArm64 -Dorg.gradle.jvmargs="-Xmx4g"
+# Or allow in System Preferences
+# System Preferences > Security & Privacy > General > Allow
 ```
 
 ## Performance

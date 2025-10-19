@@ -7,55 +7,39 @@ Feishu2HTML provides native Windows executable support, allowing you to run the 
 ## Prerequisites
 
 - **Windows**: 10 or higher (64-bit)
-- **MinGW-w64**: For building the executable
-- **MSYS2**: Recommended build environment
+- No additional dependencies required (standalone executable)
 
-### Install MSYS2 and MinGW-w64
+## Installation
 
-1. **Download and Install MSYS2**: https://www.msys2.org/
+### Download Pre-built Binary
 
-2. **Open MSYS2 MinGW 64-bit terminal**
+Download the Windows x64 binary from the [latest release](https://github.com/yidafu/feishu2html/releases/latest):
 
-3. **Install build tools**:
-```bash
-pacman -Syu
-pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-curl
-```
-
-## Building the Executable
-
-### From MSYS2 Terminal
-
-```bash
-# Navigate to project directory
-cd /c/path/to/feishu2html
-
-# Build release executable
-./gradlew linkReleaseExecutableMingwX64
-
-# The executable will be at:
-# build/bin/mingwX64/releaseExecutable/feishu2html.exe
-```
-
-### From Windows PowerShell/CMD
-
+**Using PowerShell:**
 ```powershell
-# Build release executable
-.\gradlew.bat linkReleaseExecutableMingwX64
+# Download Windows x64 binary
+Invoke-WebRequest -Uri "https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-mingwX64.zip" -OutFile "feishu2html.zip"
 
-# The executable will be at:
-# build\bin\mingwX64\releaseExecutable\feishu2html.exe
+# Extract
+Expand-Archive -Path feishu2html.zip -DestinationPath .
+
+# feishu2html.exe is now ready to use
 ```
 
-### Debug Build
+**Using Browser:**
+1. Go to [Releases page](https://github.com/yidafu/feishu2html/releases/latest)
+2. Download `feishu2html-1.0.1-mingwX64.zip`
+3. Extract the ZIP file
+4. Run `feishu2html.exe`
 
-```bash
-# Build debug executable (with debug symbols)
-./gradlew linkDebugExecutableMingwX64
+### Optional: Add to System PATH
 
-# Located at:
-# build/bin/mingwX64/debugExecutable/feishu2html.exe
-```
+To run from anywhere:
+1. Right-click "This PC" → Properties
+2. Advanced system settings → Environment Variables
+3. Under "System variables", select "Path" → Edit
+4. Add the directory containing `feishu2html.exe`
+5. Click OK and restart terminal
 
 ## Running the Application
 
@@ -63,16 +47,26 @@ cd /c/path/to/feishu2html
 
 ```powershell
 # Export a single document
-.\build\bin\mingwX64\releaseExecutable\feishu2html.exe <app_id> <app_secret> <document_id>
+.\feishu2html.exe <app_id> <app_secret> <document_id>
 
 # Export multiple documents
-.\build\bin\mingwX64\releaseExecutable\feishu2html.exe <app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>
+.\feishu2html.exe <app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>
+
+# If added to PATH
+feishu2html <app_id> <app_secret> <document_id>
 ```
 
 ### Example
 
 ```powershell
-.\build\bin\mingwX64\releaseExecutable\feishu2html.exe `
+# Using local executable
+.\feishu2html.exe `
+    cli_a1234567890abcde `
+    your_app_secret_here `
+    doxcnABC123XYZ456
+
+# If added to PATH
+feishu2html `
     cli_a1234567890abcde `
     your_app_secret_here `
     doxcnABC123XYZ456
