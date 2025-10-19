@@ -136,53 +136,35 @@ Or use [Maven Central](https://central.sonatype.com/artifact/dev.yidafu.feishu2h
 
 ### 4. CLI Usage
 
-#### Using Pre-built Binary
+**Using JAR (Recommended):**
 
-**macOS/Linux:**
-```bash
-# Download and extract
-curl -L -O https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-macosArm64.tar.gz
-tar -xzf feishu2html-1.0.1-macosArm64.tar.gz
+Download the JVM JAR from [GitHub Releases](https://github.com/yidafu/feishu2html/releases/latest):
 
-# Run
-./feishu2html.kexe <app_id> <app_secret> <document_id>
-
-# Export multiple documents
-./feishu2html.kexe <app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>
-```
-
-**Windows:**
-```bash
-# Download and extract the .zip file, then run:
-feishu2html.exe <app_id> <app_secret> <document_id>
-```
-
-**JVM JAR (cross-platform):**
 ```bash
 # Download
 curl -L -O https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-jvm.jar
 
-# Run
+# Export a single document
 java -jar feishu2html-1.0.1-jvm.jar <app_id> <app_secret> <document_id>
+
+# Export multiple documents
+java -jar feishu2html-1.0.1-jvm.jar <app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>
 ```
 
-#### Building from Source
+**Using Gradle (from source):**
 
 ```bash
 # Clone the repository
 git clone https://github.com/yidafu/feishu2html.git
 cd feishu2html
 
-# Build the project
-./gradlew build
-
-# Run using Gradle
+# Build and run
 ./gradlew run --args="<app_id> <app_secret> <document_id>"
 ```
 
 **Example:**
 ```bash
-./gradlew run --args="cli_a1234567890abcde your_app_secret_here doxcnABC123XYZ456"
+java -jar feishu2html-1.0.1-jvm.jar cli_a1234567890abcde your_app_secret_here doxcnABC123XYZ456
 ```
 
 Output files will be saved to `./output/` directory by default.
