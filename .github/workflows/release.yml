@@ -150,7 +150,7 @@ jobs:
         run: |
           cd build/bin/mingwX64/releaseExecutable
           7z a feishu2html-${{ needs.create-release.outputs.version }}-mingwX64.zip feishu2html.exe
-          mv feishu2html-${{ needs.create-release.outputs.version }}-mingwX64.zip ${{ github.workspace }}/
+          mv feishu2html-${{ needs.create-release.outputs.version }}-mingwX64.zip ../../../../
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
