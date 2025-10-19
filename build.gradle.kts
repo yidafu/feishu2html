@@ -169,7 +169,8 @@ dependencies {
     }
 }
 
-// Maven Publishing 配置
+// Maven Publishing 配置 - POM metadata for all publications
+// NMCP plugin automatically uses these publications for uploading to Central Portal
 publishing {
     publications {
         withType<MavenPublication> {
@@ -201,8 +202,6 @@ publishing {
             }
         }
     }
-
-    // Note: Repository configuration moved to nexusPublishing block below
 }
 
 // NMCP Plugin 配置 - Modern plugin for Central Portal
