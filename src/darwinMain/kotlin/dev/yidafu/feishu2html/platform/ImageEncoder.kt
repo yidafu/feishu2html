@@ -14,7 +14,7 @@ actual object ImageEncoder {
         val data = NSData.dataWithContentsOfURL(fileUrl)
             ?: throw IllegalArgumentException("Image file not found or cannot be read: $filePath")
 
-        val base64 = data.base64EncodedStringWithOptions(0)
+        val base64 = data.base64EncodedStringWithOptions(0u)
         val mimeType = getMimeType(filePath)
 
         return "data:$mimeType;base64,$base64"

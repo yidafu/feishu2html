@@ -110,9 +110,6 @@ kotlin {
                 // HTML DSL (多平台版本)
                 implementation(libs.kotlinx.html)
 
-                // CLI 参数解析
-                implementation(libs.kotlinx.cli)
-
                 // 日志
                 implementation(libs.kotlin.logging)
 
@@ -121,16 +118,34 @@ kotlin {
             }
         }
 
+        // CLI sourceSet (支持 CLI 的平台)
+        val cliMain by creating {
+            dependsOn(commonMain)
+            dependencies {
+                // CLI 参数解析 (不支持 iOS)
+                implementation(libs.kotlinx.cli)
+            }
+        }
+
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.ktor.client.mock)
+                // Kotest 多平台支持
+                implementation(libs.kotest.assertions.core)
+                implementation(libs.kotest.property)
+                implementation(libs.kotest.framework.engine)
             }
+        }
+
+        val cliTest by creating {
+            dependsOn(commonTest)
         }
 
         // JVM 特定依赖
         val jvmMain by getting {
+            dependsOn(cliMain)  // JVM 支持 CLI
             dependencies {
                 // Ktor CIO 引擎 (JVM)
                 implementation(libs.ktor.client.cio)
@@ -141,6 +156,7 @@ kotlin {
         }
 
         val jvmTest by getting {
+            dependsOn(cliTest)  // JVM 测试包含 CLI 测试
             dependencies {
                 // JVM 测试框架
                 implementation(libs.bundles.kotest)
@@ -150,6 +166,7 @@ kotlin {
 
         // JS 特定依赖
         val jsMain by getting {
+            dependsOn(cliMain)  // JS 支持 CLI
             dependencies {
                 // Ktor JS 引擎
                 implementation(libs.ktor.client.js)
@@ -164,10 +181,16 @@ kotlin {
             }
         }
 
-        val macosX64Main by getting { dependsOn(darwinMain) }
-        val macosArm64Main by getting { dependsOn(darwinMain) }
+        // macOS 平台 (支持 CLI)
+        val macosMain by creating {
+            dependsOn(darwinMain)
+            dependsOn(cliMain)  // macOS 支持 CLI
+        }
 
-        // iOS 平台
+        val macosX64Main by getting { dependsOn(macosMain) }
+        val macosArm64Main by getting { dependsOn(macosMain) }
+
+        // iOS 平台 (不支持 CLI)
         val iosMain by creating {
             dependsOn(darwinMain)
         }
@@ -179,6 +202,7 @@ kotlin {
         // Linux 平台 (POSIX mkdir)
         val linuxMain by creating {
             dependsOn(commonMain)
+            dependsOn(cliMain)  // Linux 支持 CLI
             dependencies {
                 // 使用 CIO 引擎代替 Curl，避免 libcurl 依赖问题
                 implementation(libs.ktor.client.cio)
@@ -190,6 +214,7 @@ kotlin {
         // Windows 平台 (Windows API mkdir)
         val mingwMain by creating {
             dependsOn(commonMain)
+            dependsOn(cliMain)  // Windows 支持 CLI
             dependencies {
                 // 使用 CIO 引擎代替 Curl，避免 libcurl 依赖问题
                 implementation(libs.ktor.client.curl)
