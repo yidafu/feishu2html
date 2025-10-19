@@ -31,8 +31,8 @@ Feishu2HTML 能够高度还原飞书文档的原始样式和布局。以下是�
     <th align="center">本地生成 HTML 效果</th>
   </tr>
   <tr>
-    <td><img src="docs/feishu-online.png" alt="飞书在线效果" /></td>
-    <td><img src="docs/feishu-local.png" alt="本地生成 HTML 效果" /></td>
+    <td><img src="docs/feishu-online.png" alt="飞书在线效果" height="400" /></td>
+    <td><img src="docs/feishu-local.png" alt="本地生成 HTML 效果" height="400" /></td>
   </tr>
 </table>
 
