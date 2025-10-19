@@ -31,9 +31,18 @@ fun main(args: Array<String>) {
     CliRunner.printBanner(parsed.appId, parsed.documentIds.size, "JVM")
 
     try {
-        logger.info("Starting export process with template mode: {}", parsed.templateMode)
+        logger.info("Starting export process with template mode: {}, inline images: {}, inline CSS: {}, hide unsupported: {}",
+            parsed.templateMode, parsed.inlineImages, parsed.inlineCss, parsed.hideUnsupported)
         runBlocking {
-            CliRunner.runExport(parsed.appId, parsed.appSecret, parsed.documentIds, parsed.templateMode)
+            CliRunner.runExport(
+                parsed.appId,
+                parsed.appSecret,
+                parsed.documentIds,
+                parsed.templateMode,
+                parsed.inlineImages,
+                parsed.inlineCss,
+                parsed.hideUnsupported
+            )
         }
         logger.info("Export completed successfully")
     } catch (e: Exception) {

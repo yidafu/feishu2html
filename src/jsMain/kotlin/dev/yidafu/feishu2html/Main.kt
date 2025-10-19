@@ -39,7 +39,15 @@ fun main() {
     // Use GlobalScope.promise to return a Promise for Node.js async handling
     GlobalScope.promise {
         try {
-            CliRunner.runExport(parsed.appId, parsed.appSecret, parsed.documentIds, parsed.templateMode)
+            CliRunner.runExport(
+                parsed.appId,
+                parsed.appSecret,
+                parsed.documentIds,
+                parsed.templateMode,
+                parsed.inlineImages,
+                parsed.inlineCss,
+                parsed.hideUnsupported
+            )
         } catch (e: Exception) {
             CliRunner.handleError(e)
             console.error(e)

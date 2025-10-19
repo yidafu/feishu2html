@@ -24,7 +24,15 @@ fun main(args: Array<String>) {
 
     runBlocking {
         try {
-            CliRunner.runExport(parsed.appId, parsed.appSecret, parsed.documentIds, parsed.templateMode)
+            CliRunner.runExport(
+                parsed.appId,
+                parsed.appSecret,
+                parsed.documentIds,
+                parsed.templateMode,
+                parsed.inlineImages,
+                parsed.inlineCss,
+                parsed.hideUnsupported
+            )
         } catch (e: Exception) {
             CliRunner.handleError(e)
             e.printStackTrace()

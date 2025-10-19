@@ -6,6 +6,7 @@ import dev.yidafu.feishu2html.converter.HtmlBuilder
 import dev.yidafu.feishu2html.converter.CssMode
 import dev.yidafu.feishu2html.converter.HtmlTemplate
 import dev.yidafu.feishu2html.platform.getPlatformFileSystem
+import dev.yidafu.feishu2html.platform.ImageEncoder
 import dev.yidafu.feishu2html.converter.EmbeddedResources
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
@@ -24,14 +25,14 @@ private val logger = KotlinLogging.logger {}
 private fun createHtmlTemplate(mode: TemplateMode): HtmlTemplate {
     return when (mode) {
         TemplateMode.DEFAULT -> HtmlTemplate.Default
-        
+
         TemplateMode.FRAGMENT -> HtmlTemplate.Fragment { content ->
             // Simple fragment template: just a wrapper div
             div(classes = "feishu-document") {
                 content()
             }
         }
-        
+
         TemplateMode.FULL -> HtmlTemplate.Full { content ->
             // Minimal full template with basic structure
             lang = "zh-CN"
@@ -88,6 +89,9 @@ class Feishu2Html(
 ) : AutoCloseable {
     private val apiClient = FeishuApiClient(options.appId, options.appSecret)
     private val fileSystem = getPlatformFileSystem()
+
+    // Cache for base64 encoded images (token -> base64 data URL)
+    private val imageBase64Cache = mutableMapOf<String, String>()
 
     /**
      * Export a single Feishu document to HTML file
@@ -161,6 +165,8 @@ class Feishu2Html(
                     cssFileName = options.cssFileName,
                     customCss = options.customCss,
                     template = template,
+                    imageBase64Cache = imageBase64Cache,
+                    showUnsupportedBlocks = options.showUnsupportedBlocks,
                 )
             val html = htmlBuilder.build(orderedBlocks, blocks)
 
@@ -230,6 +236,17 @@ class Feishu2Html(
                                         } else {
                                             logger.debug { "Image already exists, skipping: $token" }
                                         }
+
+                                        // Convert to base64 if inline images enabled
+                                        if (options.inlineImages) {
+                                            try {
+                                                val base64 = ImageEncoder.encodeToBase64DataUrl(imagePath)
+                                                imageBase64Cache[token] = base64
+                                                logger.debug { "Image encoded to base64: $token" }
+                                            } catch (e: Exception) {
+                                                logger.error(e) { "Failed to encode image to base64: $token" }
+                                            }
+                                        }
                                     } catch (e: Exception) {
                                         logger.error(e) { "Failed to download image: $token" }
                                     }
@@ -272,6 +289,17 @@ class Feishu2Html(
                                             logger.info { "Board exported as image: $token" }
                                         } else {
                                             logger.debug { "Board image already exists, skipping: $token" }
+                                        }
+
+                                        // Convert to base64 if inline images enabled
+                                        if (options.inlineImages) {
+                                            try {
+                                                val base64 = ImageEncoder.encodeToBase64DataUrl(imagePath)
+                                                imageBase64Cache[token] = base64
+                                                logger.debug { "Board image encoded to base64: $token" }
+                                            } catch (e: Exception) {
+                                                logger.error(e) { "Failed to encode board image to base64: $token" }
+                                            }
                                         }
                                     } catch (e: Exception) {
                                         logger.error(e) { "Failed to export board: $token" }
@@ -332,10 +360,10 @@ class Feishu2Html(
 enum class TemplateMode {
     /** Use the default built-in template */
     DEFAULT,
-    
+
     /** Use a minimal fragment template (custom body structure) */
     FRAGMENT,
-    
+
     /** Use a minimal full template (custom HTML structure) */
     FULL
 }
@@ -367,6 +395,8 @@ data class Feishu2HtmlOptions(
     val externalCss: Boolean = true, // true = external file, false = inline
     val cssFileName: String = "feishu-style-optimized.css", // Use optimized CSS with official Feishu rules
     val templateMode: TemplateMode = TemplateMode.DEFAULT,
+    val inlineImages: Boolean = false, // true = embed images as base64 data URLs
+    val showUnsupportedBlocks: Boolean = true, // true = show unsupported block warnings (for debugging)
 ) {
     init {
         // Create output directories

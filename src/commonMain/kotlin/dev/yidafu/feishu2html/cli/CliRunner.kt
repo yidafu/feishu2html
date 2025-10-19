@@ -13,6 +13,9 @@ data class CliArgs(
     val appSecret: String,
     val documentIds: List<String>,
     val templateMode: TemplateMode = TemplateMode.DEFAULT,
+    val inlineImages: Boolean = false,
+    val inlineCss: Boolean = false,
+    val hideUnsupported: Boolean = false,
 )
 
 /**
@@ -43,6 +46,27 @@ object CliRunner {
             fullName = "template",
             description = "HTML template mode (default, fragment, or full)"
         ).default("default")
+
+        // Define --inline-images option
+        val inlineImages by parser.option(
+            ArgType.Boolean,
+            fullName = "inline-images",
+            description = "Embed images as base64 data URLs"
+        ).default(false)
+
+        // Define --inline-css option
+        val inlineCss by parser.option(
+            ArgType.Boolean,
+            fullName = "inline-css",
+            description = "Embed CSS styles inline in <style> tag"
+        ).default(false)
+
+        // Define --hide-unsupported option
+        val hideUnsupported by parser.option(
+            ArgType.Boolean,
+            fullName = "hide-unsupported",
+            description = "Hide unsupported block type warnings"
+        ).default(false)
 
         // Define required positional arguments
         val appId by parser.argument(
@@ -90,7 +114,10 @@ object CliRunner {
                 appId = appId,
                 appSecret = appSecret,
                 documentIds = documentIds.toList(),
-                templateMode = template
+                templateMode = template,
+                inlineImages = inlineImages,
+                inlineCss = inlineCss,
+                hideUnsupported = hideUnsupported
             )
         } catch (e: IllegalStateException) {
             // kotlinx-cli throws IllegalStateException for parsing errors
@@ -118,12 +145,16 @@ object CliRunner {
         println("                          default:  Standard Feishu template (default)")
         println("                          fragment: Minimal template with custom body wrapper")
         println("                          full:     Minimal template with basic HTML structure")
+        println("  --inline-images         Embed images as base64 data URLs")
+        println("  --inline-css            Embed CSS styles inline in <style> tag")
+        println("  --hide-unsupported      Hide unsupported block type warnings")
         println("  -h, --help              Show this help message")
         println()
         println("Examples:")
         println("  feishu2html cli_a1234567890abcde cli_1234567890abcdef1234567890abcd doxcnABCDEFGHIJK")
         println("  feishu2html --template fragment cli_a123 cli_1234 doxcnABC")
-        println("  feishu2html -t full cli_a123 cli_1234 doxcnABC doxcnDEF")
+        println("  feishu2html --inline-images --inline-css cli_a123 cli_1234 doxcnABC")
+        println("  feishu2html -t full --inline-images cli_a123 cli_1234 doxcnABC doxcnDEF")
     }
 
     /**
@@ -157,6 +188,9 @@ object CliRunner {
         appId: String,
         appSecret: String,
         templateMode: TemplateMode = TemplateMode.DEFAULT,
+        inlineImages: Boolean = false,
+        inlineCss: Boolean = false,
+        hideUnsupported: Boolean = false,
     ): Feishu2HtmlOptions =
         Feishu2HtmlOptions(
             appId = appId,
@@ -165,6 +199,9 @@ object CliRunner {
             imageDir = "./output/images",
             fileDir = "./output/files",
             templateMode = templateMode,
+            inlineImages = inlineImages,
+            externalCss = !inlineCss,  // Invert logic: inlineCss = true means externalCss = false
+            showUnsupportedBlocks = !hideUnsupported,  // Invert logic: hideUnsupported = true means showUnsupportedBlocks = false
         )
 
     /**
@@ -178,11 +215,23 @@ object CliRunner {
         appSecret: String,
         documentIds: List<String>,
         templateMode: TemplateMode = TemplateMode.DEFAULT,
+        inlineImages: Boolean = false,
+        inlineCss: Boolean = false,
+        hideUnsupported: Boolean = false,
     ) {
-        val options = createOptions(appId, appSecret, templateMode)
+        val options = createOptions(appId, appSecret, templateMode, inlineImages, inlineCss, hideUnsupported)
 
         println("Initializing Feishu2Html with output directory: ${options.outputDir}")
         println("Template mode: $templateMode")
+        if (inlineImages) {
+            println("Inline images: enabled (base64 encoding)")
+        }
+        if (inlineCss) {
+            println("Inline CSS: enabled")
+        }
+        if (hideUnsupported) {
+            println("Hide unsupported blocks: enabled")
+        }
 
         Feishu2Html(options).use { feishu2Html ->
             println("Starting document export process")

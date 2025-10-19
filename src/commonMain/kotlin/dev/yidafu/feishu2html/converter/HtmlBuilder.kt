@@ -179,6 +179,8 @@ internal class HtmlBuilder(
     private val cssFileName: String = "feishu-style.css",
     private val customCss: String? = null,
     private val template: HtmlTemplate = HtmlTemplate.Default,
+    private val imageBase64Cache: Map<String, String> = emptyMap(),
+    private val showUnsupportedBlocks: Boolean = true,
 ) {
     private val builderLogger = KotlinLogging.logger {}
 
@@ -376,6 +378,8 @@ internal class HtmlBuilder(
             RenderContext(
                 textConverter = TextElementConverter(),
                 processedBlocks = processedBlocks,
+                imageBase64Cache = imageBase64Cache,
+                showUnsupportedBlocks = showUnsupportedBlocks,
             )
 
         for (block in blocks) {

@@ -21,7 +21,10 @@ internal object ImageBlockRenderer : Renderable {
         val height = imageBlock.image?.height
         val alignClass = getAlignClass(imageBlock.image?.align)
 
-        parent.img(src = "images/$token.png", alt = "image") {
+        // Use base64 data URL if available, otherwise use relative path
+        val imageSrc = context.imageBase64Cache[token] ?: "images/$token.png"
+
+        parent.img(src = imageSrc, alt = "image") {
             if (alignClass.isNotEmpty()) {
                 classes = setOf(alignClass)
             }
@@ -46,9 +49,12 @@ internal object BoardBlockRenderer : Renderable {
         val boardBlock = block as BoardBlock
         val token = boardBlock.board?.token ?: return
 
+        // Use base64 data URL if available, otherwise use relative path
+        val imageSrc = context.imageBase64Cache[token] ?: "images/$token.png"
+
         parent.div(classes = "board-container") {
             style = "width: 820px; height: 400px; overflow: hidden; display: block; margin: 0 auto; margin-top: 0;"
-            img(src = "images/$token.png", alt = "Electronic Whiteboard") {
+            img(src = imageSrc, alt = "Electronic Whiteboard") {
                 style = "display: block; margin: 0 auto;"
             }
         }
