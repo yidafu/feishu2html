@@ -16,7 +16,7 @@ internal object QuoteContainerBlockRenderer : Renderable {
     ) {
         val quoteContainer = block as QuoteContainerBlock
         logger.debug("Rendering quote container with {} children", quoteContainer.children?.size ?: 0)
-        parent.div(classes = "quote-container") {
+        parent.blockQuote(classes = "quote-container-block") {
             quoteContainer.children?.forEach { childId ->
                 val childBlock = allBlocks[childId]
                 if (childBlock != null) {

@@ -18,8 +18,9 @@ internal object TextBlockRenderer : Renderable {
         val elements = textBlock.text?.elements ?: return
         logger.debug("Rendering text block with {} elements", elements.size)
         val alignClass = getAlignClass(textBlock.text?.style?.align)
+        val textClass = "text-block" + if (alignClass.isNotEmpty()) " $alignClass" else ""
 
-        parent.p(classes = alignClass.takeIf { it.isNotEmpty() }) {
+        parent.p(classes = textClass) {
             context.textConverter.convertElements(elements, this)
         }
     }

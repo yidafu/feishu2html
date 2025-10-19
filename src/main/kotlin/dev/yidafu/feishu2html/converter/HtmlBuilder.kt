@@ -205,10 +205,6 @@ internal class HtmlBuilder(
         allBlocks: Map<String, Block>,
         parent: FlowContent,
     ) {
-        var inBulletList = false
-        var inOrderedList = false
-        var currentList: UL? = null
-        var currentOL: OL? = null
         val processedBlocks = mutableSetOf<String>() // 记录已处理的块
 
         // 创建渲染上下文
@@ -224,65 +220,12 @@ internal class HtmlBuilder(
                 continue
             }
 
-            // 处理列表的开始和结束
-            when (block.blockType) {
-                BlockType.BULLET -> {
-                    if (!inBulletList) {
-                        // 关闭有序列表（如果有）
-                        if (inOrderedList) {
-                            currentOL = null
-                            inOrderedList = false
-                        }
-                        // 开启无序列表
-                        parent.ul {
-                            currentList = this
-                            inBulletList = true
-                            renderBlock(block, this, allBlocks, context)
-                        }
-                    } else {
-                        // 在现有列表中添加项
-                        currentList?.let { renderBlock(block, it, allBlocks, context) }
-                    }
-                    continue
-                }
-                BlockType.ORDERED -> {
-                    if (!inOrderedList) {
-                        // 关闭无序列表（如果有）
-                        if (inBulletList) {
-                            currentList = null
-                            inBulletList = false
-                        }
-                        // 开启有序列表
-                        parent.ol {
-                            currentOL = this
-                            inOrderedList = true
-                            renderBlock(block, this, allBlocks, context)
-                        }
-                    } else {
-                        // 在现有列表中添加项
-                        currentOL?.let { renderBlock(block, it, allBlocks, context) }
-                    }
-                    continue
-                }
-                else -> {
-                    // 关闭所有列表
-                    if (inBulletList) {
-                        currentList = null
-                        inBulletList = false
-                    }
-                    if (inOrderedList) {
-                        currentOL = null
-                        inOrderedList = false
-                    }
-                }
-            }
-
             // 跳过某些块类型（它们会被父块处理）
             if (shouldSkipBlock(block)) {
                 continue
             }
 
-            // 使用全局renderBlock函数渲染
+            // 渲染块 - 列表项现在是独立的 div 块，不需要 ul/ol 包裹
             renderBlock(block, parent, allBlocks, context)
         }
     }

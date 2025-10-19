@@ -20,17 +20,21 @@ internal object CalloutBlockRenderer : Renderable {
         logger.debug("Rendering callout block: color={}, children={}",
             colorClass, calloutBlock.children?.size ?: 0)
 
-        parent.div("callout callout-$colorClass") {
+        parent.div(classes = "callout-block callout-$colorClass") {
             if (emoji != null) {
-                span(classes = "callout-emoji") { +emoji }
+                div(classes = "callout-emoji-container") {
+                    span(classes = "callout-block-emoji") { +emoji }
+                }
             }
 
-            // 递归渲染子块
-            calloutBlock.children?.forEach { childId ->
-                val childBlock = allBlocks[childId]
-                if (childBlock != null) {
-                    context.processedBlocks.add(childId)
-                    renderBlock(childBlock, this, allBlocks, context)
+            div(classes = "callout-block-children") {
+                // 递归渲染子块
+                calloutBlock.children?.forEach { childId ->
+                    val childBlock = allBlocks[childId]
+                    if (childBlock != null) {
+                        context.processedBlocks.add(childId)
+                        renderBlock(childBlock, this, allBlocks, context)
+                    }
                 }
             }
         }

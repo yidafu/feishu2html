@@ -89,4 +89,5 @@ internal data class TextStyle(
     val folded: Boolean? = null,
     val language: Int? = null,
     val wrap: Boolean? = null,
+    val sequence: String? = null,  // For ordered lists: "1", "auto", etc.
 )

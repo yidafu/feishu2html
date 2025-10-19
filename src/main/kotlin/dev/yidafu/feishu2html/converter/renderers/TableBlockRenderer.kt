@@ -21,7 +21,7 @@ internal object TableBlockRenderer : Renderable {
         logger.debug("Rendering table: {}x{} ({}cells)",
             property.rowSize, property.columnSize, children.size)
 
-        parent.table {
+        parent.table(classes = "table-block") {
             var currentRowCells = mutableListOf<TableCellBlock>()
 
             for (childId in children) {

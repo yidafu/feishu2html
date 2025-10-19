@@ -21,9 +21,11 @@ internal object CodeBlockRenderer : Renderable {
         logger.debug("Rendering code block: language={}, elements={}", language, elements.size)
         val content = elements.joinToString("") { it.textRun?.content ?: "" }
 
-        parent.pre {
-            code(classes = "language-$language") {
-                +content
+        parent.div(classes = "code-block") {
+            pre {
+                code(classes = "hljs language-$language") {
+                    +content
+                }
             }
         }
     }
@@ -73,15 +75,17 @@ internal object TodoBlockRenderer : Renderable {
         val checked = todoBlock.todo?.style?.done == true
         logger.debug("Rendering todo block: checked={}, elements={}", checked, elements.size)
 
-        parent.div(classes = "todo") {
-            input(type = InputType.checkBox) {
-                if (checked) {
-                    this.checked = true
+        parent.div(classes = "todo-block") {
+            div(classes = "todo-block_content") {
+                input(type = InputType.checkBox) {
+                    if (checked) {
+                        this.checked = true
+                    }
+                    disabled = true
                 }
-                disabled = true
-            }
-            span {
-                context.textConverter.convertElements(elements, this)
+                span {
+                    context.textConverter.convertElements(elements, this)
+                }
             }
         }
     }

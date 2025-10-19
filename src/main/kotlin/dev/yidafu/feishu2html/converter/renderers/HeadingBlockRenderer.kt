@@ -124,35 +124,39 @@ private fun renderHeading(
     val elements = headingData?.elements ?: return
     logger.debug("Rendering heading level {} with {} elements", level, elements.size)
     val alignClass = getAlignClass(headingData.style?.align)
+    val feishuClass = "heading heading-h$level" + if (alignClass.isNotEmpty()) " $alignClass" else ""
 
     when (level) {
         1 ->
-            parent.h1(classes = alignClass.takeIf { it.isNotEmpty() }) {
+            parent.h1(classes = feishuClass) {
                 context.textConverter.convertElements(elements, this)
             }
         2 ->
-            parent.h2(classes = alignClass.takeIf { it.isNotEmpty() }) {
+            parent.h2(classes = feishuClass) {
                 context.textConverter.convertElements(elements, this)
             }
         3 ->
-            parent.h3(classes = alignClass.takeIf { it.isNotEmpty() }) {
+            parent.h3(classes = feishuClass) {
                 context.textConverter.convertElements(elements, this)
             }
         4 ->
-            parent.h4(classes = alignClass.takeIf { it.isNotEmpty() }) {
+            parent.h4(classes = feishuClass) {
                 context.textConverter.convertElements(elements, this)
             }
         5 ->
-            parent.h5(classes = alignClass.takeIf { it.isNotEmpty() }) {
+            parent.h5(classes = feishuClass) {
                 context.textConverter.convertElements(elements, this)
             }
         6 ->
-            parent.h6(classes = alignClass.takeIf { it.isNotEmpty() }) {
+            parent.h6(classes = feishuClass) {
                 context.textConverter.convertElements(elements, this)
             }
-        else ->
-            parent.h6(classes = alignClass.takeIf { it.isNotEmpty() }) {
+        else -> {
+            // h7-h9 rendered as h6 since HTML only supports h1-h6
+            val headingClass = "heading heading-h$level" + if (alignClass.isNotEmpty()) " $alignClass" else ""
+            parent.h6(classes = headingClass) {
                 context.textConverter.convertElements(elements, this)
             }
+        }
     }
 }
