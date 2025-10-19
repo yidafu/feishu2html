@@ -5,7 +5,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 
 class BlockTypeTest : FunSpec({
 
@@ -56,11 +55,12 @@ class BlockTypeTest : FunSpec({
     }
 
     test("应该包含所有Heading类型") {
-        val headingTypes = listOf(
-            BlockType.HEADING1, BlockType.HEADING2, BlockType.HEADING3,
-            BlockType.HEADING4, BlockType.HEADING5, BlockType.HEADING6,
-            BlockType.HEADING7, BlockType.HEADING8, BlockType.HEADING9
-        )
+        val headingTypes =
+            listOf(
+                BlockType.HEADING1, BlockType.HEADING2, BlockType.HEADING3,
+                BlockType.HEADING4, BlockType.HEADING5, BlockType.HEADING6,
+                BlockType.HEADING7, BlockType.HEADING8, BlockType.HEADING9,
+            )
 
         for (heading in headingTypes) {
             BlockType.entries shouldContain heading
@@ -74,10 +74,14 @@ class BlockTypeTest : FunSpec({
     }
 
     test("应该包含所有媒体类型") {
-        val mediaTypes = listOf(
-            BlockType.IMAGE, BlockType.FILE, BlockType.BOARD,
-            BlockType.DIAGRAM, BlockType.IFRAME
-        )
+        val mediaTypes =
+            listOf(
+                BlockType.IMAGE,
+                BlockType.FILE,
+                BlockType.BOARD,
+                BlockType.DIAGRAM,
+                BlockType.IFRAME,
+            )
 
         for (media in mediaTypes) {
             BlockType.entries shouldContain media
@@ -85,11 +89,15 @@ class BlockTypeTest : FunSpec({
     }
 
     test("应该包含所有容器类型") {
-        val containerTypes = listOf(
-            BlockType.GRID, BlockType.GRID_COLUMN,
-            BlockType.TABLE, BlockType.TABLE_CELL,
-            BlockType.CALLOUT, BlockType.QUOTE_CONTAINER
-        )
+        val containerTypes =
+            listOf(
+                BlockType.GRID,
+                BlockType.GRID_COLUMN,
+                BlockType.TABLE,
+                BlockType.TABLE_CELL,
+                BlockType.CALLOUT,
+                BlockType.QUOTE_CONTAINER,
+            )
 
         for (container in containerTypes) {
             BlockType.entries shouldContain container
@@ -97,12 +105,13 @@ class BlockTypeTest : FunSpec({
     }
 
     test("应该包含所有OKR相关类型") {
-        val okrTypes = listOf(
-            BlockType.OKR,
-            BlockType.OKR_OBJECTIVE,
-            BlockType.OKR_KEY_RESULT,
-            BlockType.OKR_PROGRESS
-        )
+        val okrTypes =
+            listOf(
+                BlockType.OKR,
+                BlockType.OKR_OBJECTIVE,
+                BlockType.OKR_KEY_RESULT,
+                BlockType.OKR_PROGRESS,
+            )
 
         for (okr in okrTypes) {
             BlockType.entries shouldContain okr
@@ -110,12 +119,13 @@ class BlockTypeTest : FunSpec({
     }
 
     test("应该包含所有Agenda相关类型") {
-        val agendaTypes = listOf(
-            BlockType.AGENDA,
-            BlockType.AGENDA_ITEM,
-            BlockType.AGENDA_ITEM_TITLE,
-            BlockType.AGENDA_ITEM_CONTENT
-        )
+        val agendaTypes =
+            listOf(
+                BlockType.AGENDA,
+                BlockType.AGENDA_ITEM,
+                BlockType.AGENDA_ITEM_TITLE,
+                BlockType.AGENDA_ITEM_CONTENT,
+            )
 
         for (agenda in agendaTypes) {
             BlockType.entries shouldContain agenda
@@ -132,5 +142,3 @@ class BlockTypeTest : FunSpec({
         // ... 等等
     }
 })
-
-

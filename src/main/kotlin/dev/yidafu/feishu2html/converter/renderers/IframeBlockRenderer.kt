@@ -9,7 +9,6 @@ import java.net.URLDecoder
 private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.IframeBlockRenderer")
 
 internal object IframeBlockRenderer : Renderable {
-
     override fun <T> render(
         parent: FlowContent,
         block: T,

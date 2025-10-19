@@ -2,7 +2,6 @@ package dev.yidafu.feishu2html.model
 
 import dev.yidafu.feishu2html.api.model.*
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
@@ -10,18 +9,20 @@ import kotlinx.serialization.json.Json
 
 class DocumentTest : FunSpec({
 
-    val json = Json {
-        ignoreUnknownKeys = true
-        isLenient = true
-        encodeDefaults = true
-    }
+    val json =
+        Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+            encodeDefaults = true
+        }
 
     test("应该正确创建Document实例") {
-        val doc = Document(
-            documentId = "doc123",
-            revisionId = 10,
-            title = "Test Document"
-        )
+        val doc =
+            Document(
+                documentId = "doc123",
+                revisionId = 10,
+                title = "Test Document",
+            )
 
         doc.documentId shouldBe "doc123"
         doc.revisionId shouldBe 10
@@ -29,11 +30,12 @@ class DocumentTest : FunSpec({
     }
 
     test("应该正确序列化Document") {
-        val doc = Document(
-            documentId = "doc456",
-            revisionId = 5,
-            title = "Sample"
-        )
+        val doc =
+            Document(
+                documentId = "doc456",
+                revisionId = 5,
+                title = "Sample",
+            )
 
         val jsonString = json.encodeToString(Document.serializer(), doc)
 
@@ -42,13 +44,14 @@ class DocumentTest : FunSpec({
     }
 
     test("应该正确反序列化Document") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "document_id": "doc789",
                 "revision_id": 15,
                 "title": "Deserialized"
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val doc = json.decodeFromString<Document>(jsonString)
 
@@ -59,34 +62,38 @@ class DocumentTest : FunSpec({
 
     test("应该正确创建DocumentRawContent") {
         val doc = Document(documentId = "doc1", revisionId = 1, title = "Test")
-        val block = TextBlock(
-            blockId = "text1",
-            blockType = BlockType.TEXT,
-            children = emptyList(),
-            parentId = "page1",
-            text = TextBlockData(
-                elements = listOf(TextElement(textRun = TextRun(content = "Content"))),
-                style = TextStyle(align = 1)
+        val block =
+            TextBlock(
+                blockId = "text1",
+                blockType = BlockType.TEXT,
+                children = emptyList(),
+                parentId = "page1",
+                text =
+                    TextBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Content"))),
+                        style = TextStyle(align = 1),
+                    ),
             )
-        )
 
-        val content = DocumentRawContent(
-            document = doc,
-            blocks = mapOf("text1" to block)
-        )
+        val content =
+            DocumentRawContent(
+                document = doc,
+                blocks = mapOf("text1" to block),
+            )
 
         content.document shouldBe doc
         content.blocks.size shouldBe 1
     }
 
     test("应该正确反序列化DocumentInfo") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "document_id": "info123",
                 "revision_id": 20,
                 "title": "Document Info"
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val info = json.decodeFromString<DocumentInfo>(jsonString)
 
@@ -96,7 +103,8 @@ class DocumentTest : FunSpec({
     }
 
     test("应该正确反序列化DocumentInfoResponse") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "code": 0,
                 "msg": "success",
@@ -108,7 +116,7 @@ class DocumentTest : FunSpec({
                     }
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val response = json.decodeFromString<DocumentInfoResponse>(jsonString)
 
@@ -119,7 +127,8 @@ class DocumentTest : FunSpec({
     }
 
     test("应该正确反序列化DocumentBlocksResponse") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "code": 0,
                 "msg": "success",
@@ -140,7 +149,7 @@ class DocumentTest : FunSpec({
                     "has_more": false
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val response = json.decodeFromString<DocumentBlocksResponse>(jsonString)
 
@@ -151,12 +160,13 @@ class DocumentTest : FunSpec({
     }
 
     test("应该正确处理错误响应") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "code": 1770032,
                 "msg": "forBidden"
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val response = json.decodeFromString<DocumentInfoResponse>(jsonString)
 
@@ -165,4 +175,3 @@ class DocumentTest : FunSpec({
         response.data shouldBe null
     }
 })
-

@@ -17,7 +17,7 @@ internal object BulletBlockRenderer : Renderable {
         val bulletBlock = block as BulletBlock
         val elements = bulletBlock.bullet?.elements ?: return
         logger.debug("Rendering bullet list item with {} elements", elements.size)
-        
+
         // Feishu-style structure with div instead of ul/li
         parent.div(classes = "list-wrapper bullet-list") {
             div(classes = "list") {
@@ -36,7 +36,7 @@ internal object BulletBlockRenderer : Renderable {
 
 internal object OrderedBlockRenderer : Renderable {
     private var listCounter = 0
-    
+
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -46,16 +46,16 @@ internal object OrderedBlockRenderer : Renderable {
         val orderedBlock = block as OrderedBlock
         val elements = orderedBlock.ordered?.elements ?: return
         val sequence = orderedBlock.ordered?.style?.sequence
-        
+
         // Reset or increment counter based on sequence
         listCounter = when (sequence) {
             "1" -> 1
             "auto" -> listCounter + 1
             else -> listCounter + 1
         }
-        
+
         logger.debug("Rendering ordered list item with {} elements", elements.size)
-        
+
         // Feishu-style structure with div instead of ul/li
         parent.div(classes = "list-wrapper ordered-list") {
             div(classes = "list") {

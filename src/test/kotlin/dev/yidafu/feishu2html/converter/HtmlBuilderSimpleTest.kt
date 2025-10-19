@@ -7,24 +7,27 @@ import io.kotest.matchers.string.shouldContain
 class HtmlBuilderSimpleTest : FunSpec({
 
     test("应该生成完整的HTML文档结构") {
-        val textBlock = TextBlock(
-            blockId = "text1",
-            blockType = BlockType.TEXT,
-            children = emptyList(),
-            parentId = "page1",
-            text = TextBlockData(
-                elements = listOf(TextElement(textRun = TextRun(content = "Test content"))),
-                style = TextStyle(align = 1)
+        val textBlock =
+            TextBlock(
+                blockId = "text1",
+                blockType = BlockType.TEXT,
+                children = emptyList(),
+                parentId = "page1",
+                text =
+                    TextBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Test content"))),
+                        style = TextStyle(align = 1),
+                    ),
             )
-        )
 
         val blocks = listOf(textBlock)
         val allBlocks = blocks.associateBy { it.blockId }
 
-        val builder = HtmlBuilder(
-            title = "Test Document",
-            customCss = null
-        )
+        val builder =
+            HtmlBuilder(
+                title = "Test Document",
+                customCss = null,
+            )
 
         val html = builder.build(blocks, allBlocks)
 
@@ -41,10 +44,11 @@ class HtmlBuilderSimpleTest : FunSpec({
         val blocks = emptyList<Block>()
         val allBlocks = emptyMap<String, Block>()
 
-        val builder = HtmlBuilder(
-            title = "Test",
-            customCss = null
-        )
+        val builder =
+            HtmlBuilder(
+                title = "Test",
+                customCss = null,
+            )
 
         val html = builder.build(blocks, allBlocks)
 
@@ -56,10 +60,11 @@ class HtmlBuilderSimpleTest : FunSpec({
         val blocks = emptyList<Block>()
         val allBlocks = emptyMap<String, Block>()
 
-        val builder = HtmlBuilder(
-            title = "Test",
-            customCss = null
-        )
+        val builder =
+            HtmlBuilder(
+                title = "Test",
+                customCss = null,
+            )
 
         val html = builder.build(blocks, allBlocks)
 
@@ -72,10 +77,11 @@ class HtmlBuilderSimpleTest : FunSpec({
         val blocks = emptyList<Block>()
         val allBlocks = emptyMap<String, Block>()
 
-        val builder = HtmlBuilder(
-            title = "Test",
-            customCss = customCss
-        )
+        val builder =
+            HtmlBuilder(
+                title = "Test",
+                customCss = customCss,
+            )
 
         val html = builder.build(blocks, allBlocks)
 
@@ -86,10 +92,11 @@ class HtmlBuilderSimpleTest : FunSpec({
         val blocks = emptyList<Block>()
         val allBlocks = emptyMap<String, Block>()
 
-        val builder = HtmlBuilder(
-            title = "Empty Document",
-            customCss = null
-        )
+        val builder =
+            HtmlBuilder(
+                title = "Empty Document",
+                customCss = null,
+            )
 
         val html = builder.build(blocks, allBlocks)
 
@@ -99,4 +106,3 @@ class HtmlBuilderSimpleTest : FunSpec({
         html shouldContain "</body>"
     }
 })
-

@@ -46,8 +46,11 @@ internal object GridBlockRenderer : Renderable {
             }
         }
 
-        logger.debug("Grid has {} columns with template: {}", columns.size,
-            columns.joinToString(" ") { "${it.second}fr" })
+        logger.debug(
+            "Grid has {} columns with template: {}",
+            columns.size,
+            columns.joinToString(" ") { "${it.second}fr" },
+        )
         val gridTemplate = columns.joinToString(" ") { "${it.second}fr" }
 
         parent.div(classes = "grid-layout") {

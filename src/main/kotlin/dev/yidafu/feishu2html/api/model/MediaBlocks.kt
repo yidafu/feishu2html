@@ -55,4 +55,3 @@ internal data class IframeBlock(
     @SerialName("comment_ids") override val commentIds: List<String>? = null,
     @SerialName("iframe") val iframe: IframeBlockData? = null,
 ) : Block()
-

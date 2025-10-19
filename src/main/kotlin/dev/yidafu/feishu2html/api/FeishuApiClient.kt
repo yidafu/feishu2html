@@ -156,7 +156,9 @@ internal class FeishuApiClient(
 
             logger.info(
                 "Successfully fetched document info: {} (ID: {}, Revision: {})",
-                documentInfo.title, documentInfo.documentId, documentInfo.revisionId
+                documentInfo.title,
+                documentInfo.documentId,
+                documentInfo.revisionId,
             )
             documentInfo
         }
@@ -186,8 +188,11 @@ internal class FeishuApiClient(
         // Fetch all blocks with pagination
         while (hasMore) {
             pageCount++
-            logger.debug("Fetching page {} blocks{}", pageCount,
-                if (pageToken != null) " with page_token=$pageToken" else "")
+            logger.debug(
+                "Fetching page {} blocks{}",
+                pageCount,
+                if (pageToken != null) " with page_token=$pageToken" else "",
+            )
 
             // Execute request with rate limiter
             val currentPageToken = pageToken
@@ -279,8 +284,11 @@ internal class FeishuApiClient(
             logger.debug("Fetched {} blocks, has_more={}", data.items.size, hasMore)
         }
 
-        logger.info("Successfully fetched all document blocks: {} blocks across {} pages",
-            allBlocks.size, pageCount)
+        logger.info(
+            "Successfully fetched all document blocks: {} blocks across {} pages",
+            allBlocks.size,
+            pageCount,
+        )
 
         // Convert block list to Map format
         val blocksMap = allBlocks.associateBy { it.blockId }
@@ -336,8 +344,11 @@ internal class FeishuApiClient(
                     }
 
                     if (!response.status.isSuccess()) {
-                        logger.error("File download failed with status: {} for token: {}",
-                            response.status, fileToken)
+                        logger.error(
+                            "File download failed with status: {} for token: {}",
+                            response.status,
+                            fileToken,
+                        )
                         throw FeishuApiException("File download failed: ${response.status}")
                     }
 
@@ -347,8 +358,11 @@ internal class FeishuApiClient(
                     val bytes = response.body<ByteArray>()
                     file.writeBytes(bytes)
 
-                    logger.info("File downloaded successfully: {} ({} bytes)",
-                        file.absolutePath, bytes.size)
+                    logger.info(
+                        "File downloaded successfully: {} ({} bytes)",
+                        file.absolutePath,
+                        bytes.size,
+                    )
                     file
                 } catch (e: Exception) {
                     logger.error("Failed to download file {}: {}", fileToken, e.message, e)
@@ -413,8 +427,11 @@ internal class FeishuApiClient(
                 val bytes = response.body<ByteArray>()
                 file.writeBytes(bytes)
 
-                logger.info("Board saved successfully: {} ({} bytes)",
-                    file.absolutePath, bytes.size)
+                logger.info(
+                    "Board saved successfully: {} ({} bytes)",
+                    file.absolutePath,
+                    bytes.size,
+                )
                 file
             }
         }
@@ -443,8 +460,11 @@ internal class FeishuApiClient(
         // In the new blocks list API, the first block is the PAGE block (document root)
         val pageBlock = blocks.values.firstOrNull { it is PageBlock } as? PageBlock
         if (pageBlock != null) {
-            logger.debug("Found PAGE block - ID: {}, children count: {}",
-                pageBlock.blockId, pageBlock.children?.size ?: 0)
+            logger.debug(
+                "Found PAGE block - ID: {}, children count: {}",
+                pageBlock.blockId,
+                pageBlock.children?.size ?: 0,
+            )
 
             // Traverse all children of PAGE block (excluding PAGE block itself)
             pageBlock.children?.forEach { childId ->

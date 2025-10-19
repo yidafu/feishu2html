@@ -6,18 +6,19 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.serialization.json.Json
-import java.io.File
 
 class BlockSerializationTest : FunSpec({
 
-    val json = Json {
-        ignoreUnknownKeys = true
-        isLenient = true
-        encodeDefaults = true
-    }
+    val json =
+        Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+            encodeDefaults = true
+        }
 
     test("应该正确反序列化PageBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_page_1",
                 "block_type": 1,
@@ -27,7 +28,7 @@ class BlockSerializationTest : FunSpec({
                     "elements": [{"text_run": {"content": "Page Title"}}]
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -37,7 +38,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化TextBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_text_1",
                 "block_type": 2,
@@ -48,7 +50,7 @@ class BlockSerializationTest : FunSpec({
                     "style": {"align": 1}
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -61,7 +63,8 @@ class BlockSerializationTest : FunSpec({
 
     test("应该正确反序列化所有Heading类型") {
         for (level in 1..9) {
-            val jsonString = """
+            val jsonString =
+                """
                 {
                     "block_id": "test_h$level",
                     "block_type": ${2 + level},
@@ -72,7 +75,7 @@ class BlockSerializationTest : FunSpec({
                         "style": {"align": 1}
                     }
                 }
-            """.trimIndent()
+                """.trimIndent()
 
             val block = json.decodeFromString<Block>(jsonString)
 
@@ -95,7 +98,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化BulletBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_bullet_1",
                 "block_type": 12,
@@ -106,7 +110,7 @@ class BlockSerializationTest : FunSpec({
                     "style": {"align": 1}
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -115,7 +119,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化OrderedBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_ordered_1",
                 "block_type": 13,
@@ -126,7 +131,7 @@ class BlockSerializationTest : FunSpec({
                     "style": {"align": 1}
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -135,7 +140,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化CodeBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_code_1",
                 "block_type": 14,
@@ -146,7 +152,7 @@ class BlockSerializationTest : FunSpec({
                     "style": {"language": 1}
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -155,7 +161,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化QuoteBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_quote_1",
                 "block_type": 15,
@@ -165,7 +172,7 @@ class BlockSerializationTest : FunSpec({
                     "elements": [{"text_run": {"content": "Quote text"}}]
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -174,7 +181,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化EquationBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_equation_1",
                 "block_type": 16,
@@ -184,7 +192,7 @@ class BlockSerializationTest : FunSpec({
                     "content": "E = mc^2"
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -194,7 +202,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化TodoBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_todo_1",
                 "block_type": 17,
@@ -205,7 +214,7 @@ class BlockSerializationTest : FunSpec({
                     "style": {"done": false}
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -214,7 +223,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化ImageBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_image_1",
                 "block_type": 27,
@@ -226,7 +236,7 @@ class BlockSerializationTest : FunSpec({
                     "height": 600
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -236,7 +246,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化TableBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_table_1",
                 "block_type": 31,
@@ -250,7 +261,7 @@ class BlockSerializationTest : FunSpec({
                     }
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -259,7 +270,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化TableCellBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_cell_1",
                 "block_type": 32,
@@ -267,7 +279,7 @@ class BlockSerializationTest : FunSpec({
                 "parent_id": "table1",
                 "table_cell": {}
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -276,7 +288,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化CalloutBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_callout_1",
                 "block_type": 19,
@@ -288,7 +301,7 @@ class BlockSerializationTest : FunSpec({
                     "emoji_id": "smile"
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -297,7 +310,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化GridBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_grid_1",
                 "block_type": 24,
@@ -307,7 +321,7 @@ class BlockSerializationTest : FunSpec({
                     "column_size": 2
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -316,7 +330,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化GridColumnBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_col_1",
                 "block_type": 25,
@@ -326,7 +341,7 @@ class BlockSerializationTest : FunSpec({
                     "width_ratio": 50
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -335,7 +350,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化IframeBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_iframe_1",
                 "block_type": 26,
@@ -348,7 +364,7 @@ class BlockSerializationTest : FunSpec({
                     }
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -357,7 +373,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化BoardBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_board_1",
                 "block_type": 43,
@@ -369,7 +386,7 @@ class BlockSerializationTest : FunSpec({
                     "height": 400
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -378,7 +395,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化DividerBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_divider_1",
                 "block_type": 22,
@@ -386,7 +404,7 @@ class BlockSerializationTest : FunSpec({
                 "parent_id": "parent1",
                 "divider": {}
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -395,7 +413,8 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该正确反序列化FileBlock") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "block_id": "test_file_1",
                 "block_type": 23,
@@ -406,7 +425,7 @@ class BlockSerializationTest : FunSpec({
                     "name": "document.pdf"
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val block = json.decodeFromString<Block>(jsonString)
 
@@ -427,8 +446,9 @@ class BlockSerializationTest : FunSpec({
     }
 
     test("应该能够处理最小测试文档") {
-        val testDocMinimalResource = this::class.java.getResource("/test-document-minimal.json")
-            ?: throw IllegalStateException("test-document-minimal.json not found in resources")
+        val testDocMinimalResource =
+            this::class.java.getResource("/test-document-minimal.json")
+                ?: throw IllegalStateException("test-document-minimal.json not found in resources")
         val content = testDocMinimalResource.readText()
         val response = json.decodeFromString<DocumentBlocksResponse>(content)
 
@@ -464,4 +484,3 @@ class BlockSerializationTest : FunSpec({
         BlockType.fromCode(9999) shouldBe null
     }
 })
-

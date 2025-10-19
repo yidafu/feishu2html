@@ -7,7 +7,11 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.UnsupportedBlocksRenderer")
 
-private fun renderUnsupportedBlock(parent: FlowContent, blockType: String, block: Block) {
+private fun renderUnsupportedBlock(
+    parent: FlowContent,
+    blockType: String,
+    block: Block,
+) {
     logger.warn("Rendering unsupported block type: {} (block_id: {})", blockType, block.blockId)
     parent.div(classes = "unsupported-block") {
         +"[Unsupported block type: $blockType]"

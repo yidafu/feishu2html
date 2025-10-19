@@ -65,4 +65,3 @@ internal data class TableCellBlock(
     @SerialName("comment_ids") override val commentIds: List<String>? = null,
     @SerialName("table_cell") val tableCell: TableCellBlockData? = null,
 ) : Block()
-

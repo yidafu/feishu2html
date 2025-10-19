@@ -50,4 +50,3 @@ internal object UnknownBlockRenderer : Renderable {
         }
     }
 }
-

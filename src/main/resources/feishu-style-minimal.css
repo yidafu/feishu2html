@@ -1,0 +1,497 @@
+/* ========================================
+   Feishu2HTML Minimal Styles
+   Optimized from official Feishu CSS
+   Size: ~50KB (down from 1MB)
+   ======================================== */
+
+
+
+/* ==================== Base Styles ==================== */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-body-overlay);
+  color: var(--text-body);
+  font-family: var(--b3-font-family);
+  font-size: var(--b3-font-size);
+  line-height: 1.75;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* ==================== Container Styles ==================== */
+.protyle-wysiwyg {
+  max-width: 920px;
+  margin: 24px auto;
+  padding: 48px 60px;
+  background: var(--bg-body);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.b3-typography {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-body);
+}
+
+/* ==================== Heading Styles ==================== */
+.heading,
+.protyle-wysiwyg h1,
+.protyle-wysiwyg h2,
+.protyle-wysiwyg h3,
+.protyle-wysiwyg h4,
+.protyle-wysiwyg h5,
+.protyle-wysiwyg h6,
+.b3-typography h1,
+.b3-typography h2,
+.b3-typography h3,
+.b3-typography h4,
+.b3-typography h5,
+.b3-typography h6 {
+  margin-top: 28px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-title);
+}
+
+.heading-h1, .protyle-wysiwyg h1, .b3-typography h1 {
+  font-size: 28px;
+  margin-top: 32px;
+}
+
+.heading-h2, .protyle-wysiwyg h2, .b3-typography h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+
+.heading-h3, .protyle-wysiwyg h3, .b3-typography h3 {
+  font-size: 20px;
+}
+
+.heading-h4, .protyle-wysiwyg h4, .b3-typography h4 {
+  font-size: 18px;
+}
+
+.heading-h5, .protyle-wysiwyg h5, .b3-typography h5 {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.heading-h6, .protyle-wysiwyg h6, .b3-typography h6 {
+  font-size: 14px;
+  font-weight: 500;
+  color: #646a73;
+}
+
+.heading-h7, .heading-h8, .heading-h9 {
+  font-size: 14px;
+  font-weight: 500;
+  color: #646a73;
+}
+
+/* ==================== Text Block Styles ==================== */
+.text-block,
+.protyle-wysiwyg p,
+.b3-typography p {
+  margin: 8px 0;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-body);
+}
+
+/* Text Alignment */
+.text-align-left { text-align: left; }
+.text-align-center { text-align: center; }
+.text-align-right { text-align: right; }
+
+/* ==================== Inline Text Styles ==================== */
+.protyle-wysiwyg strong,
+.b3-typography strong {
+  font-weight: 600;
+}
+
+.protyle-wysiwyg em,
+.b3-typography em {
+  font-style: italic;
+}
+
+.protyle-wysiwyg u,
+.b3-typography u {
+  text-decoration: underline;
+}
+
+.protyle-wysiwyg del,
+.b3-typography del {
+  text-decoration: line-through;
+}
+
+.protyle-wysiwyg code:not(.hljs),
+.b3-typography code:not(.hljs) {
+  border: 1px solid #dee0e3;
+  border-radius: var(--b3-border-radius-code);
+  padding: 2px 6px;
+  margin: 0 4px;
+  background-color: #f2f3f5;
+  color: #1f2329;
+  font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+  font-size: 0.9em;
+}
+
+/* ==================== Link Styles ==================== */
+.protyle-wysiwyg a,
+.b3-typography a {
+  color: #3370ff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.protyle-wysiwyg a:hover,
+.b3-typography a:hover {
+  text-decoration: underline;
+}
+
+.mention-user,
+.mention-doc {
+  color: #3370ff;
+  text-decoration: none;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background-color: #e8f3ff;
+}
+
+/* ==================== List Styles ==================== */
+.list-wrapper {
+  margin: 4px 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+.bullet-list, .ordered-list {
+  width: 100%;
+}
+
+.list {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 24px;
+}
+
+.bullet {
+  flex-shrink: 0;
+  width: 20px;
+  color: #646a73;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: center;
+}
+
+.order {
+  flex-shrink: 0;
+  min-width: 24px;
+  color: var(--b3-theme-primary);
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+.list-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-content p {
+  margin: 0;
+}
+
+/* ==================== Code Block Styles ==================== */
+.code-block {
+  margin: 16px 0;
+  border: 1px solid var(--line-border-card);
+  border-radius: var(--b3-border-radius);
+  overflow: hidden;
+  background-color: #f7f8fa;
+}
+
+.code-block pre {
+  margin: 0;
+  padding: 0;
+}
+
+.code-block code,
+.hljs {
+  display: block;
+  padding: 16px;
+  background-color: #f7f8fa;
+  color: #1f2329;
+  font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.protyle-wysiwyg .code-block,
+.b3-typography .code-block {
+  margin: 12px 0;
+}
+
+.protyle-wysiwyg div.hljs,
+.b3-typography div.hljs {
+  padding: 16px;
+}
+
+/* ==================== Table Styles ==================== */
+.table-block,
+.protyle-wysiwyg table,
+.b3-typography table {
+  width: 100%;
+  margin: 16px 0;
+  border-collapse: collapse;
+  border: 1px solid var(--line-border-card);
+  border-radius: var(--b3-border-radius);
+  overflow: hidden;
+}
+
+.protyle-wysiwyg table th,
+.protyle-wysiwyg table td,
+.b3-typography table th,
+.b3-typography table td {
+  padding: 12px 16px;
+  border: 1px solid var(--line-border-card);
+  text-align: left;
+  font-size: 14px;
+}
+
+.protyle-wysiwyg table thead th,
+.protyle-wysiwyg table thead td,
+.b3-typography table thead th,
+.b3-typography table thead td {
+  font-weight: 600;
+  background-color: var(--bg-body-overlay);
+}
+
+/* ==================== Callout Block Styles ==================== */
+.callout-block {
+  margin: 16px 0;
+  padding: 16px;
+  border-radius: var(--b3-border-radius);
+  border-left: 4px solid;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.callout-red {
+  border-color: var(--ccmtoken-doc-blockbackground-red-solid);
+  background-color: var(--ccmtoken-doc-highlightcolor-bg-red-soft);
+}
+
+.callout-yellow {
+  border-color: var(--ccmtoken-doc-blockbackground-yellow-solid);
+  background-color: var(--ccmtoken-doc-highlightcolor-bg-yellow-soft);
+}
+
+.callout-green {
+  border-color: var(--ccmtoken-doc-blockbackground-green-solid);
+  background-color: var(--ccmtoken-doc-highlightcolor-bg-green-soft);
+}
+
+.callout-blue {
+  border-color: var(--ccmtoken-doc-blockbackground-blue-solid);
+  background-color: var(--ccmtoken-doc-highlightcolor-bg-blue-soft);
+}
+
+.callout-emoji-container {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.callout-block-emoji {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.callout-block-children {
+  flex: 1;
+  min-width: 0;
+}
+
+.callout-block-children p {
+  margin: 0;
+}
+
+/* ==================== Quote Styles ==================== */
+.quote-container-block,
+.protyle-wysiwyg blockquote,
+.b3-typography blockquote {
+  margin: 16px 0;
+  padding: 12px 16px;
+  padding-left: 20px;
+  border-left: 4px solid #e1e4e8;
+  background-color: #f7f8fa;
+  color: #646a73;
+}
+
+.quote-container-block p,
+.protyle-wysiwyg blockquote p,
+.b3-typography blockquote p {
+  margin: 4px 0;
+}
+
+/* ==================== Todo Block Styles ==================== */
+.todo-block {
+  margin: 4px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.todo-block_content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.todo-block input[type="checkbox"] {
+  margin: 0;
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.todo-block span {
+  flex: 1;
+}
+
+/* ==================== Grid Layout Styles ==================== */
+.grid-layout {
+  display: grid;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.grid-column {
+  min-width: 0;
+}
+
+/* ==================== Divider Styles ==================== */
+.protyle-wysiwyg hr,
+.b3-typography hr {
+  margin: 24px 0;
+  border: none;
+  border-top: 1px solid var(--line-border-card);
+}
+
+/* ==================== Image Styles ==================== */
+.protyle-wysiwyg img,
+.b3-typography img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px 0;
+  border-radius: var(--b3-border-radius);
+}
+
+img.text-align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+img.text-align-right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* ==================== Text Color Utilities ==================== */
+.text-red { color: #f54a45; }
+.text-yellow { color: #ff8800; }
+.text-green { color: #00b578; }
+.text-blue { color: #3370ff; }
+.text-indigo { color: #6366f1; }
+.text-purple { color: #8957e5; }
+.text-pink { color: #ec4899; }
+.text-gray { color: #646a73; }
+
+/* Text Background Colors */
+.bg-red { background-color: #ffecea; padding: 2px 6px; border-radius: 4px; }
+.bg-yellow { background-color: #fff3e0; padding: 2px 6px; border-radius: 4px; }
+.bg-green { background-color: #e6f7ed; padding: 2px 6px; border-radius: 4px; }
+.bg-blue { background-color: #e8f3ff; padding: 2px 6px; border-radius: 4px; }
+.bg-indigo { background-color: #eff0ff; padding: 2px 6px; border-radius: 4px; }
+.bg-purple { background-color: #f3ebff; padding: 2px 6px; border-radius: 4px; }
+.bg-pink { background-color: #ffe4e6; padding: 2px 6px; border-radius: 4px; }
+.bg-gray { background-color: #f2f3f5; padding: 2px 6px; border-radius: 4px; }
+
+/* ==================== Iframe & Embed Styles ==================== */
+.embed-generic iframe,
+iframe:only-of-type {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line-border-card);
+  border-radius: var(--b3-border-radius);
+  background: transparent;
+}
+
+/* ==================== Unsupported Block Styles ==================== */
+.unsupported-block {
+  margin: 12px 0;
+  padding: 12px 16px;
+  background-color: #fff3e0;
+  border-left: 4px solid #ff8800;
+  color: #8f5d00;
+  font-style: italic;
+  border-radius: 4px;
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 920px) {
+  .protyle-wysiwyg {
+    margin: 16px;
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .protyle-wysiwyg {
+    margin: 8px;
+    padding: 16px 12px;
+  }
+
+  .heading-h1 { font-size: 24px; }
+  .heading-h2 { font-size: 20px; }
+  .heading-h3 { font-size: 18px; }
+  .heading-h4 { font-size: 16px; }
+}
+
+/* ==================== Print Styles ==================== */
+@media print {
+  body {
+    background-color: white;
+  }
+
+  .protyle-wysiwyg {
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+  }
+}
+

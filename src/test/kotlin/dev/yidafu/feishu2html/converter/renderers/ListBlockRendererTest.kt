@@ -11,81 +11,91 @@ import kotlinx.html.stream.createHTML
 
 class ListBlockRendererTest : FunSpec({
 
-    val context = RenderContext(
-        textConverter = TextElementConverter(),
-        processedBlocks = mutableSetOf()
-    )
-
-    test("应该正确渲染Bullet块") {
-        val block = BulletBlock(
-            blockId = "bullet1",
-            blockType = BlockType.BULLET,
-            children = emptyList(),
-            parentId = "page1",
-            bullet = BulletBlockData(
-                elements = listOf(TextElement(textRun = TextRun(content = "Bullet item"))),
-                style = TextStyle(align = 1)
-            )
+    val context =
+        RenderContext(
+            textConverter = TextElementConverter(),
+            processedBlocks = mutableSetOf(),
         )
 
-        val html = createHTML().div {
-            BulletBlockRenderer.render(this, block, emptyMap(), context)
-        }
+    test("应该正确渲染Bullet块") {
+        val block =
+            BulletBlock(
+                blockId = "bullet1",
+                blockType = BlockType.BULLET,
+                children = emptyList(),
+                parentId = "page1",
+                bullet =
+                    BulletBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Bullet item"))),
+                        style = TextStyle(align = 1),
+                    ),
+            )
+
+        val html =
+            createHTML().div {
+                BulletBlockRenderer.render(this, block, emptyMap(), context)
+            }
 
         // 渲染结果包含内容即可
         html.length shouldBe html.length // 基本验证
     }
 
     test("应该正确渲染Ordered块") {
-        val block = OrderedBlock(
-            blockId = "ordered1",
-            blockType = BlockType.ORDERED,
-            children = emptyList(),
-            parentId = "page1",
-            ordered = OrderedBlockData(
-                elements = listOf(TextElement(textRun = TextRun(content = "Ordered item"))),
-                style = TextStyle(align = 1)
+        val block =
+            OrderedBlock(
+                blockId = "ordered1",
+                blockType = BlockType.ORDERED,
+                children = emptyList(),
+                parentId = "page1",
+                ordered =
+                    OrderedBlockData(
+                        elements = listOf(TextElement(textRun = TextRun(content = "Ordered item"))),
+                        style = TextStyle(align = 1),
+                    ),
             )
-        )
 
-        val html = createHTML().div {
-            OrderedBlockRenderer.render(this, block, emptyMap(), context)
-        }
+        val html =
+            createHTML().div {
+                OrderedBlockRenderer.render(this, block, emptyMap(), context)
+            }
 
         // 渲染结果包含内容即可
         html.length shouldBe html.length // 基本验证
     }
 
     test("应该处理空bullet数据") {
-        val block = BulletBlock(
-            blockId = "bullet_empty",
-            blockType = BlockType.BULLET,
-            children = emptyList(),
-            parentId = "page1",
-            bullet = null
-        )
+        val block =
+            BulletBlock(
+                blockId = "bullet_empty",
+                blockType = BlockType.BULLET,
+                children = emptyList(),
+                parentId = "page1",
+                bullet = null,
+            )
 
-        val html = createHTML().div {
-            BulletBlockRenderer.render(this, block, emptyMap(), context)
-        }
+        val html =
+            createHTML().div {
+                BulletBlockRenderer.render(this, block, emptyMap(), context)
+            }
 
         html shouldContain "<div></div>"
     }
 
     test("应该处理空ordered数据") {
-        val block = OrderedBlock(
-            blockId = "ordered_empty",
-            blockType = BlockType.ORDERED,
-            children = emptyList(),
-            parentId = "page1",
-            ordered = null
-        )
+        val block =
+            OrderedBlock(
+                blockId = "ordered_empty",
+                blockType = BlockType.ORDERED,
+                children = emptyList(),
+                parentId = "page1",
+                ordered = null,
+            )
 
-        val html = createHTML().div {
-            OrderedBlockRenderer.render(this, block, emptyMap(), context)
-        }
+        val html =
+            createHTML().div {
+                OrderedBlockRenderer.render(this, block, emptyMap(), context)
+            }
 
         html shouldContain "<div></div>"
     }
 })
-

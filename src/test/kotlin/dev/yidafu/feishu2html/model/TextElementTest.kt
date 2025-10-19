@@ -8,13 +8,15 @@ import kotlinx.serialization.json.Json
 
 class TextElementTest : FunSpec({
 
-    val json = Json {
-        ignoreUnknownKeys = true
-        isLenient = true
-    }
+    val json =
+        Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
 
     test("应该正确反序列化TextRun") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "text_run": {
                     "content": "Hello",
@@ -23,7 +25,7 @@ class TextElementTest : FunSpec({
                     }
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val element = json.decodeFromString<TextElement>(jsonString)
 
@@ -33,13 +35,14 @@ class TextElementTest : FunSpec({
     }
 
     test("应该正确反序列化MentionUser") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "mention_user": {
                     "user_id": "user123"
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val element = json.decodeFromString<TextElement>(jsonString)
 
@@ -48,7 +51,8 @@ class TextElementTest : FunSpec({
     }
 
     test("应该正确反序列化MentionDoc") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "mention_doc": {
                     "token": "doc_token",
@@ -57,7 +61,7 @@ class TextElementTest : FunSpec({
                     "title": "Doc Title"
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val element = json.decodeFromString<TextElement>(jsonString)
 
@@ -66,13 +70,14 @@ class TextElementTest : FunSpec({
     }
 
     test("应该正确反序列化InlineEquation") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "equation": {
                     "content": "x^2"
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val element = json.decodeFromString<TextElement>(jsonString)
 
@@ -81,14 +86,15 @@ class TextElementTest : FunSpec({
     }
 
     test("应该正确反序列化InlineFile") {
-        val jsonString = """
+        val jsonString =
+            """
             {
                 "file": {
                     "file_token": "file123",
                     "source_block_id": "block456"
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val element = json.decodeFromString<TextElement>(jsonString)
 
@@ -97,16 +103,17 @@ class TextElementTest : FunSpec({
     }
 
     test("TextElementStyle应该支持所有样式属性") {
-        val style = TextElementStyle(
-            bold = true,
-            italic = true,
-            strikethrough = true,
-            underline = true,
-            inlineCode = true,
-            textColor = 1,
-            backgroundColor = 2,
-            link = Link(url = "https://example.com")
-        )
+        val style =
+            TextElementStyle(
+                bold = true,
+                italic = true,
+                strikethrough = true,
+                underline = true,
+                inlineCode = true,
+                textColor = 1,
+                backgroundColor = 2,
+                link = Link(url = "https://example.com"),
+            )
 
         style.bold shouldBe true
         style.italic shouldBe true
@@ -124,13 +131,14 @@ class TextElementTest : FunSpec({
     }
 
     test("TextStyle应该正确创建") {
-        val style = TextStyle(
-            align = 2,
-            done = true,
-            folded = false,
-            language = 5,
-            wrap = true
-        )
+        val style =
+            TextStyle(
+                align = 2,
+                done = true,
+                folded = false,
+                language = 5,
+                wrap = true,
+            )
 
         style.align shouldBe 2
         style.done shouldBe true
@@ -142,5 +150,3 @@ class TextElementTest : FunSpec({
         style.done shouldBe true
     }
 })
-
-

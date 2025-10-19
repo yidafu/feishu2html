@@ -127,22 +127,24 @@ tasks.jacocoTestReport {
     }
 
     classDirectories.setFrom(
-        files(classDirectories.files.map {
-            fileTree(it) {
-                exclude(
-                    "**/model/**Data.class",
-                    "**/model/Block.class",
-                    "**/model/Document.class",
-                    "**/model/BlockType.class",
-                    "**/model/Emoji.class",
-                    "**/model/TextAlign.class",
-                    "**/model/BlockColor.class",
-                    "**/model/CodeLanguage.class",
-                    "**/model/IframeType.class",
-                    "**/MainKt.class"
-                )
-            }
-        })
+        files(
+            classDirectories.files.map {
+                fileTree(it) {
+                    exclude(
+                        "**/model/**Data.class",
+                        "**/model/Block.class",
+                        "**/model/Document.class",
+                        "**/model/BlockType.class",
+                        "**/model/Emoji.class",
+                        "**/model/TextAlign.class",
+                        "**/model/BlockColor.class",
+                        "**/model/CodeLanguage.class",
+                        "**/model/IframeType.class",
+                        "**/MainKt.class",
+                    )
+                }
+            },
+        ),
     )
 }
 

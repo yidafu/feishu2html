@@ -2,7 +2,6 @@ package dev.yidafu.feishu2html.api
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.ints.shouldBeInRange
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -35,14 +34,15 @@ class RateLimiterTest : FunSpec({
         val counter = AtomicInteger(0)
 
         // 同时发起10个请求
-        val jobs = (1..10).map {
-            async {
-                rateLimiter.execute {
-                    counter.incrementAndGet()
-                    delay(10) // 模拟一些处理时间
+        val jobs =
+            (1..10).map {
+                async {
+                    rateLimiter.execute {
+                        counter.incrementAndGet()
+                        delay(10) // 模拟一些处理时间
+                    }
                 }
             }
-        }
 
         jobs.awaitAll()
 
@@ -50,39 +50,43 @@ class RateLimiterTest : FunSpec({
     }
 
     test("应该在限频错误后重试") {
-        val rateLimiter = RateLimiter(
-            maxRequestsPerSecond = 5,
-            maxRetries = 3,
-            initialBackoffMs = 100
-        )
+        val rateLimiter =
+            RateLimiter(
+                maxRequestsPerSecond = 5,
+                maxRetries = 3,
+                initialBackoffMs = 100,
+            )
         val attemptCount = AtomicInteger(0)
 
         // 前两次模拟失败，第三次成功
-        val result = rateLimiter.execute {
-            val count = attemptCount.incrementAndGet()
-            if (count < 3) {
-                throw FeishuApiException("API限频", code = 99991400)
+        val result =
+            rateLimiter.execute {
+                val count = attemptCount.incrementAndGet()
+                if (count < 3) {
+                    throw FeishuApiException("API限频", code = 99991400)
+                }
+                "success"
             }
-            "success"
-        }
 
         result shouldBe "success"
         attemptCount.get() shouldBe 3
     }
 
     test("应该在达到最大重试次数后抛出异常") {
-        val rateLimiter = RateLimiter(
-            maxRequestsPerSecond = 5,
-            maxRetries = 3,
-            initialBackoffMs = 50
-        )
+        val rateLimiter =
+            RateLimiter(
+                maxRequestsPerSecond = 5,
+                maxRetries = 3,
+                initialBackoffMs = 50,
+            )
 
         // 总是抛出限频异常
-        val exception = shouldThrow<FeishuApiException> {
-            rateLimiter.execute {
-                throw FeishuApiException("API限频", code = 99991400)
+        val exception =
+            shouldThrow<FeishuApiException> {
+                rateLimiter.execute {
+                    throw FeishuApiException("API限频", code = 99991400)
+                }
             }
-        }
 
         exception.code shouldBe 99991400
     }
@@ -90,11 +94,12 @@ class RateLimiterTest : FunSpec({
     test("非限频异常应该立即抛出") {
         val rateLimiter = RateLimiter(maxRequestsPerSecond = 5)
 
-        val exception = shouldThrow<FeishuApiException> {
-            rateLimiter.execute {
-                throw FeishuApiException("其他错误", code = 12345)
+        val exception =
+            shouldThrow<FeishuApiException> {
+                rateLimiter.execute {
+                    throw FeishuApiException("其他错误", code = 12345)
+                }
             }
-        }
 
         exception.code shouldBe 12345
     }
@@ -136,4 +141,3 @@ class RateLimiterTest : FunSpec({
         rateLimiter.getCurrentRequestCount() shouldBe 1
     }
 })
-

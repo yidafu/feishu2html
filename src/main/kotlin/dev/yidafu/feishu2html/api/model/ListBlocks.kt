@@ -25,4 +25,3 @@ internal data class OrderedBlock(
     @SerialName("comment_ids") override val commentIds: List<String>? = null,
     @SerialName("ordered") val ordered: OrderedBlockData? = null,
 ) : Block()
-

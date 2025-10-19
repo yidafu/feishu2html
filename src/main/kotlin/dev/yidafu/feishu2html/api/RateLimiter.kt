@@ -45,8 +45,11 @@ internal class RateLimiter(
             } catch (e: FeishuApiException) {
                 // Check if it's a rate limit error
                 if (e.code == 99991400) {
-                    logger.warn("Rate limit error encountered (99991400), retry attempt {}/{}",
-                        attempt + 1, maxRetries)
+                    logger.warn(
+                        "Rate limit error encountered (99991400), retry attempt {}/{}",
+                        attempt + 1,
+                        maxRetries,
+                    )
                     lastException = e
 
                     // Use exponential backoff algorithm
@@ -86,8 +89,12 @@ internal class RateLimiter(
                 val waitTime = 1000 - (now - oldestRequest)
 
                 if (waitTime > 0) {
-                    logger.debug("Rate limit reached ({}/{}), waiting {}ms",
-                        requestTimes.size, maxRequestsPerSecond, waitTime)
+                    logger.debug(
+                        "Rate limit reached ({}/{}), waiting {}ms",
+                        requestTimes.size,
+                        maxRequestsPerSecond,
+                        waitTime,
+                    )
                     delay(waitTime)
 
                     // Clean old records again
@@ -105,8 +112,11 @@ internal class RateLimiter(
         mutex.withLock {
             val now = System.currentTimeMillis()
             requestTimes.add(now)
-            logger.trace("Request recorded, current window requests: {}/{}",
-                requestTimes.size, maxRequestsPerSecond)
+            logger.trace(
+                "Request recorded, current window requests: {}/{}",
+                requestTimes.size,
+                maxRequestsPerSecond,
+            )
         }
     }
 

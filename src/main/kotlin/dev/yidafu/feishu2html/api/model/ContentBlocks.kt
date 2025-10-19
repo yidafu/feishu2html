@@ -55,4 +55,3 @@ internal data class DividerBlock(
     @SerialName("comment_ids") override val commentIds: List<String>? = null,
     @SerialName("divider") val divider: kotlinx.serialization.json.JsonElement? = null,
 ) : Block()
-

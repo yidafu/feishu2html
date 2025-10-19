@@ -78,5 +78,3 @@ class FeishuStylesTest : FunSpec({
         css shouldContain "grid"
     }
 })
-
-

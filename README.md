@@ -36,7 +36,10 @@ A powerful Kotlin library and CLI tool to convert Feishu (Lark) documents to bea
       - [Add to Your Project](#add-to-your-project)
       - [Basic Example](#basic-example)
       - [Advanced Example with Custom Options](#advanced-example-with-custom-options)
-    - [5. Custom CSS Styling](#5-custom-css-styling)
+    - [5. CSS Styling Options](#5-css-styling-options)
+      - [Using Official Feishu Styles (Default)](#using-official-feishu-styles-default)
+      - [Inline CSS Mode](#inline-css-mode)
+      - [Custom CSS Styling](#custom-css-styling)
   - [🔍 Getting Document ID](#-getting-document-id)
   - [🔧 Troubleshooting](#-troubleshooting)
     - [1. Token Acquisition Failure](#1-token-acquisition-failure)
@@ -225,14 +228,14 @@ fun main() = runBlocking {
 
 #### Using Official Feishu Styles (Default)
 
-By default, exported HTML uses official Feishu styles for authentic visual appearance:
+By default, exported HTML uses an optimized version of official Feishu styles:
 
 ```kotlin
 val options = Feishu2HtmlOptions(
     appId = "your_app_id",
     appSecret = "your_app_secret",
-    externalCss = true,              // Use external CSS file (default)
-    cssFileName = "feishu-style.css" // CSS file name (default)
+    externalCss = true,                      // Use external CSS file (default)
+    cssFileName = "feishu-style-minimal.css" // Optimized CSS (default, 11KB)
 )
 
 Feishu2Html(options).use { converter ->
@@ -240,7 +243,25 @@ Feishu2Html(options).use { converter ->
 }
 // Output: 
 //   - document.html (with <link> to CSS)
-//   - feishu-style.css (official styles, 980KB)
+//   - feishu-style-minimal.css (optimized styles, only 11KB!)
+```
+
+**Why Minimal CSS?**
+- 98.8% smaller than full CSS (11KB vs 1MB)
+- Only includes rules needed for our generated HTML
+- Faster page load times
+- Still maintains authentic Feishu appearance
+
+**Using Full Official CSS:**
+
+If you need the complete Feishu CSS (for advanced features):
+
+```kotlin
+val options = Feishu2HtmlOptions(
+    appId = "your_app_id",
+    appSecret = "your_app_secret",
+    cssFileName = "feishu-style.css"  // Full official CSS (1MB)
+)
 ```
 
 #### Inline CSS Mode

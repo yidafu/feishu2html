@@ -18,8 +18,12 @@ internal object TableBlockRenderer : Renderable {
         val property = tableBlock.table?.property ?: return
         val children = tableBlock.children ?: return
 
-        logger.debug("Rendering table: {}x{} ({}cells)",
-            property.rowSize, property.columnSize, children.size)
+        logger.debug(
+            "Rendering table: {}x{} ({}cells)",
+            property.rowSize,
+            property.columnSize,
+            children.size,
+        )
 
         parent.table(classes = "table-block") {
             var currentRowCells = mutableListOf<TableCellBlock>()
@@ -67,8 +71,12 @@ internal object TableBlockRenderer : Renderable {
     ) {
         val elements = cellBlock.tableCell?.elements ?: emptyList()
         val children = cellBlock.children
-        logger.debug("Rendering table cell: ID={}, elements={}, children={}",
-            cellBlock.blockId, elements.size, children?.size ?: 0)
+        logger.debug(
+            "Rendering table cell: ID={}, elements={}, children={}",
+            cellBlock.blockId,
+            elements.size,
+            children?.size ?: 0,
+        )
 
         if (elements.isNotEmpty()) {
             context.textConverter.convertElements(elements, parent)

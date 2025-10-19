@@ -59,15 +59,22 @@ class Feishu2Html(
         outputFileName: String? = null,
     ) {
         logger.info("Starting export for document: {}", documentId)
-        logger.debug("Export options - outputDir: {}, imageDir: {}, fileDir: {}",
-            options.outputDir, options.imageDir, options.fileDir)
+        logger.debug(
+            "Export options - outputDir: {}, imageDir: {}, fileDir: {}",
+            options.outputDir,
+            options.imageDir,
+            options.fileDir,
+        )
 
         try {
             // Fetch document metadata (title, cover, etc.)
             logger.debug("Fetching document info for: {}", documentId)
             val documentInfo = apiClient.getDocumentInfo(documentId)
-            logger.info("Document info retrieved - Title: {}, Version: {}",
-                documentInfo.title, documentInfo.revisionId)
+            logger.info(
+                "Document info retrieved - Title: {}, Version: {}",
+                documentInfo.title,
+                documentInfo.revisionId,
+            )
 
             // Fetch document content
             logger.debug("Fetching document content for: {}", documentId)
@@ -87,13 +94,14 @@ class Feishu2Html(
 
             // Copy CSS file if external mode enabled
             if (options.externalCss) {
-                val cssContent = this::class.java.getResourceAsStream("/feishu-style.css")
-                    ?.bufferedReader()?.readText()
-                    ?: throw java.io.IOException("feishu-style.css not found in resources")
+                val cssContent =
+                    this::class.java.getResourceAsStream("/${options.cssFileName}")
+                        ?.bufferedReader()?.readText()
+                        ?: throw java.io.IOException("${options.cssFileName} not found in resources")
 
                 val cssFile = File(options.outputDir, options.cssFileName)
                 cssFile.writeText(cssContent)
-                logger.info("CSS file written: {}", cssFile.absolutePath)
+                logger.info("CSS file written: {} ({} bytes)", cssFile.absolutePath, cssContent.length)
             }
 
             // Generate HTML
@@ -103,12 +111,13 @@ class Feishu2Html(
             logger.debug("Output file path: {}", htmlFile.absolutePath)
 
             logger.info("Building HTML for document: {}", document.title)
-            val htmlBuilder = HtmlBuilder(
-                title = document.title,
-                cssMode = if (options.externalCss) CssMode.EXTERNAL else CssMode.INLINE,
-                cssFileName = options.cssFileName,
-                customCss = options.customCss
-            )
+            val htmlBuilder =
+                HtmlBuilder(
+                    title = document.title,
+                    cssMode = if (options.externalCss) CssMode.EXTERNAL else CssMode.INLINE,
+                    cssFileName = options.cssFileName,
+                    customCss = options.customCss,
+                )
             val html = htmlBuilder.build(orderedBlocks, blocks)
 
             htmlFile.writeText(html)
@@ -145,13 +154,23 @@ class Feishu2Html(
                     logger.debug("Document {}/{} exported successfully", index + 1, documentIds.size)
                 } catch (e: Exception) {
                     failureCount++
-                    logger.error("Failed to export document {}/{} ({}): {}",
-                        index + 1, documentIds.size, documentId, e.message, e)
+                    logger.error(
+                        "Failed to export document {}/{} ({}): {}",
+                        index + 1,
+                        documentIds.size,
+                        documentId,
+                        e.message,
+                        e,
+                    )
                 }
             }
 
-            logger.info("Batch export completed - Success: {}, Failed: {}, Total: {}",
-                successCount, failureCount, documentIds.size)
+            logger.info(
+                "Batch export completed - Success: {}, Failed: {}, Total: {}",
+                successCount,
+                failureCount,
+                documentIds.size,
+            )
         }
 
     private suspend fun downloadAssets(blocks: List<Block>) =
@@ -230,13 +249,19 @@ class Feishu2Html(
             }
 
             // Wait for all downloads to complete
-            logger.debug("Waiting for {} image downloads and {} file downloads",
-                imageJobs.size, fileJobs.size)
+            logger.debug(
+                "Waiting for {} image downloads and {} file downloads",
+                imageJobs.size,
+                fileJobs.size,
+            )
             imageJobs.awaitAll()
             fileJobs.awaitAll()
 
-            logger.info("Asset download completed - Images: {}, Files: {}",
-                imageJobs.size, fileJobs.size)
+            logger.info(
+                "Asset download completed - Images: {}, Files: {}",
+                imageJobs.size,
+                fileJobs.size,
+            )
         }
 
     /**
@@ -292,8 +317,8 @@ data class Feishu2HtmlOptions(
     val imagePath: String = "images",
     val filePath: String = "files",
     val customCss: String? = null,
-    val externalCss: Boolean = true,  // true = external file, false = inline
-    val cssFileName: String = "feishu-style.css",
+    val externalCss: Boolean = true, // true = external file, false = inline
+    val cssFileName: String = "feishu-style-minimal.css", // Use minimal optimized CSS by default
 ) {
     init {
         // Create output directories

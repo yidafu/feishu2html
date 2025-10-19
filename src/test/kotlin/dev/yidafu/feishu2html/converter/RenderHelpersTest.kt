@@ -36,4 +36,3 @@ class RenderHelpersTest : FunSpec({
         result.length shouldBe result.length
     }
 })
-

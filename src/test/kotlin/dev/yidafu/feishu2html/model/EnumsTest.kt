@@ -84,4 +84,3 @@ class EnumsTest : FunSpec({
         emoji shouldBe null
     }
 })
-

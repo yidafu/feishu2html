@@ -66,8 +66,11 @@ internal class FeishuAuthService(
                         expiresAt = expiresAt, // Expire 60 seconds early
                     )
 
-                logger.info("Successfully obtained new access token (expires at: {}, valid for {} seconds)",
-                    expiresAt, result.expire - 60)
+                logger.info(
+                    "Successfully obtained new access token (expires at: {}, valid for {} seconds)",
+                    expiresAt,
+                    result.expire - 60,
+                )
                 token
             } catch (e: Exception) {
                 logger.error("Failed to request access token: {}", e.message, e)
