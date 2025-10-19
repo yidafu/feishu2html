@@ -53,14 +53,16 @@ cp local.properties.example local.properties
 Edit `local.properties` and fill in:
 
 ```properties
-# Central Portal credentials (Portal user token)
+# Central Portal credentials (Portal user token - REQUIRED)
 centralUsername=your-portal-token-username
 centralPassword=your-portal-token-password
 
-# GPG signing configuration
+# GPG signing configuration (REQUIRED for releases)
 signing.password=your-gpg-passphrase
 signing.key=-----BEGIN PGP PRIVATE KEY BLOCK-----\n...\n-----END PGP PRIVATE KEY BLOCK-----
 ```
+
+**Note**: The old `ossrhUsername`/`ossrhPassword` names are deprecated. Use `centralUsername`/`centralPassword` instead.
 
 **⚠️ Note**: `local.properties` is git-ignored for security.
 
@@ -193,10 +195,14 @@ env:
 ```
 
 Configure in GitHub Secrets:
-- `CENTRAL_USERNAME` - Portal token username
-- `CENTRAL_PASSWORD` - Portal token password
-- `SIGNING_KEY` - GPG private key (ASCII armored)
-- `SIGNING_PASSWORD` - GPG key passphrase
+- `CENTRAL_USERNAME` - Portal token username (required)
+- `CENTRAL_PASSWORD` - Portal token password (required)
+- `SIGNING_KEY` - GPG private key in ASCII armored format (required)
+- `SIGNING_PASSWORD` - GPG key passphrase (required)
+
+**Legacy environment variables** (deprecated but still supported):
+- `OSSRH_USERNAME` → Use `CENTRAL_USERNAME` instead
+- `OSSRH_PASSWORD` → Use `CENTRAL_PASSWORD` instead
 
 ---
 

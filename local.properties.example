@@ -12,13 +12,13 @@
 # 2. Generate a Portal user token (Account Settings -> Generate Token)
 # 3. Use the generated token as username/password below
 
-# Portal user token (replaces OSSRH credentials)
+# Portal user token (required for publishing to Central Portal)
 centralUsername=your-portal-token-username
 centralPassword=your-portal-token-password
 
-# Legacy OSSRH credentials (for backward compatibility only - will fallback to Central if not set)
-# ossrhUsername=your-sonatype-username
-# ossrhPassword=your-sonatype-password
+# Legacy names (deprecated, use centralUsername/centralPassword instead)
+# ossrhUsername and ossrhPassword are still supported for backward compatibility
+# but will be removed in future versions
 
 # ==========================================
 # GPG 签名配置（发布到 Maven Central 必需）
