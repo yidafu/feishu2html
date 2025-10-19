@@ -21,10 +21,33 @@ A powerful Kotlin library and CLI tool to convert Feishu (Lark) documents to bea
 - 🛡️ **Type Safety** - Type-safe HTML generation using kotlinx.html DSL
 - 🎭 **Clean Architecture** - Elegant Renderer delegation pattern
 
+## 🎨 效果展示
+
+Feishu2HTML 能够高度还原飞书文档的原始样式和布局。以下是飞书在线版本与本地生成 HTML 的效果对比：
+
+<table>
+  <tr>
+    <th align="center">飞书在线效果</th>
+    <th align="center">本地生成 HTML 效果</th>
+  </tr>
+  <tr>
+    <td><img src="docs/feishu-online.png" alt="飞书在线效果" /></td>
+    <td><img src="docs/feishu-local.png" alt="本地生成 HTML 效果" /></td>
+  </tr>
+</table>
+
+从对比可以看出，本地生成的 HTML 完美保留了飞书文档的视觉风格，包括：
+
+- ✨ 一致的排版和间距
+- 🎨 原汁原味的颜色和样式
+- 📐 精确的布局和对齐
+- 🖼️ 完整的图片和媒体内容
+
 ## 📋 Table of Contents
 
 - [Feishu2HTML](#feishu2html)
   - [✨ Features](#-features)
+  - [🎨 效果展示](#-效果展示)
   - [📋 Table of Contents](#-table-of-contents)
   - [📊 Supported Block Types](#-supported-block-types)
   - [🚀 Quick Start](#-quick-start)
