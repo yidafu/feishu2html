@@ -15,7 +15,12 @@ internal object BitableBlockRenderer : Renderable {
         context: RenderContext,
     ) {
         logger.warn { "Rendering partially supported block: Bitable (block_id: ${(block as Block).blockId})" }
-        // Bitable not yet supported
+        // Bitable not yet supported - optionally show warning
+        if (context.showUnsupportedBlocks) {
+            parent.div(classes = "unsupported-block") {
+                +"[Partially supported: Bitable block]"
+            }
+        }
     }
 }
 
@@ -27,7 +32,12 @@ internal object ChatCardBlockRenderer : Renderable {
         context: RenderContext,
     ) {
         logger.warn { "Rendering partially supported block: ChatCard (block_id: ${(block as Block).blockId})" }
-        // ChatCard not yet supported
+        // ChatCard not yet supported - optionally show warning
+        if (context.showUnsupportedBlocks) {
+            parent.div(classes = "unsupported-block") {
+                +"[Partially supported: ChatCard block]"
+            }
+        }
     }
 }
 
@@ -46,6 +56,11 @@ internal object UnknownBlockRenderer : Renderable {
             logger.debug { "Unknown block contains quote data, rendering as blockquote" }
             parent.blockQuote {
                 context.textConverter.convertElements(quoteData.elements, this)
+            }
+        } else if (context.showUnsupportedBlocks) {
+            // Only show warning if no special handling and showUnsupportedBlocks is enabled
+            parent.div(classes = "unsupported-block") {
+                +"[Unknown block type: UNDEFINED]"
             }
         }
     }

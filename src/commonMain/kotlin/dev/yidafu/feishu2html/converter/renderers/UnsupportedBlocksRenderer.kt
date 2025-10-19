@@ -11,10 +11,15 @@ private fun renderUnsupportedBlock(
     parent: FlowContent,
     blockType: String,
     block: Block,
+    context: RenderContext,
 ) {
     logger.warn { "Rendering unsupported block type: $blockType (block_id: ${block.blockId})" }
-    parent.div(classes = "unsupported-block") {
-        +"[Unsupported block type: $blockType]"
+
+    // Only render if showUnsupportedBlocks is enabled
+    if (context.showUnsupportedBlocks) {
+        parent.div(classes = "unsupported-block") {
+            +"[Unsupported block type: $blockType]"
+        }
     }
 }
 
@@ -25,7 +30,7 @@ internal object IsvBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "ISV", block as Block)
+        renderUnsupportedBlock(parent, "ISV", block as Block, context)
     }
 }
 
@@ -36,7 +41,7 @@ internal object MindnoteBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Mindnote", block as Block)
+        renderUnsupportedBlock(parent, "Mindnote", block as Block, context)
     }
 }
 
@@ -47,7 +52,7 @@ internal object SheetBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Sheet", block as Block)
+        renderUnsupportedBlock(parent, "Sheet", block as Block, context)
     }
 }
 
@@ -58,7 +63,7 @@ internal object ViewBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "View", block as Block)
+        renderUnsupportedBlock(parent, "View", block as Block, context)
     }
 }
 
@@ -69,7 +74,7 @@ internal object TaskBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Task", block as Block)
+        renderUnsupportedBlock(parent, "Task", block as Block, context)
     }
 }
 
@@ -80,7 +85,7 @@ internal object OkrBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "OKR", block as Block)
+        renderUnsupportedBlock(parent, "OKR", block as Block, context)
     }
 }
 
@@ -91,7 +96,7 @@ internal object OkrObjectiveBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "OKR Objective", block as Block)
+        renderUnsupportedBlock(parent, "OKR Objective", block as Block, context)
     }
 }
 
@@ -102,7 +107,7 @@ internal object OkrKeyResultBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "OKR Key Result", block as Block)
+        renderUnsupportedBlock(parent, "OKR Key Result", block as Block, context)
     }
 }
 
@@ -113,7 +118,7 @@ internal object OkrProgressBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "OKR Progress", block as Block)
+        renderUnsupportedBlock(parent, "OKR Progress", block as Block, context)
     }
 }
 
@@ -124,7 +129,7 @@ internal object AddOnsBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Add-ons", block as Block)
+        renderUnsupportedBlock(parent, "Add-ons", block as Block, context)
     }
 }
 
@@ -135,7 +140,7 @@ internal object JiraIssueBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Jira Issue", block as Block)
+        renderUnsupportedBlock(parent, "Jira Issue", block as Block, context)
     }
 }
 
@@ -146,7 +151,7 @@ internal object WikiCatalogBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Wiki Catalog (Legacy)", block as Block)
+        renderUnsupportedBlock(parent, "Wiki Catalog (Legacy)", block as Block, context)
     }
 }
 
@@ -157,7 +162,7 @@ internal object AgendaBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Agenda", block as Block)
+        renderUnsupportedBlock(parent, "Agenda", block as Block, context)
     }
 }
 
@@ -168,7 +173,7 @@ internal object AgendaItemBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Agenda Item", block as Block)
+        renderUnsupportedBlock(parent, "Agenda Item", block as Block, context)
     }
 }
 
@@ -179,7 +184,7 @@ internal object AgendaItemTitleBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Agenda Item Title", block as Block)
+        renderUnsupportedBlock(parent, "Agenda Item Title", block as Block, context)
     }
 }
 
@@ -190,7 +195,7 @@ internal object AgendaItemContentBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Agenda Item Content", block as Block)
+        renderUnsupportedBlock(parent, "Agenda Item Content", block as Block, context)
     }
 }
 
@@ -201,7 +206,7 @@ internal object LinkPreviewBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Link Preview", block as Block)
+        renderUnsupportedBlock(parent, "Link Preview", block as Block, context)
     }
 }
 
@@ -212,7 +217,7 @@ internal object SourceSyncedBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Source Synced", block as Block)
+        renderUnsupportedBlock(parent, "Source Synced", block as Block, context)
     }
 }
 
@@ -223,7 +228,7 @@ internal object ReferenceSyncedBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Reference Synced", block as Block)
+        renderUnsupportedBlock(parent, "Reference Synced", block as Block, context)
     }
 }
 
@@ -234,7 +239,7 @@ internal object SubPageListBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Sub Page List", block as Block)
+        renderUnsupportedBlock(parent, "Sub Page List", block as Block, context)
     }
 }
 
@@ -245,6 +250,6 @@ internal object AiTemplateBlockRenderer : Renderable {
         allBlocks: Map<String, Block>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "AI Template", block as Block)
+        renderUnsupportedBlock(parent, "AI Template", block as Block, context)
     }
 }
