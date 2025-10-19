@@ -7,7 +7,7 @@ import kotlinx.serialization.*
  */
 
 @Serializable
-data class BitableBlock(
+internal data class BitableBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -17,7 +17,7 @@ data class BitableBlock(
 ) : Block()
 
 @Serializable
-data class ChatCardBlock(
+internal data class ChatCardBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -27,7 +27,7 @@ data class ChatCardBlock(
 ) : Block()
 
 @Serializable
-data class UnknownBlock(
+internal data class UnknownBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType = BlockType.UNDEFINED,
     @SerialName("parent_id") override val parentId: String? = null,

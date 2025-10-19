@@ -7,7 +7,7 @@ import kotlinx.serialization.*
  */
 
 @Serializable
-data class CodeBlockItem(
+internal data class CodeBlockItem(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -17,7 +17,7 @@ data class CodeBlockItem(
 ) : Block()
 
 @Serializable
-data class QuoteBlock(
+internal data class QuoteBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -27,7 +27,7 @@ data class QuoteBlock(
 ) : Block()
 
 @Serializable
-data class EquationBlock(
+internal data class EquationBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -37,7 +37,7 @@ data class EquationBlock(
 ) : Block()
 
 @Serializable
-data class TodoBlock(
+internal data class TodoBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -47,7 +47,7 @@ data class TodoBlock(
 ) : Block()
 
 @Serializable
-data class DividerBlock(
+internal data class DividerBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,

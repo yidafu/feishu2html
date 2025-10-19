@@ -4,7 +4,7 @@ package dev.yidafu.feishu2html.api.model
  * 块颜色枚举（用于背景色、边框色、文字颜色）
  * 参考: https://open.feishu.cn/document/docs/docs/data-structure/block
  */
-enum class BlockColor(val code: Int, val lightColor: String, val darkColor: String) {
+internal enum class BlockColor(val code: Int, val lightColor: String, val darkColor: String) {
     RED(1, "#fee2e2", "#ef4444"),
     YELLOW(2, "#fef3c7", "#f59e0b"),
     GREEN(3, "#d1fae5", "#10b981"),

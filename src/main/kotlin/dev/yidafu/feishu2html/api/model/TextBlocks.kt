@@ -7,7 +7,7 @@ import kotlinx.serialization.*
  */
 
 @Serializable
-data class PageBlock(
+internal data class PageBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -17,7 +17,7 @@ data class PageBlock(
 ) : Block()
 
 @Serializable
-data class TextBlock(
+internal data class TextBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,

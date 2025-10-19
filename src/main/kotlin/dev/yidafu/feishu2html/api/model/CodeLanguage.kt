@@ -4,7 +4,7 @@ package dev.yidafu.feishu2html.api.model
  * 代码块语言枚举
  * 参考: https://open.feishu.cn/document/docs/docs/data-structure/block
  */
-enum class CodeLanguage(val code: Int, val languageName: String) {
+internal enum class CodeLanguage(val code: Int, val languageName: String) {
     PLAINTEXT(1, "plaintext"),
     ABAP(2, "abap"),
     ADA(3, "ada"),

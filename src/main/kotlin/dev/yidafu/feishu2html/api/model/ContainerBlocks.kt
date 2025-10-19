@@ -7,7 +7,7 @@ import kotlinx.serialization.*
  */
 
 @Serializable
-data class CalloutBlock(
+internal data class CalloutBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -17,7 +17,7 @@ data class CalloutBlock(
 ) : Block()
 
 @Serializable
-data class GridBlock(
+internal data class GridBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -27,7 +27,7 @@ data class GridBlock(
 ) : Block()
 
 @Serializable
-data class GridColumnBlock(
+internal data class GridColumnBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -37,7 +37,7 @@ data class GridColumnBlock(
 ) : Block()
 
 @Serializable
-data class QuoteContainerBlock(
+internal data class QuoteContainerBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -47,7 +47,7 @@ data class QuoteContainerBlock(
 ) : Block()
 
 @Serializable
-data class TableBlock(
+internal data class TableBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -57,7 +57,7 @@ data class TableBlock(
 ) : Block()
 
 @Serializable
-data class TableCellBlock(
+internal data class TableCellBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,

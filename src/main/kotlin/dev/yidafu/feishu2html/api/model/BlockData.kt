@@ -7,73 +7,73 @@ import kotlinx.serialization.*
  */
 
 @Serializable
-data class PageBlockData(
+internal data class PageBlockData(
     val elements: List<TextElement>? = null,
     val style: TextStyle? = null,
 )
 
 @Serializable
-data class TextBlockData(
+internal data class TextBlockData(
     val elements: List<TextElement>,
     val style: TextStyle? = null,
 )
 
 @Serializable
-data class HeadingBlockData(
+internal data class HeadingBlockData(
     val elements: List<TextElement>,
     val style: TextStyle? = null,
 )
 
 @Serializable
-data class BulletBlockData(
+internal data class BulletBlockData(
     val elements: List<TextElement>,
     val style: TextStyle? = null,
 )
 
 @Serializable
-data class OrderedBlockData(
+internal data class OrderedBlockData(
     val elements: List<TextElement>,
     val style: TextStyle? = null,
 )
 
 @Serializable
-data class CodeBlockData(
+internal data class CodeBlockData(
     val language: Int? = null,
     val elements: List<TextElement>,
 )
 
 @Serializable
-data class QuoteBlockData(
+internal data class QuoteBlockData(
     val elements: List<TextElement>,
     val style: TextStyle? = null,
 )
 
 @Serializable
-data class EquationBlockData(
+internal data class EquationBlockData(
     val content: String,
 )
 
 @Serializable
-data class TodoBlockData(
+internal data class TodoBlockData(
     val elements: List<TextElement>,
     val style: TodoStyle? = null,
 )
 
 @Serializable
-data class TodoStyle(
+internal data class TodoStyle(
     val align: Int? = null,
     val done: Boolean? = null,
     val folded: Boolean? = null,
 )
 
 @Serializable
-data class BitableBlockData(
+internal data class BitableBlockData(
     val token: String,
     @SerialName("view_type") val viewType: String? = null,
 )
 
 @Serializable
-data class CalloutBlockData(
+internal data class CalloutBlockData(
     @SerialName("background_color") val backgroundColor: Int? = null,
     @SerialName("border_color") val borderColor: Int? = null,
     @SerialName("text_color") val textColor: Int? = null,
@@ -82,48 +82,48 @@ data class CalloutBlockData(
 )
 
 @Serializable
-data class ChatCardBlockData(
+internal data class ChatCardBlockData(
     @SerialName("chat_id") val chatId: String,
     @SerialName("align") val align: Int? = null,
 )
 
 @Serializable
-data class DiagramBlockData(
+internal data class DiagramBlockData(
     @SerialName("diagram_type") val diagramType: Int? = null,
     val content: String,
 )
 
 @Serializable
-data class FileBlockData(
+internal data class FileBlockData(
     val name: String? = null,
     val token: String,
     @SerialName("tmp_url") val tmpUrl: String? = null,
 )
 
 @Serializable
-data class GridBlockData(
+internal data class GridBlockData(
     @SerialName("column_size") val columnSize: Int,
 )
 
 @Serializable
-data class GridColumnBlockData(
+internal data class GridColumnBlockData(
     @SerialName("width_ratio") val widthRatio: Int,
 )
 
 @Serializable
-data class IframeBlockData(
+internal data class IframeBlockData(
     val url: String? = null, // 旧格式兼容
     val component: IframeComponent? = null, // 新格式
 )
 
 @Serializable
-data class IframeComponent(
+internal data class IframeComponent(
     @SerialName("iframe_type") val iframeType: Int,
     val url: String,
 )
 
 @Serializable
-data class ImageBlockData(
+internal data class ImageBlockData(
     val token: String? = null,
     val width: Int? = null,
     val height: Int? = null,
@@ -131,13 +131,13 @@ data class ImageBlockData(
 )
 
 @Serializable
-data class TableBlockData(
+internal data class TableBlockData(
     val cells: List<String>? = null,
     @SerialName("property") val property: TableProperty? = null,
 )
 
 @Serializable
-data class TableProperty(
+internal data class TableProperty(
     @SerialName("row_size") val rowSize: Int,
     @SerialName("column_size") val columnSize: Int,
     @SerialName("column_width") val columnWidth: List<Int>? = null,
@@ -145,30 +145,30 @@ data class TableProperty(
 )
 
 @Serializable
-data class MergeInfo(
+internal data class MergeInfo(
     @SerialName("row_span") val rowSpan: Int,
     @SerialName("col_span") val colSpan: Int,
 )
 
 @Serializable
-data class TableCellBlockData(
+internal data class TableCellBlockData(
     val elements: List<TextElement>? = null,
 )
 
 @Serializable
-data class QuoteContainerBlockData(
+internal data class QuoteContainerBlockData(
     val elements: List<TextElement>? = null,
 )
 
 @Serializable
-data class BoardBlockData(
+internal data class BoardBlockData(
     val token: String,
     val width: Int? = null,
     val height: Int? = null,
 )
 
 @Serializable
-data class AddOnsBlockData(
+internal data class AddOnsBlockData(
     @SerialName("component_id") val componentId: String? = null,
     @SerialName("component_type_id") val componentTypeId: String? = null,
     val record: String? = null,

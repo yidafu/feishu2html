@@ -7,7 +7,7 @@ import kotlinx.serialization.*
  */
 
 @Serializable
-data class ImageBlock(
+internal data class ImageBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -17,7 +17,7 @@ data class ImageBlock(
 ) : Block()
 
 @Serializable
-data class FileBlock(
+internal data class FileBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -27,7 +27,7 @@ data class FileBlock(
 ) : Block()
 
 @Serializable
-data class BoardBlock(
+internal data class BoardBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -37,7 +37,7 @@ data class BoardBlock(
 ) : Block()
 
 @Serializable
-data class DiagramBlock(
+internal data class DiagramBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -47,7 +47,7 @@ data class DiagramBlock(
 ) : Block()
 
 @Serializable
-data class IframeBlock(
+internal data class IframeBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,

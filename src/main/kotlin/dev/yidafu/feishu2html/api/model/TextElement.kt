@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
  * 文本元素
  */
 @Serializable
-data class TextElement(
+internal data class TextElement(
     @SerialName("text_run") val textRun: TextRun? = null,
     @SerialName("mention_user") val mentionUser: MentionUser? = null,
     @SerialName("mention_doc") val mentionDoc: MentionDoc? = null,
@@ -18,13 +18,13 @@ data class TextElement(
 )
 
 @Serializable
-data class TextRun(
+internal data class TextRun(
     val content: String,
     @SerialName("text_element_style") val textElementStyle: TextElementStyle? = null,
 )
 
 @Serializable
-data class TextElementStyle(
+internal data class TextElementStyle(
     val bold: Boolean? = null,
     val italic: Boolean? = null,
     val strikethrough: Boolean? = null,
@@ -36,18 +36,18 @@ data class TextElementStyle(
 )
 
 @Serializable
-data class Link(
+internal data class Link(
     val url: String,
 )
 
 @Serializable
-data class MentionUser(
+internal data class MentionUser(
     @SerialName("user_id") val userId: String,
     @SerialName("text_element_style") val textElementStyle: TextElementStyle? = null,
 )
 
 @Serializable
-data class MentionDoc(
+internal data class MentionDoc(
     val token: String,
     @SerialName("obj_type") val objType: Int,
     val url: String,
@@ -56,13 +56,13 @@ data class MentionDoc(
 )
 
 @Serializable
-data class InlineEquation(
+internal data class InlineEquation(
     val content: String,
     @SerialName("text_element_style") val textElementStyle: TextElementStyle? = null,
 )
 
 @Serializable
-data class Reminder(
+internal data class Reminder(
     @SerialName("create_user_id") val createUserId: String,
     @SerialName("is_notify") val isNotify: Boolean? = null,
     @SerialName("is_whole_day") val isWholeDay: Boolean? = null,
@@ -71,19 +71,19 @@ data class Reminder(
 )
 
 @Serializable
-data class InlineFile(
+internal data class InlineFile(
     @SerialName("file_token") val fileToken: String,
     @SerialName("source_block_id") val sourceBlockId: String,
     @SerialName("text_element_style") val textElementStyle: TextElementStyle? = null,
 )
 
 @Serializable
-data class UndefinedElement(
+internal data class UndefinedElement(
     val content: String? = null,
 )
 
 @Serializable
-data class TextStyle(
+internal data class TextStyle(
     val align: Int? = null,
     val done: Boolean? = null,
     val folded: Boolean? = null,

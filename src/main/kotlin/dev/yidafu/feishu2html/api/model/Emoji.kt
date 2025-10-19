@@ -4,7 +4,7 @@ package dev.yidafu.feishu2html.api.model
  * 飞书 Emoji 枚举
  * 参考: https://open.feishu.cn/document/docs/docs/data-structure/emoji
  */
-enum class Emoji(val id: String, val unicode: String) {
+internal enum class Emoji(val id: String, val unicode: String) {
     // 表情类
     SMILE("smile", "😊"),
     LAUGH("laugh", "😄"),

@@ -7,7 +7,7 @@ import kotlinx.serialization.*
  */
 
 @Serializable
-data class IsvBlock(
+internal data class IsvBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -16,7 +16,7 @@ data class IsvBlock(
 ) : Block()
 
 @Serializable
-data class MindnoteBlock(
+internal data class MindnoteBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -25,7 +25,7 @@ data class MindnoteBlock(
 ) : Block()
 
 @Serializable
-data class SheetBlock(
+internal data class SheetBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -34,7 +34,7 @@ data class SheetBlock(
 ) : Block()
 
 @Serializable
-data class ViewBlock(
+internal data class ViewBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -43,7 +43,7 @@ data class ViewBlock(
 ) : Block()
 
 @Serializable
-data class TaskBlock(
+internal data class TaskBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -52,7 +52,7 @@ data class TaskBlock(
 ) : Block()
 
 @Serializable
-data class OkrBlock(
+internal data class OkrBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -61,7 +61,7 @@ data class OkrBlock(
 ) : Block()
 
 @Serializable
-data class OkrObjectiveBlock(
+internal data class OkrObjectiveBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -70,7 +70,7 @@ data class OkrObjectiveBlock(
 ) : Block()
 
 @Serializable
-data class OkrKeyResultBlock(
+internal data class OkrKeyResultBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -79,7 +79,7 @@ data class OkrKeyResultBlock(
 ) : Block()
 
 @Serializable
-data class OkrProgressBlock(
+internal data class OkrProgressBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -88,7 +88,7 @@ data class OkrProgressBlock(
 ) : Block()
 
 @Serializable
-data class AddOnsBlock(
+internal data class AddOnsBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -98,7 +98,7 @@ data class AddOnsBlock(
 ) : Block()
 
 @Serializable
-data class JiraIssueBlock(
+internal data class JiraIssueBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -107,7 +107,7 @@ data class JiraIssueBlock(
 ) : Block()
 
 @Serializable
-data class WikiCatalogBlock(
+internal data class WikiCatalogBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -116,7 +116,7 @@ data class WikiCatalogBlock(
 ) : Block()
 
 @Serializable
-data class AgendaBlock(
+internal data class AgendaBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -125,7 +125,7 @@ data class AgendaBlock(
 ) : Block()
 
 @Serializable
-data class AgendaItemBlock(
+internal data class AgendaItemBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -134,7 +134,7 @@ data class AgendaItemBlock(
 ) : Block()
 
 @Serializable
-data class AgendaItemTitleBlock(
+internal data class AgendaItemTitleBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -143,7 +143,7 @@ data class AgendaItemTitleBlock(
 ) : Block()
 
 @Serializable
-data class AgendaItemContentBlock(
+internal data class AgendaItemContentBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -152,7 +152,7 @@ data class AgendaItemContentBlock(
 ) : Block()
 
 @Serializable
-data class LinkPreviewBlock(
+internal data class LinkPreviewBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -161,7 +161,7 @@ data class LinkPreviewBlock(
 ) : Block()
 
 @Serializable
-data class SourceSyncedBlock(
+internal data class SourceSyncedBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -170,7 +170,7 @@ data class SourceSyncedBlock(
 ) : Block()
 
 @Serializable
-data class ReferenceSyncedBlock(
+internal data class ReferenceSyncedBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -179,7 +179,7 @@ data class ReferenceSyncedBlock(
 ) : Block()
 
 @Serializable
-data class SubPageListBlock(
+internal data class SubPageListBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,
@@ -188,7 +188,7 @@ data class SubPageListBlock(
 ) : Block()
 
 @Serializable
-data class AiTemplateBlock(
+internal data class AiTemplateBlock(
     @SerialName("block_id") override val blockId: String,
     @SerialName("block_type") override val blockType: BlockType,
     @SerialName("parent_id") override val parentId: String? = null,

@@ -6,7 +6,7 @@ package dev.yidafu.feishu2html.api.model
  * 根据飞书 API 文档定义的 iframe_type 类型
  * 参考：https://open.feishu.cn/document/docs/docs/data-structure/block#f7b07e0c
  */
-enum class IframeType(val typeCode: Int, val displayName: String) {
+internal enum class IframeType(val typeCode: Int, val displayName: String) {
     BILIBILI(1, "哔哩哔哩视频"),
     AIRTABLE(3, "Airtable"),
     YOUKU(5, "优酷视频"),

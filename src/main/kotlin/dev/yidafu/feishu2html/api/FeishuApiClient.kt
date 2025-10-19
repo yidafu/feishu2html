@@ -186,7 +186,7 @@ internal class FeishuApiClient(
         // Fetch all blocks with pagination
         while (hasMore) {
             pageCount++
-            logger.debug("Fetching page {} blocks{}", pageCount, 
+            logger.debug("Fetching page {} blocks{}", pageCount,
                 if (pageToken != null) " with page_token=$pageToken" else "")
 
             // Execute request with rate limiter
@@ -413,7 +413,7 @@ internal class FeishuApiClient(
                 val bytes = response.body<ByteArray>()
                 file.writeBytes(bytes)
 
-                logger.info("Board saved successfully: {} ({} bytes)", 
+                logger.info("Board saved successfully: {} ({} bytes)",
                     file.absolutePath, bytes.size)
                 file
             }
@@ -443,7 +443,7 @@ internal class FeishuApiClient(
         // In the new blocks list API, the first block is the PAGE block (document root)
         val pageBlock = blocks.values.firstOrNull { it is PageBlock } as? PageBlock
         if (pageBlock != null) {
-            logger.debug("Found PAGE block - ID: {}, children count: {}", 
+            logger.debug("Found PAGE block - ID: {}, children count: {}",
                 pageBlock.blockId, pageBlock.children?.size ?: 0)
 
             // Traverse all children of PAGE block (excluding PAGE block itself)
