@@ -16,7 +16,7 @@ internal object TextBlockRenderer : Renderable {
     ) {
         val textBlock = block as TextBlock
         val elements = textBlock.text?.elements ?: return
-        logger.debug("Rendering text block with {} elements", elements.size)
+        logger.debug { "Rendering text block with ${elements.size} elements" }
         val alignClass = getAlignClass(textBlock.text?.style?.align)
         val textClass = "text-block" + if (alignClass.isNotEmpty()) " $alignClass" else ""
 

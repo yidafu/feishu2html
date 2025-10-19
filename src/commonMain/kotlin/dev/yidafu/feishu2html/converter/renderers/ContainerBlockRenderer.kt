@@ -15,7 +15,7 @@ internal object QuoteContainerBlockRenderer : Renderable {
         context: RenderContext,
     ) {
         val quoteContainer = block as QuoteContainerBlock
-        logger.debug("Rendering quote container with {} children", quoteContainer.children?.size ?: 0)
+        logger.debug { "Rendering quote container with ${quoteContainer.children?.size ?: 0} children" }
         parent.blockQuote(classes = "quote-container-block") {
             quoteContainer.children?.forEach { childId ->
                 val childBlock = allBlocks[childId]
@@ -36,7 +36,7 @@ internal object GridBlockRenderer : Renderable {
         context: RenderContext,
     ) {
         val gridBlock = block as GridBlock
-        logger.debug("Rendering grid layout with {} children", gridBlock.children?.size ?: 0)
+        logger.debug { "Rendering grid layout with ${gridBlock.children?.size ?: 0} children" }
         val columns = mutableListOf<Pair<GridColumnBlock, Int>>()
         gridBlock.children?.forEach { childId ->
             val childBlock = allBlocks[childId]
@@ -46,12 +46,8 @@ internal object GridBlockRenderer : Renderable {
             }
         }
 
-        logger.debug(
-            "Grid has {} columns with template: {}",
-            columns.size,
-            columns.joinToString(" ") { "${it.second}fr" },
-        )
         val gridTemplate = columns.joinToString(" ") { "${it.second}fr" }
+        logger.debug { "Grid has ${columns.size} columns with template: $gridTemplate" }
 
         parent.div(classes = "grid-layout") {
             style = "display: grid; grid-template-columns: $gridTemplate; gap: 20px;"

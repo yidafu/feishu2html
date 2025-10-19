@@ -16,7 +16,7 @@ internal object ImageBlockRenderer : Renderable {
     ) {
         val imageBlock = block as ImageBlock
         val token = imageBlock.image?.token ?: return
-        logger.debug("Rendering image: token={}", token)
+        logger.debug { "Rendering image: token=$token" }
         val width = imageBlock.image?.width
         val height = imageBlock.image?.height
         val alignClass = getAlignClass(imageBlock.image?.align)

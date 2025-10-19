@@ -100,7 +100,7 @@ internal object DiagramBlockRenderer : Renderable {
         val diagramBlock = block as DiagramBlock
         val content = diagramBlock.diagram?.content ?: return
         val type = diagramBlock.diagram?.diagramType
-        logger.debug("Rendering diagram block: type={}, content length={}", type, content.length)
+        logger.debug { "Rendering diagram block: type=$type, content length=${content.length}" }
 
         parent.div(classes = "diagram") {
             attributes["data-type"] = type?.toString() ?: ""

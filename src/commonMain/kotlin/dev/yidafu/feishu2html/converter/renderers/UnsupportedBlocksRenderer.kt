@@ -12,7 +12,7 @@ private fun renderUnsupportedBlock(
     blockType: String,
     block: Block,
 ) {
-    logger.warn("Rendering unsupported block type: {} (block_id: {})", blockType, block.blockId)
+    logger.warn { "Rendering unsupported block type: $blockType (block_id: ${block.blockId})" }
     parent.div(classes = "unsupported-block") {
         +"[Unsupported block type: $blockType]"
     }

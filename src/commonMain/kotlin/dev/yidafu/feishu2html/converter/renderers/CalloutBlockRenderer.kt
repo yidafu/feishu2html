@@ -17,11 +17,7 @@ internal object CalloutBlockRenderer : Renderable {
         val calloutBlock = block as CalloutBlock
         val colorClass = BlockColor.getColorClass(calloutBlock.callout?.backgroundColor) ?: "default"
         val emoji = Emoji.fromId(calloutBlock.callout?.emojiId)
-        logger.debug(
-            "Rendering callout block: color={}, children={}",
-            colorClass,
-            calloutBlock.children?.size ?: 0,
-        )
+        logger.debug { "Rendering callout block: color=$colorClass, children=${calloutBlock.children?.size ?: 0}" }
 
         parent.div(classes = "callout-block callout-$colorClass") {
             if (emoji != null) {

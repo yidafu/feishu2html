@@ -16,7 +16,7 @@ internal object BulletBlockRenderer : Renderable {
     ) {
         val bulletBlock = block as BulletBlock
         val elements = bulletBlock.bullet?.elements ?: return
-        logger.debug("Rendering bullet list item with {} elements", elements.size)
+        logger.debug { "Rendering bullet list item with ${elements.size} elements" }
 
         // Feishu-style structure with div instead of ul/li
         parent.div(classes = "list-wrapper bullet-list") {
@@ -55,7 +55,7 @@ internal object OrderedBlockRenderer : Renderable {
                 else -> listCounter + 1
             }
 
-        logger.debug("Rendering ordered list item with {} elements", elements.size)
+        logger.debug { "Rendering ordered list item with ${elements.size} elements" }
 
         // Feishu-style structure with div instead of ul/li
         parent.div(classes = "list-wrapper ordered-list") {

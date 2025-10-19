@@ -122,7 +122,7 @@ private fun renderHeading(
     context: RenderContext,
 ) {
     val elements = headingData?.elements ?: return
-    logger.debug("Rendering heading level {} with {} elements", level, elements.size)
+    logger.debug { "Rendering heading level $level with ${elements.size} elements" }
     val alignClass = getAlignClass(headingData.style?.align)
     val feishuClass = "heading heading-h$level" + if (alignClass.isNotEmpty()) " $alignClass" else ""
 

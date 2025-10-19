@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+/**
+ * Feishu2HTML Node.js launcher script (CommonJS)
+ *
+ * This script loads the compiled Kotlin/JS application in UMD format
+ */
+
+const path = require('path');
+
+// Get the absolute path to the Kotlin build output
+const mainModule = path.join(__dirname, '../build/js/packages/feishu2html/kotlin/feishu2html.js');
+
+// Load and run the main application module
+require(mainModule);
+
+// The main function is automatically called by the Kotlin/JS runtime

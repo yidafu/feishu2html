@@ -17,7 +17,7 @@ internal class TextElementConverter {
         elements: List<TextElement>,
         parent: FlowContent,
     ) {
-        logger.debug("Converting {} text elements", elements.size)
+        logger.debug { "Converting ${elements.size} text elements" }
         elements.forEach { convertElement(it, parent) }
     }
 

@@ -43,52 +43,10 @@ kotlin {
         }
     }
 
-    // JS 目标平台 (Node.js only) - ES Module
+    // JS 目标平台 (Node.js only) - UMD/CommonJS
     js(IR) {
         nodejs()
         binaries.executable()
-
-        // 配置为输出 ES Module 格式
-        useEsModules()
-
-        compilations.all {
-            compileTaskProvider.configure {
-                compilerOptions {
-                    moduleKind.set(org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_ES)
-                }
-
-                // 构建后处理：将 eval('require') 替换为 require
-                doLast {
-                    val outputDir = destinationDirectory.get().asFile
-                    val jsFiles =
-                        outputDir.listFiles { file ->
-                            file.extension == "mjs"
-                        }
-
-                    jsFiles?.forEach { file ->
-                        var content = file.readText()
-                        var modified = false
-
-                        // 替换 eval('require')('xxx') 为 require('xxx')
-                        if (content.contains("eval('require')")) {
-                            content = content.replace(Regex("eval\\('require'\\)"), "require")
-                            modified = true
-                        }
-
-                        // 替换 eval("require")("xxx") 为 require("xxx")
-                        if (content.contains("eval(\"require\")")) {
-                            content = content.replace(Regex("eval\\(\"require\"\\)"), "require")
-                            modified = true
-                        }
-
-                        if (modified) {
-                            file.writeText(content)
-                            println("Patched: ${file.name} - Replaced eval('require') with require")
-                        }
-                    }
-                }
-            }
-        }
     }
 
     // Native 桌面平台
@@ -282,43 +240,6 @@ nmcp {
 }
 
 // Signing 配置 (发布到 Maven Central 需要)
-// Patch compiled JS files: Replace eval('require') with require
-// This runs after JS compilation tasks
-tasks.matching {
-    it.name == "compileProductionExecutableKotlinJs" || it.name == "jsProductionExecutableCompileSync"
-}.configureEach {
-    doLast {
-        val outputDirs =
-            listOf(
-                File(project.buildDir, "compileSync/js/main/productionExecutable/kotlin"),
-                File(project.buildDir, "js/packages/feishu2html/kotlin"),
-            )
-
-        outputDirs.forEach { outputDir ->
-            if (outputDir.exists()) {
-                val jsFiles =
-                    outputDir.listFiles { file ->
-                        file.extension == "mjs"
-                    }
-
-                jsFiles?.forEach { file ->
-                    var content = file.readText()
-                    val originalContent = content
-
-                    // 替换 eval('require') 为 require
-                    content = content.replace("eval('require')", "require")
-                    content = content.replace("eval(\"require\")", "require")
-
-                    if (content != originalContent) {
-                        file.writeText(content)
-                        println("✅ Patched: ${file.name} - Replaced eval('require') with require")
-                    }
-                }
-            }
-        }
-    }
-}
-
 signing {
     // Check for signing configuration in local.properties
     val signingKey =

@@ -17,7 +17,7 @@ internal object FileBlockRenderer : Renderable {
         val fileBlock = block as FileBlock
         val token = fileBlock.file?.token ?: return
         val name = fileBlock.file?.name ?: "Download File"
-        logger.debug("Rendering file block: name={}, token={}", name, token)
+        logger.debug { "Rendering file block: name=$name, token=$token" }
 
         parent.a(href = "files/$token") {
             attributes["download"] = ""
