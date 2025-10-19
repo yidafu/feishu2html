@@ -212,19 +212,13 @@ nmcp {
         // Central Portal credentials (Portal user token)
         username.set(
             localProperties.getProperty("centralUsername")
-                ?: localProperties.getProperty("ossrhUsername")
                 ?: project.findProperty("centralUsername") as String?
-                ?: project.findProperty("ossrhUsername") as String?
                 ?: System.getenv("CENTRAL_USERNAME")
-                ?: System.getenv("OSSRH_USERNAME")
         )
         password.set(
             localProperties.getProperty("centralPassword")
-                ?: localProperties.getProperty("ossrhPassword")
                 ?: project.findProperty("centralPassword") as String?
-                ?: project.findProperty("ossrhPassword") as String?
                 ?: System.getenv("CENTRAL_PASSWORD")
-                ?: System.getenv("OSSRH_PASSWORD")
         )
 
         // Automatically publish to Maven Central after validation
