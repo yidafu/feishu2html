@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "dev.yidafu.feishu2html"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.0"
 
 // Load local.properties
 val localPropertiesFile = rootProject.file("local.properties")
@@ -175,6 +175,14 @@ dependencies {
 publishing {
     publications {
         withType<MavenPublication> {
+            // Create empty Javadoc JAR to satisfy Central Portal requirements
+            // Dokka HTML is available separately via dokkaHtml task
+            val javadocJar = tasks.register("${name}JavadocJar", Jar::class) {
+                archiveClassifier.set("javadoc")
+                // Empty JAR is acceptable for Central Portal
+            }
+            artifact(javadocJar)
+
             pom {
                 name.set("Feishu2HTML")
                 description.set("A Kotlin Multiplatform library and CLI tool to convert Feishu (Lark) documents to beautiful, standalone HTML files")
@@ -208,7 +216,9 @@ publishing {
 // NMCP Plugin 配置 - Modern plugin for Central Portal
 // See: https://github.com/GradleUp/nmcp
 nmcp {
-    // Publish automatically to Central Portal
+    // Publish to Central Portal
+    // Note: Central Portal does NOT support SNAPSHOT versions
+    // All versions must be release versions
     publishAllPublications {
         // Central Portal credentials (Portal user token)
         username.set(
@@ -222,29 +232,34 @@ nmcp {
                 ?: System.getenv("CENTRAL_PASSWORD")
         )
 
-        // Automatically publish to Maven Central after validation
-        publicationType.set(
-            if (version.toString().endsWith("SNAPSHOT")) {
-                "AUTOMATIC"  // Automatic for SNAPSHOT
-            } else {
-                "USER_MANAGED"  // Manual approval for releases via Portal UI
-            }
-        )
+        // Publication type: USER_MANAGED requires manual approval in Portal UI
+        // AUTOMATIC would auto-publish, but requires namespace verification
+        publicationType.set("USER_MANAGED")
     }
 }
 
 // Signing 配置 (发布到 Maven Central 需要)
 signing {
+    // Check for signing configuration in local.properties
     val signingKey = localProperties.getProperty("signing.key")
-        ?: project.findProperty("signing.key") as String?
         ?: System.getenv("SIGNING_KEY")
     val signingPassword = localProperties.getProperty("signing.password")
-        ?: project.findProperty("signing.password") as String?
         ?: System.getenv("SIGNING_PASSWORD")
+    val signingKeyId = localProperties.getProperty("signing.keyId")
+    val signingSecretKeyRingFile = localProperties.getProperty("signing.secretKeyRingFile")
 
-    if (signingKey != null && signingPassword != null) {
-        useInMemoryPgpKeys(signingKey, signingPassword)
-        sign(publishing.publications)
+    when {
+        // Method 1: In-memory PGP keys (recommended for CI/CD)
+        signingKey != null && signingPassword != null -> {
+            useInMemoryPgpKeys(signingKey, signingPassword)
+            sign(publishing.publications)
+        }
+        // Method 2: Use system GPG command (easiest for local development)
+        else -> {
+            // Use gpg-agent with configured keyId
+            useGpgCmd()
+            sign(publishing.publications)
+        }
     }
 }
 

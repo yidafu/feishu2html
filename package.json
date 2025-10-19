@@ -1,0 +1,29 @@
+{
+  "name": "@yidafu/feishu2html-test",
+  "version": "1.0.0",
+  "description": "Test scripts for Feishu2HTML Kotlin/JS output",
+  "type": "module",
+  "scripts": {
+    "test:js": "node test-js.mjs",
+    "example:js": "node test-js-example.mjs",
+    "build:js": "./gradlew compileKotlinJs",
+    "test": "npm run build:js && npm run test:js"
+  },
+  "keywords": [
+    "feishu",
+    "lark",
+    "html",
+    "converter",
+    "kotlin-js"
+  ],
+  "author": "YidaFu <yidafu90@qq.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yidafu/feishu2html.git"
+  }
+}
+
