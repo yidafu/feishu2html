@@ -26,16 +26,43 @@ cd feishu2html
 
 ```bash
 # Export a single document
-./gradlew run --args="<app_id> <app_secret> <document_id>"
+./gradlew runJvm --args="<app_id> <app_secret> <document_id>"
 
 # Export multiple documents
-./gradlew run --args="<app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>"
+./gradlew runJvm --args="<app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>"
+
+# With options for standalone HTML
+./gradlew runJvm --args="--inline-images --inline-css <app_id> <app_secret> <document_id>"
+
+# Clean output (hide unsupported warnings)
+./gradlew runJvm --args="--hide-unsupported <app_id> <app_secret> <document_id>"
+
+# All options combined
+./gradlew runJvm --args="-t fragment --inline-images --inline-css --hide-unsupported <app_id> <app_secret> <document_id>"
 ```
 
-### Example
+### CLI Options
+
+```
+Options:
+  -t, --template <mode>   HTML template mode: default | fragment | full
+  --inline-images         Embed images as base64 data URLs (for standalone HTML)
+  --inline-css            Embed CSS styles inline in <style> tag (for standalone HTML)
+  --hide-unsupported      Hide unsupported block type warnings (for cleaner output)
+  -h, --help              Show help message
+```
+
+### Examples
 
 ```bash
-./gradlew run --args="cli_a1234567890abcde your_app_secret_here doxcnABC123XYZ456"
+# Basic export
+./gradlew runJvm --args="cli_a1234567890abcde your_app_secret_here doxcnABC123XYZ456"
+
+# Generate standalone HTML file (single file with everything embedded)
+./gradlew runJvm --args="--inline-images --inline-css cli_a123 secret123 doxcnABC"
+
+# Clean export without warnings
+./gradlew runJvm --args="--hide-unsupported cli_a123 secret123 doxcnABC"
 ```
 
 Output files will be saved to the `./output/` directory by default.

@@ -21,14 +21,18 @@ A powerful **Kotlin Multiplatform** library and CLI tool to convert Feishu (Lark
 - 🌐 **Kotlin Multiplatform** - Runs on JVM, JS (Node.js/Browser), and Native platforms
 - 🎯 **Comprehensive Block Support** - All major Feishu document block types (headings, paragraphs, lists, tables, code blocks, etc.)
 - 📦 **Resource Management** - Automatic download and save of images and attachments
+- 🖼️ **Base64 Image Embedding** - Optional base64 encoding for standalone HTML files
 - 🎨 **Rich Text Formatting** - Full support for text styles (bold, italic, underline, strikethrough, links, etc.)
+- 📎 **Enhanced File Attachments** - Beautiful Feishu-style attachment cards with type icons
 - 🧮 **Math Rendering** - Mathematical formulas powered by MathJax
 - 💻 **Syntax Highlighting** - Code blocks with 70+ language support
-- 🔧 **Flexible Usage** - Use as library or CLI tool (JVM)
+- 🎨 **Customizable Templates** - Default, Fragment, and Full HTML template modes
+- 🔧 **Flexible Usage** - Use as library or CLI tool with rich options
 - ⚡ **Async Downloads** - Asynchronous resource downloading for better performance
 - 🛡️ **Type Safety** - Type-safe HTML generation using kotlinx.html DSL
 - 🎭 **Clean Architecture** - Elegant Renderer delegation pattern
 - 🚀 **Cross-Platform** - >95% code shared across all platforms
+- 🧹 **Clean Output** - Optional hiding of unsupported block warnings
 
 ## 🎨 Visual Comparison
 
@@ -142,11 +146,31 @@ Download the JVM JAR from [GitHub Releases](https://github.com/yidafu/feishu2htm
 # Download
 curl -L -O https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.2-jvm.jar
 
-# Export a single document
+# Basic usage - Export a single document
 java -jar feishu2html-1.0.2-jvm.jar <app_id> <app_secret> <document_id>
 
 # Export multiple documents
 java -jar feishu2html-1.0.2-jvm.jar <app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>
+
+# With options for standalone HTML (embedded images and CSS)
+java -jar feishu2html-1.0.2-jvm.jar --inline-images --inline-css <app_id> <app_secret> <document_id>
+
+# Clean output (hide unsupported block warnings)
+java -jar feishu2html-1.0.2-jvm.jar --hide-unsupported <app_id> <app_secret> <document_id>
+
+# All options combined
+java -jar feishu2html-1.0.2-jvm.jar -t fragment --inline-images --inline-css --hide-unsupported <app_id> <app_secret> <document_id>
+```
+
+**CLI Options:**
+
+```
+Options:
+  -t, --template <mode>   HTML template mode: default | fragment | full
+  --inline-images         Embed images as base64 data URLs
+  --inline-css            Embed CSS styles inline in <style> tag
+  --hide-unsupported      Hide unsupported block type warnings
+  -h, --help              Show help message
 ```
 
 **Using Gradle (from source):**
@@ -157,7 +181,8 @@ git clone https://github.com/yidafu/feishu2html.git
 cd feishu2html
 
 # Build and run
-./gradlew run --args="<app_id> <app_secret> <document_id>"
+./gradlew runJvm --args="<app_id> <app_secret> <document_id>"
+./gradlew runJvm --args="--inline-images --inline-css <app_id> <app_secret> <document_id>"
 ```
 
 **Example:**
@@ -227,18 +252,23 @@ fun main() = runBlocking {
 ```kotlin
 import dev.yidafu.feishu2html.Feishu2Html
 import dev.yidafu.feishu2html.Feishu2HtmlOptions
+import dev.yidafu.feishu2html.TemplateMode
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
     val options = Feishu2HtmlOptions(
         appId = "your_app_id",
         appSecret = "your_app_secret",
-        outputDir = "./output",          // HTML output directory
-        imageDir = "./output/images",    // Image save directory
-        fileDir = "./output/files",      // Attachment save directory
-        imagePath = "images",            // Relative path for images in HTML
-        filePath = "files",              // Relative path for files in HTML
-        customCss = null                 // Custom CSS (optional)
+        outputDir = "./output",              // HTML output directory
+        imageDir = "./output/images",        // Image save directory
+        fileDir = "./output/files",          // Attachment save directory
+        imagePath = "images",                // Relative path for images in HTML
+        filePath = "files",                  // Relative path for files in HTML
+        externalCss = false,                 // Inline CSS (true = external file)
+        customCss = null,                    // Custom CSS (optional)
+        templateMode = TemplateMode.DEFAULT, // HTML template mode
+        inlineImages = true,                 // Embed images as base64
+        showUnsupportedBlocks = false        // Hide unsupported block warnings
     )
 
     // Automatic resource cleanup with use {}
@@ -255,6 +285,24 @@ fun main() = runBlocking {
     }
 }
 ```
+
+**Available Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `appId` | String | required | Feishu application App ID |
+| `appSecret` | String | required | Feishu application App Secret |
+| `outputDir` | String | `"./output"` | HTML output directory |
+| `imageDir` | String | `"./output/images"` | Image save directory |
+| `fileDir` | String | `"./output/files"` | Attachment save directory |
+| `imagePath` | String | `"images"` | Relative path for images in HTML |
+| `filePath` | String | `"files"` | Relative path for files in HTML |
+| `customCss` | String? | `null` | Custom CSS styles |
+| `externalCss` | Boolean | `true` | Use external CSS file (false = inline) |
+| `cssFileName` | String | `"feishu-style-optimized.css"` | CSS filename |
+| `templateMode` | TemplateMode | `DEFAULT` | HTML template mode |
+| `inlineImages` | Boolean | `false` | Embed images as base64 data URLs |
+| `showUnsupportedBlocks` | Boolean | `true` | Show unsupported block warnings |
 
 ### 6. CSS Styling Options
 
@@ -424,7 +472,23 @@ Content from real-time collaboration features (e.g., comments, suggestions) is n
 
 ### 3. Unsupported Block Types
 
-Some advanced block types are not yet supported (ISV, Mindnote, Sheet, Task, OKR, Wiki Catalog, Agenda, Link Preview, etc.). These will display a placeholder message: `[暂不支持的Block类型: XXX]`
+Some advanced block types are not yet supported (ISV, Mindnote, Sheet, Task, OKR, Wiki Catalog, Agenda, Link Preview, etc.). By default, these will display a placeholder message for debugging purposes.
+
+**Solution**: Use the `--hide-unsupported` CLI option or set `showUnsupportedBlocks = false` in library usage to hide these warnings for cleaner output.
+
+```bash
+# CLI: Hide unsupported block warnings
+java -jar feishu2html.jar --hide-unsupported <app_id> <app_secret> <document_id>
+```
+
+```kotlin
+// Library: Hide unsupported block warnings
+val options = Feishu2HtmlOptions(
+    appId = "your_app_id",
+    appSecret = "your_app_secret",
+    showUnsupportedBlocks = false  // Hide warnings
+)
+```
 
 See the [Supported Block Types](#-supported-block-types) table for a complete list.
 

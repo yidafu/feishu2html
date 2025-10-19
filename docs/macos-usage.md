@@ -67,17 +67,50 @@ feishu2html <app_id> <app_secret> <document_id>
 feishu2html <app_id> <app_secret> <document_id>
 ```
 
+### Advanced Usage with Options
+
+```bash
+# Standalone HTML (embedded images and CSS)
+./feishu2html.kexe --inline-images --inline-css <app_id> <app_secret> <document_id>
+
+# Clean output (hide unsupported block warnings)
+./feishu2html.kexe --hide-unsupported <app_id> <app_secret> <document_id>
+
+# Custom HTML template
+./feishu2html.kexe -t fragment <app_id> <app_secret> <document_id>
+
+# All options combined
+./feishu2html.kexe -t fragment --inline-images --inline-css --hide-unsupported <app_id> <app_secret> <document_id>
+```
+
+### CLI Options
+
+```
+Options:
+  -t, --template <mode>   HTML template mode: default | fragment | full
+                          default:  Standard Feishu template (default)
+                          fragment: Minimal template with custom body wrapper
+                          full:     Minimal template with basic HTML structure
+  --inline-images         Embed images as base64 data URLs
+  --inline-css            Embed CSS styles inline in <style> tag
+  --hide-unsupported      Hide unsupported block type warnings
+  -h, --help              Show help message
+```
+
 ### Example
 
 ```bash
-# Using local binary
+# Basic export
 ./feishu2html.kexe \
     cli_a1234567890abcde \
     your_app_secret_here \
     doxcnABC123XYZ456
 
-# Using system-installed binary
-feishu2html \
+# Standalone HTML for sharing
+./feishu2html.kexe \
+    --inline-images \
+    --inline-css \
+    --hide-unsupported \
     cli_a1234567890abcde \
     your_app_secret_here \
     doxcnABC123XYZ456
