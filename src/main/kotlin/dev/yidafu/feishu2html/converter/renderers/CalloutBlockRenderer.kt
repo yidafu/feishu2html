@@ -5,7 +5,7 @@ import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
 import org.slf4j.LoggerFactory
 
-object CalloutBlockRenderer : Renderable {
+internal object CalloutBlockRenderer : Renderable {
     private val logger = LoggerFactory.getLogger(CalloutBlockRenderer::class.java)
 
     override fun <T> render(

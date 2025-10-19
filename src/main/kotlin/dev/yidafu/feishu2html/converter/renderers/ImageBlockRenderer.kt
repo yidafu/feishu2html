@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.ImageBlockRenderer")
 
-object ImageBlockRenderer : Renderable {
+internal object ImageBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -36,7 +36,7 @@ object ImageBlockRenderer : Renderable {
     }
 }
 
-object BoardBlockRenderer : Renderable {
+internal object BoardBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,

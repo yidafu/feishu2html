@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.ListBlockRenderer")
 
-object BulletBlockRenderer : Renderable {
+internal object BulletBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -25,7 +25,7 @@ object BulletBlockRenderer : Renderable {
     }
 }
 
-object OrderedBlockRenderer : Renderable {
+internal object OrderedBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,

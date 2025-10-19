@@ -5,7 +5,7 @@ import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
 import org.slf4j.LoggerFactory
 
-object TableBlockRenderer : Renderable {
+internal object TableBlockRenderer : Renderable {
     private val logger = LoggerFactory.getLogger(TableBlockRenderer::class.java)
 
     override fun <T> render(
@@ -82,7 +82,7 @@ object TableBlockRenderer : Renderable {
     }
 }
 
-object TableCellBlockRenderer : Renderable {
+internal object TableCellBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,

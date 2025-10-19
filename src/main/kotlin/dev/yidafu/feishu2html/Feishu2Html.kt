@@ -75,7 +75,6 @@ class Feishu2Html(
             val blocks = content.blocks
 
             logger.info("Document content loaded - Total blocks: {}", blocks.size)
-            logger.debug("Document has {} top-level children", document.body?.children?.size ?: 0)
 
             // Get ordered block list
             val orderedBlocks = apiClient.getOrderedBlocks(content)

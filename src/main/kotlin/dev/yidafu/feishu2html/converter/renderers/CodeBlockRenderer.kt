@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.CodeBlockRenderer")
 
-object CodeBlockRenderer : Renderable {
+internal object CodeBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -29,7 +29,7 @@ object CodeBlockRenderer : Renderable {
     }
 }
 
-object QuoteBlockRenderer : Renderable {
+internal object QuoteBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -45,7 +45,7 @@ object QuoteBlockRenderer : Renderable {
     }
 }
 
-object EquationBlockRenderer : Renderable {
+internal object EquationBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -61,7 +61,7 @@ object EquationBlockRenderer : Renderable {
     }
 }
 
-object TodoBlockRenderer : Renderable {
+internal object TodoBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -87,7 +87,7 @@ object TodoBlockRenderer : Renderable {
     }
 }
 
-object DividerBlockRenderer : Renderable {
+internal object DividerBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,

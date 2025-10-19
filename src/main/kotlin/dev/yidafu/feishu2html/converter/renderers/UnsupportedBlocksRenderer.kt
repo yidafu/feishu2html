@@ -14,7 +14,7 @@ private fun renderUnsupportedBlock(parent: FlowContent, blockType: String, block
     }
 }
 
-object IsvBlockRenderer : Renderable {
+internal object IsvBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -25,7 +25,7 @@ object IsvBlockRenderer : Renderable {
     }
 }
 
-object MindnoteBlockRenderer : Renderable {
+internal object MindnoteBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -36,7 +36,7 @@ object MindnoteBlockRenderer : Renderable {
     }
 }
 
-object SheetBlockRenderer : Renderable {
+internal object SheetBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -47,7 +47,7 @@ object SheetBlockRenderer : Renderable {
     }
 }
 
-object ViewBlockRenderer : Renderable {
+internal object ViewBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -58,7 +58,7 @@ object ViewBlockRenderer : Renderable {
     }
 }
 
-object TaskBlockRenderer : Renderable {
+internal object TaskBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -69,7 +69,7 @@ object TaskBlockRenderer : Renderable {
     }
 }
 
-object OkrBlockRenderer : Renderable {
+internal object OkrBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -80,7 +80,7 @@ object OkrBlockRenderer : Renderable {
     }
 }
 
-object OkrObjectiveBlockRenderer : Renderable {
+internal object OkrObjectiveBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -91,7 +91,7 @@ object OkrObjectiveBlockRenderer : Renderable {
     }
 }
 
-object OkrKeyResultBlockRenderer : Renderable {
+internal object OkrKeyResultBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -102,7 +102,7 @@ object OkrKeyResultBlockRenderer : Renderable {
     }
 }
 
-object OkrProgressBlockRenderer : Renderable {
+internal object OkrProgressBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -113,7 +113,7 @@ object OkrProgressBlockRenderer : Renderable {
     }
 }
 
-object AddOnsBlockRenderer : Renderable {
+internal object AddOnsBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -124,7 +124,7 @@ object AddOnsBlockRenderer : Renderable {
     }
 }
 
-object JiraIssueBlockRenderer : Renderable {
+internal object JiraIssueBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -135,7 +135,7 @@ object JiraIssueBlockRenderer : Renderable {
     }
 }
 
-object WikiCatalogBlockRenderer : Renderable {
+internal object WikiCatalogBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -146,7 +146,7 @@ object WikiCatalogBlockRenderer : Renderable {
     }
 }
 
-object AgendaBlockRenderer : Renderable {
+internal object AgendaBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -157,7 +157,7 @@ object AgendaBlockRenderer : Renderable {
     }
 }
 
-object AgendaItemBlockRenderer : Renderable {
+internal object AgendaItemBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -168,7 +168,7 @@ object AgendaItemBlockRenderer : Renderable {
     }
 }
 
-object AgendaItemTitleBlockRenderer : Renderable {
+internal object AgendaItemTitleBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -179,7 +179,7 @@ object AgendaItemTitleBlockRenderer : Renderable {
     }
 }
 
-object AgendaItemContentBlockRenderer : Renderable {
+internal object AgendaItemContentBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -190,7 +190,7 @@ object AgendaItemContentBlockRenderer : Renderable {
     }
 }
 
-object LinkPreviewBlockRenderer : Renderable {
+internal object LinkPreviewBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -201,7 +201,7 @@ object LinkPreviewBlockRenderer : Renderable {
     }
 }
 
-object SourceSyncedBlockRenderer : Renderable {
+internal object SourceSyncedBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -212,7 +212,7 @@ object SourceSyncedBlockRenderer : Renderable {
     }
 }
 
-object ReferenceSyncedBlockRenderer : Renderable {
+internal object ReferenceSyncedBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -223,7 +223,7 @@ object ReferenceSyncedBlockRenderer : Renderable {
     }
 }
 
-object SubPageListBlockRenderer : Renderable {
+internal object SubPageListBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -234,7 +234,7 @@ object SubPageListBlockRenderer : Renderable {
     }
 }
 
-object AiTemplateBlockRenderer : Renderable {
+internal object AiTemplateBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,

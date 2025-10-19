@@ -6,7 +6,7 @@ package dev.yidafu.feishu2html.converter
 internal object FeishuStyles {
     fun generateCSS(): String {
         return """        /* ========== Feishu Document Styles ========== */
-        
+
         /* Base Styles */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -42,7 +42,7 @@ internal object FeishuStyles {
         h4 { font-size: 18px; }
         h5 { font-size: 16px; font-weight: 500; }
         h6 { font-size: 14px; font-weight: 500; color: #646a73; }
-        
+
         .heading-extra-bold {
             font-weight: 700;
         }
@@ -443,11 +443,11 @@ internal object FeishuStyles {
             .grid-layout {
                 display: block !important;
             }
-            
+
             .grid-column {
                 margin-bottom: 16px;
             }
-            
+
             h1 { font-size: 24px; }
             h2 { font-size: 20px; }
             h3 { font-size: 18px; }

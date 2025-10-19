@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.HeadingBlockRenderer")
 
-object Heading1BlockRenderer : Renderable {
+internal object Heading1BlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -19,7 +19,7 @@ object Heading1BlockRenderer : Renderable {
     }
 }
 
-object Heading2BlockRenderer : Renderable {
+internal object Heading2BlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -31,7 +31,7 @@ object Heading2BlockRenderer : Renderable {
     }
 }
 
-object Heading3BlockRenderer : Renderable {
+internal object Heading3BlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -43,7 +43,7 @@ object Heading3BlockRenderer : Renderable {
     }
 }
 
-object Heading4BlockRenderer : Renderable {
+internal object Heading4BlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -55,7 +55,7 @@ object Heading4BlockRenderer : Renderable {
     }
 }
 
-object Heading5BlockRenderer : Renderable {
+internal object Heading5BlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -67,7 +67,7 @@ object Heading5BlockRenderer : Renderable {
     }
 }
 
-object Heading6BlockRenderer : Renderable {
+internal object Heading6BlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -79,7 +79,7 @@ object Heading6BlockRenderer : Renderable {
     }
 }
 
-object Heading7BlockRenderer : Renderable {
+internal object Heading7BlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -91,7 +91,7 @@ object Heading7BlockRenderer : Renderable {
     }
 }
 
-object Heading8BlockRenderer : Renderable {
+internal object Heading8BlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -103,7 +103,7 @@ object Heading8BlockRenderer : Renderable {
     }
 }
 
-object Heading9BlockRenderer : Renderable {
+internal object Heading9BlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,

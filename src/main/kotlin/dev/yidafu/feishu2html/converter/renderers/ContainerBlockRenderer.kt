@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.ContainerBlockRenderer")
 
-object QuoteContainerBlockRenderer : Renderable {
+internal object QuoteContainerBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -28,7 +28,7 @@ object QuoteContainerBlockRenderer : Renderable {
     }
 }
 
-object GridBlockRenderer : Renderable {
+internal object GridBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -69,7 +69,7 @@ object GridBlockRenderer : Renderable {
     }
 }
 
-object GridColumnBlockRenderer : Renderable {
+internal object GridColumnBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,

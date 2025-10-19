@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.OtherBlocksRenderer")
 
-object BitableBlockRenderer : Renderable {
+internal object BitableBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -19,7 +19,7 @@ object BitableBlockRenderer : Renderable {
     }
 }
 
-object ChatCardBlockRenderer : Renderable {
+internal object ChatCardBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -31,7 +31,7 @@ object ChatCardBlockRenderer : Renderable {
     }
 }
 
-object UnknownBlockRenderer : Renderable {
+internal object UnknownBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,

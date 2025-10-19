@@ -6,8 +6,9 @@ import kotlinx.html.*
 import org.slf4j.LoggerFactory
 import java.net.URLDecoder
 
-object IframeBlockRenderer : Renderable {
-    private val logger = LoggerFactory.getLogger(IframeBlockRenderer::class.java)
+private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.converter.renderers.IframeBlockRenderer")
+
+internal object IframeBlockRenderer : Renderable {
 
     override fun <T> render(
         parent: FlowContent,
@@ -90,7 +91,7 @@ object IframeBlockRenderer : Renderable {
     }
 }
 
-object DiagramBlockRenderer : Renderable {
+internal object DiagramBlockRenderer : Renderable {
     override fun <T> render(
         parent: FlowContent,
         block: T,
