@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.serialization") version "2.1.0"
     id("org.jetbrains.dokka") version "1.9.20"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
+    jacoco
     application
 }
 
@@ -37,9 +38,14 @@ dependencies {
     // kotlin-css for CSS DSL (kotlin-wrappers)
     implementation("org.jetbrains.kotlin-wrappers:kotlin-css:2025.10.8")
 
-    // 测试
+    // 测试框架
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+    testImplementation("io.kotest:kotest-property:5.8.0")
+    testImplementation("io.mockk:mockk:1.13.9")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("io.ktor:ktor-client-mock:2.3.7")
 }
 
 application {
@@ -105,4 +111,54 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+// JaCoCo配置 - 代码覆盖率
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+
+    classDirectories.setFrom(
+        files(classDirectories.files.map {
+            fileTree(it) {
+                exclude(
+                    "**/model/**Data.class",
+                    "**/model/Block.class",
+                    "**/model/Document.class",
+                    "**/model/BlockType.class",
+                    "**/model/Emoji.class",
+                    "**/model/TextAlign.class",
+                    "**/model/BlockColor.class",
+                    "**/model/CodeLanguage.class",
+                    "**/model/IframeType.class",
+                    "**/MainKt.class"
+                )
+            }
+        })
+    )
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.jacocoTestReport)
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.98".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.register("testCoverage") {
+    dependsOn(tasks.test, tasks.jacocoTestReport)
+    description = "Run tests and generate coverage report"
+    group = "verification"
 }
