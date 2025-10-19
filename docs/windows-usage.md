@@ -18,7 +18,7 @@ Download the Windows x64 binary from the [latest release](https://github.com/yid
 **Using PowerShell:**
 ```powershell
 # Download Windows x64 binary
-Invoke-WebRequest -Uri "https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-mingwX64.zip" -OutFile "feishu2html.zip"
+Invoke-WebRequest -Uri "https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.2-mingwX64.zip" -OutFile "feishu2html.zip"
 
 # Extract
 Expand-Archive -Path feishu2html.zip -DestinationPath .
@@ -28,7 +28,7 @@ Expand-Archive -Path feishu2html.zip -DestinationPath .
 
 **Using Browser:**
 1. Go to [Releases page](https://github.com/yidafu/feishu2html/releases/latest)
-2. Download `feishu2html-1.0.1-mingwX64.zip`
+2. Download `feishu2html-1.0.2-mingwX64.zip`
 3. Extract the ZIP file
 4. Run `feishu2html.exe`
 

@@ -140,13 +140,13 @@ Download the JVM JAR from [GitHub Releases](https://github.com/yidafu/feishu2htm
 
 ```bash
 # Download
-curl -L -O https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-jvm.jar
+curl -L -O https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.2-jvm.jar
 
 # Export a single document
-java -jar feishu2html-1.0.1-jvm.jar <app_id> <app_secret> <document_id>
+java -jar feishu2html-1.0.2-jvm.jar <app_id> <app_secret> <document_id>
 
 # Export multiple documents
-java -jar feishu2html-1.0.1-jvm.jar <app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>
+java -jar feishu2html-1.0.2-jvm.jar <app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>
 ```
 
 **Using Gradle (from source):**
@@ -162,7 +162,7 @@ cd feishu2html
 
 **Example:**
 ```bash
-java -jar feishu2html-1.0.1-jvm.jar cli_a1234567890abcde your_app_secret_here doxcnABC123XYZ456
+java -jar feishu2html-1.0.2-jvm.jar cli_a1234567890abcde your_app_secret_here doxcnABC123XYZ456
 ```
 
 Output files will be saved to `./output/` directory by default.
@@ -178,7 +178,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("dev.yidafu.feishu2html:feishu2html:1.0.1")
+                implementation("dev.yidafu.feishu2html:feishu2html:1.0.2")
             }
         }
     }
@@ -189,7 +189,7 @@ kotlin {
 
 ```kotlin
 dependencies {
-    implementation("dev.yidafu.feishu2html:feishu2html-jvm:1.0.1")
+    implementation("dev.yidafu.feishu2html:feishu2html-jvm:1.0.2")
 }
 ```
 
@@ -197,7 +197,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("dev.yidafu.feishu2html:feishu2html-js:1.0.1")
+    implementation("dev.yidafu.feishu2html:feishu2html-js:1.0.2")
 }
 ```
 

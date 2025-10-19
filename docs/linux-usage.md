@@ -17,10 +17,10 @@ Download the Linux x64 binary from the [latest release](https://github.com/yidaf
 
 ```bash
 # Download Linux x64 binary
-curl -LO https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-linuxX64.tar.gz
+curl -LO https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.2-linuxX64.tar.gz
 
 # Extract
-tar -xzf feishu2html-1.0.1-linuxX64.tar.gz
+tar -xzf feishu2html-1.0.2-linuxX64.tar.gz
 
 # Make executable
 chmod +x feishu2html.kexe
@@ -145,11 +145,11 @@ FROM ubuntu:22.04
 
 # Download pre-built binary
 RUN apt-get update && apt-get install -y curl && \
-    curl -LO https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-linuxX64.tar.gz && \
-    tar -xzf feishu2html-1.0.1-linuxX64.tar.gz && \
+    curl -LO https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.2-linuxX64.tar.gz && \
+    tar -xzf feishu2html-1.0.2-linuxX64.tar.gz && \
     mv feishu2html.kexe /usr/local/bin/feishu2html && \
     chmod +x /usr/local/bin/feishu2html && \
-    rm feishu2html-1.0.1-linuxX64.tar.gz
+    rm feishu2html-1.0.2-linuxX64.tar.gz
 
 ENTRYPOINT ["feishu2html"]
 ```

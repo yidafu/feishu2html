@@ -21,10 +21,10 @@ Download the appropriate binary for your Mac from the [latest release](https://g
 #### For Apple Silicon (M1/M2/M3/M4)
 ```bash
 # Download macOS ARM64 binary
-curl -LO https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-macosArm64.tar.gz
+curl -LO https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.2-macosArm64.tar.gz
 
 # Extract
-tar -xzf feishu2html-1.0.1-macosArm64.tar.gz
+tar -xzf feishu2html-1.0.2-macosArm64.tar.gz
 
 # Make executable
 chmod +x feishu2html.kexe
@@ -33,10 +33,10 @@ chmod +x feishu2html.kexe
 #### For Intel Macs
 ```bash
 # Download macOS x64 binary
-curl -LO https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-macosX64.tar.gz
+curl -LO https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.2-macosX64.tar.gz
 
 # Extract
-tar -xzf feishu2html-1.0.1-macosX64.tar.gz
+tar -xzf feishu2html-1.0.2-macosX64.tar.gz
 
 # Make executable
 chmod +x feishu2html.kexe
