@@ -177,7 +177,8 @@ kotlin {
         val linuxMain by creating {
             dependsOn(commonMain)
             dependencies {
-                implementation(libs.ktor.client.curl)
+                // 使用 CIO 引擎代替 Curl，避免 libcurl 依赖问题
+                implementation(libs.ktor.client.cio)
             }
         }
 
@@ -187,7 +188,8 @@ kotlin {
         val mingwMain by creating {
             dependsOn(commonMain)
             dependencies {
-                implementation(libs.ktor.client.curl)
+                // 使用 CIO 引擎代替 Curl，避免 libcurl 依赖问题
+                implementation(libs.ktor.client.cio)
             }
         }
 

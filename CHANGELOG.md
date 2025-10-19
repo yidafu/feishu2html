@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `kotlin.native.ignoreDisabledTargets=true` to gradle.properties to allow cross-platform builds
 - Fixed Linux x64 linker errors by disabling Kotlin Native cache (`kotlin.native.cacheKind.linuxX64=none`)
 - Fixed Windows build path issues in GitHub Actions workflow
+- Fixed Linux/Windows build libcurl dependency issues by switching from Curl engine to CIO engine
 
 ### Changed
 - Updated Gradle version badge from 8.5 to 8.10.2 in README
