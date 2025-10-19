@@ -259,7 +259,10 @@ val options = Feishu2HtmlOptions(
 Detailed platform-specific usage guides:
 
 - **[JVM Usage Guide](docs/jvm-usage.md)** - Complete guide for JVM platform (CLI & Library)
-- **[Node.js Usage Guide](docs/nodejs-usage.md)** - ES Module setup and usage
+- **[Node.js Usage Guide](docs/nodejs-usage.md)** - CommonJS setup and usage
+- **[macOS Usage Guide](docs/macos-usage.md)** - Native macOS executable (ARM64 & Intel)
+- **[Linux Usage Guide](docs/linux-usage.md)** - Native Linux executable (x64)
+- **[Windows Usage Guide](docs/windows-usage.md)** - Native Windows executable (x64)
 
 ## 🌐 Multiplatform Support
 
@@ -386,6 +389,9 @@ The documentation is automatically updated on every push to the `main` branch.
 
 - [JVM Usage Guide](docs/jvm-usage.md) - Detailed JVM platform guide
 - [Node.js Usage Guide](docs/nodejs-usage.md) - Node.js / JavaScript guide
+- [macOS Usage Guide](docs/macos-usage.md) - Native macOS executable guide
+- [Linux Usage Guide](docs/linux-usage.md) - Native Linux executable guide
+- [Windows Usage Guide](docs/windows-usage.md) - Native Windows executable guide
 
 ### Feishu API References
 

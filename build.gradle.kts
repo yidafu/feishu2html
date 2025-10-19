@@ -50,10 +50,44 @@ kotlin {
     }
 
     // Native 桌面平台
-    linuxX64()
-    macosX64()
-    macosArm64()
-    mingwX64() // Windows
+
+    // Linux 平台 - 配置为可执行文件
+    linuxX64 {
+        binaries {
+            executable {
+                entryPoint = "dev.yidafu.feishu2html.main"
+                baseName = "feishu2html"
+            }
+        }
+    }
+
+    // macOS 平台 - 配置为可执行文件
+    macosX64 {
+        binaries {
+            executable {
+                entryPoint = "dev.yidafu.feishu2html.main"
+                baseName = "feishu2html"
+            }
+        }
+    }
+    macosArm64 {
+        binaries {
+            executable {
+                entryPoint = "dev.yidafu.feishu2html.main"
+                baseName = "feishu2html"
+            }
+        }
+    }
+
+    // Windows 平台 - 配置为可执行文件
+    mingwX64 {
+        binaries {
+            executable {
+                entryPoint = "dev.yidafu.feishu2html.main"
+                baseName = "feishu2html"
+            }
+        }
+    }
 
     // iOS 平台
     iosX64()

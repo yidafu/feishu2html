@@ -1,87 +1,45 @@
 package dev.yidafu.feishu2html
 
+import dev.yidafu.feishu2html.cli.CliRunner
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.Main")
 
 /**
- * 命令行入口
+ * JVM command line entry point
  *
- * 使用方式：
- * ./gradlew :feishu2html:run --args="<app_id> <app_secret> <document_id>"
+ * Usage:
+ * ./gradlew run --args="<app_id> <app_secret> <document_id>"
  */
 fun main(args: Array<String>) {
-    logger.info("Feishu2HTML application started")
-    logger.debug("Received {} command line arguments", args.size)
+    logger.info("Feishu2HTML application started (JVM)")
+    println("Feishu2HTML application started")
+    println("Received ${args.size} command line arguments")
 
-    if (args.size < 3) {
+    val parsed = CliRunner.parseArguments(args.toList())
+    if (parsed == null) {
         logger.error("Insufficient arguments provided: expected at least 3, got {}", args.size)
-        println("使用方式: feishu2html <app_id> <app_secret> <document_id> [document_id2] [document_id3] ...")
-        println()
-        println("参数说明:")
-        println("  app_id       - 飞书应用的 App ID")
-        println("  app_secret   - 飞书应用的 App Secret")
-        println("  document_id  - 要导出的文档 ID（可以指定多个）")
-        println()
-        println("示例:")
-        println("  feishu2html cli_a1234567890abcde cli_1234567890abcdef1234567890abcd doxcnABCDEFGHIJK")
+        CliRunner.showHelp()
         return
     }
 
-    val appId = args[0]
-    val appSecret = args[1]
-    val documentIds = args.drop(2)
-
+    val (appId, appSecret, documentIds) = parsed
     logger.info("Parsed arguments - App ID: {}, Document count: {}", appId, documentIds.size)
     logger.debug("Document IDs to export: {}", documentIds.joinToString(", "))
 
-    println("=".repeat(60))
-    println("飞书文档转HTML工具")
-    println("=".repeat(60))
-    println("App ID: $appId")
-    println("要导出的文档数量: ${documentIds.size}")
-    println("=".repeat(60))
-    println()
+    CliRunner.printBanner(appId, documentIds.size, "JVM")
 
-    val options =
-        Feishu2HtmlOptions(
-            appId = appId,
-            appSecret = appSecret,
-            outputDir = "./output",
-            imageDir = "./output/images",
-            fileDir = "./output/files",
-        )
-
-    logger.info("Initializing Feishu2Html with output directory: {}", options.outputDir)
-
-    Feishu2Html(options).use { feishu2Html ->
-        try {
-            logger.info("Starting document export process")
-            runBlocking {
-                if (documentIds.size == 1) {
-                    logger.info("Exporting single document: {}", documentIds[0])
-                    feishu2Html.export(documentIds[0])
-                } else {
-                    logger.info("Batch exporting {} documents", documentIds.size)
-                    feishu2Html.exportBatch(documentIds)
-                }
-            }
-
-            logger.info("Export process completed successfully")
-            println()
-            println("=".repeat(60))
-            println("导出完成！")
-            println("输出目录: ${options.outputDir}")
-            println("=".repeat(60))
-        } catch (e: Exception) {
-            logger.error("Export process failed: {}", e.message, e)
-            println()
-            println("=".repeat(60))
-            println("错误: ${e.message}")
-            e.printStackTrace()
-            println("=".repeat(60))
+    try {
+        logger.info("Starting export process")
+        runBlocking {
+            CliRunner.runExport(appId, appSecret, documentIds)
         }
+        logger.info("Export completed successfully")
+    } catch (e: Exception) {
+        logger.error("Export failed: {}", e.message, e)
+        CliRunner.handleError(e)
+        e.printStackTrace()
     }
 
     logger.info("Feishu2HTML application terminated")
