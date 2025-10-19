@@ -8,7 +8,7 @@ import java.net.URLDecoder
 
 object IframeBlockRenderer : Renderable {
     private val logger = LoggerFactory.getLogger(IframeBlockRenderer::class.java)
-    
+
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -23,7 +23,7 @@ object IframeBlockRenderer : Renderable {
             } ?: IframeType.GENERIC
 
         if (url.isNullOrEmpty()) return
-        
+
         logger.debug("Rendering iframe: type={}, url={}", iframeType.displayName, url)
 
         val decodedUrl = URLDecoder.decode(url, "UTF-8")

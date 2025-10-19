@@ -179,14 +179,10 @@ fun main() = runBlocking {
         appSecret = "your_app_secret"
     )
 
-    val feishu2Html = Feishu2Html(options)
-
-    try {
-        // Export a single document
-        feishu2Html.export("doxcnABC123XYZ456")
+    // Use .use {} for automatic resource management
+    Feishu2Html(options).use { converter ->
+        converter.export("doxcnABC123XYZ456")
         println("Export completed successfully!")
-    } finally {
-        feishu2Html.close()
     }
 }
 ```
@@ -210,9 +206,8 @@ fun main() = runBlocking {
         customCss = null                 // Custom CSS (optional)
     )
 
-    val feishu2Html = Feishu2Html(options)
-
-    try {
+    // Automatic resource cleanup with use {}
+    Feishu2Html(options).use { converter ->
         // Batch export multiple documents
         val documentIds = listOf(
             "doxcnABC123XYZ456",
@@ -220,10 +215,8 @@ fun main() = runBlocking {
             "doxcnJKL345MNO678"
         )
         
-        feishu2Html.exportBatch(documentIds)
+        converter.exportBatch(documentIds)
         println("Batch export completed!")
-    } finally {
-        feishu2Html.close()
     }
 }
 ```

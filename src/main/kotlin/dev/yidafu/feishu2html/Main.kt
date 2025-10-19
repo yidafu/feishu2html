@@ -53,37 +53,36 @@ fun main(args: Array<String>) {
             fileDir = "./output/files",
         )
 
-    val feishu2Html = Feishu2Html(options)
-    logger.info("Feishu2Html instance created with output directory: {}", options.outputDir)
-
-    try {
-        logger.info("Starting document export process")
-        runBlocking {
-            if (documentIds.size == 1) {
-                logger.info("Exporting single document: {}", documentIds[0])
-                feishu2Html.export(documentIds[0])
-            } else {
-                logger.info("Batch exporting {} documents", documentIds.size)
-                feishu2Html.exportBatch(documentIds)
+    logger.info("Initializing Feishu2Html with output directory: {}", options.outputDir)
+    
+    Feishu2Html(options).use { feishu2Html ->
+        try {
+            logger.info("Starting document export process")
+            runBlocking {
+                if (documentIds.size == 1) {
+                    logger.info("Exporting single document: {}", documentIds[0])
+                    feishu2Html.export(documentIds[0])
+                } else {
+                    logger.info("Batch exporting {} documents", documentIds.size)
+                    feishu2Html.exportBatch(documentIds)
+                }
             }
-        }
 
-        logger.info("Export process completed successfully")
-        println()
-        println("=".repeat(60))
-        println("导出完成！")
-        println("输出目录: ${options.outputDir}")
-        println("=".repeat(60))
-    } catch (e: Exception) {
-        logger.error("Export process failed: {}", e.message, e)
-        println()
-        println("=".repeat(60))
-        println("错误: ${e.message}")
-        e.printStackTrace()
-        println("=".repeat(60))
-    } finally {
-        logger.debug("Closing Feishu2Html instance")
-        feishu2Html.close()
-        logger.info("Feishu2HTML application terminated")
+            logger.info("Export process completed successfully")
+            println()
+            println("=".repeat(60))
+            println("导出完成！")
+            println("输出目录: ${options.outputDir}")
+            println("=".repeat(60))
+        } catch (e: Exception) {
+            logger.error("Export process failed: {}", e.message, e)
+            println()
+            println("=".repeat(60))
+            println("错误: ${e.message}")
+            e.printStackTrace()
+            println("=".repeat(60))
+        }
     }
+    
+    logger.info("Feishu2HTML application terminated")
 }

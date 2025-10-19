@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 
 object FileBlockRenderer : Renderable {
     private val logger = LoggerFactory.getLogger(FileBlockRenderer::class.java)
-    
+
     override fun <T> render(
         parent: FlowContent,
         block: T,

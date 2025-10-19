@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
  */
 class TextElementConverter {
     private val logger = LoggerFactory.getLogger(TextElementConverter::class.java)
-    
+
     /**
      * 将文本元素列表转换为HTML (DSL方式)
      */

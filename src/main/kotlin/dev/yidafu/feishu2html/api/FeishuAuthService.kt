@@ -39,7 +39,7 @@ class FeishuAuthService(
 
             logger.info("Requesting new tenant_access_token")
             logger.debug("App ID: {}", appId)
-            
+
             try {
                 val response =
                     httpClient.post("https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal") {
@@ -66,7 +66,7 @@ class FeishuAuthService(
                         expiresAt = expiresAt, // 提前60秒过期
                     )
 
-                logger.info("Successfully obtained new access token (expires at: {}, valid for {} seconds)", 
+                logger.info("Successfully obtained new access token (expires at: {}, valid for {} seconds)",
                     expiresAt, result.expire - 60)
                 token
             } catch (e: Exception) {

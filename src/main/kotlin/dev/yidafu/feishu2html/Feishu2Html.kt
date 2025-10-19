@@ -12,6 +12,7 @@ import java.nio.file.Paths
  * 飞书文档转HTML主类
  *
  * 提供将飞书云文档导出为HTML文件的功能，支持自动下载图片和附件。
+ * 实现 AutoCloseable 接口，支持使用 use 函数自动管理资源。
  *
  * ## 使用示例
  *
@@ -22,11 +23,8 @@ import java.nio.file.Paths
  *     outputDir = "./output"
  * )
  *
- * val converter = Feishu2Html(options)
- * try {
+ * Feishu2Html(options).use { converter ->
  *     converter.export("document_id")
- * } finally {
- *     converter.close()
  * }
  * ```
  *
@@ -35,7 +33,7 @@ import java.nio.file.Paths
  */
 class Feishu2Html(
     private val options: Feishu2HtmlOptions,
-) {
+) : AutoCloseable {
     private val logger = LoggerFactory.getLogger(Feishu2Html::class.java)
     private val apiClient = FeishuApiClient(options.appId, options.appSecret)
 
@@ -228,10 +226,17 @@ class Feishu2Html(
     /**
      * 关闭HTTP客户端并释放资源
      *
-     * 应在所有导出操作完成后调用此方法以释放网络连接资源。
-     * 建议使用 try-finally 块确保资源被正确释放。
+     * 实现 AutoCloseable 接口，会自动在 use 块结束时调用。
+     * 也可以手动调用以立即释放资源。
      *
-     * ## 示例
+     * ## 示例（推荐使用 use）
+     * ```kotlin
+     * Feishu2Html(options).use { converter ->
+     *     converter.export("doc_id")
+     * }
+     * ```
+     *
+     * ## 或手动管理
      * ```kotlin
      * val converter = Feishu2Html(options)
      * try {
@@ -241,7 +246,7 @@ class Feishu2Html(
      * }
      * ```
      */
-    fun close() {
+    override fun close() {
         logger.debug("Closing Feishu2Html and releasing resources")
         apiClient.close()
         logger.debug("Feishu2Html closed successfully")

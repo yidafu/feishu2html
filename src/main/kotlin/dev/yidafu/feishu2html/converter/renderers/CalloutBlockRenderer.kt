@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 
 object CalloutBlockRenderer : Renderable {
     private val logger = LoggerFactory.getLogger(CalloutBlockRenderer::class.java)
-    
+
     override fun <T> render(
         parent: FlowContent,
         block: T,
@@ -17,7 +17,7 @@ object CalloutBlockRenderer : Renderable {
         val calloutBlock = block as CalloutBlock
         val colorClass = BlockColor.getColorClass(calloutBlock.callout?.backgroundColor) ?: "default"
         val emoji = Emoji.fromId(calloutBlock.callout?.emojiId)
-        logger.debug("Rendering callout block: color={}, children={}", 
+        logger.debug("Rendering callout block: color={}, children={}",
             colorClass, calloutBlock.children?.size ?: 0)
 
         parent.div("callout callout-$colorClass") {

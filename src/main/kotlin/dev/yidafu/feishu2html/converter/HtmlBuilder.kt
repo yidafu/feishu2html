@@ -105,7 +105,7 @@ class HtmlBuilder(
     private val customCss: String? = null,
 ) {
     private val builderLogger = LoggerFactory.getLogger(HtmlBuilder::class.java)
-    
+
     /**
      * 构建完整的HTML文档
      *
@@ -123,7 +123,7 @@ class HtmlBuilder(
         builderLogger.info("Starting HTML build for document: {}", title)
         builderLogger.debug("Building with {} blocks (total {} in map)", blocks.size, allBlocks.size)
         builderLogger.debug("Using {} CSS", if (customCss != null) "custom" else "default")
-        
+
         try {
             val html = createHTML().html {
             lang = "zh-CN"
@@ -171,7 +171,7 @@ class HtmlBuilder(
                 }
             }
             }
-            
+
             builderLogger.info("HTML build completed successfully for document: {}", title)
             builderLogger.debug("Generated HTML size: {} characters", html.length)
             return html

@@ -17,8 +17,8 @@ object TableBlockRenderer : Renderable {
         val tableBlock = block as TableBlock
         val property = tableBlock.table?.property ?: return
         val children = tableBlock.children ?: return
-        
-        logger.debug("Rendering table: {}x{} ({}cells)", 
+
+        logger.debug("Rendering table: {}x{} ({}cells)",
             property.rowSize, property.columnSize, children.size)
 
         parent.table {
