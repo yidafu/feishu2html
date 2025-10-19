@@ -110,6 +110,9 @@ kotlin {
                 // HTML DSL (多平台版本)
                 implementation(libs.kotlinx.html)
 
+                // CLI 参数解析
+                implementation(libs.kotlinx.cli)
+
                 // 日志
                 implementation(libs.kotlin.logging)
 

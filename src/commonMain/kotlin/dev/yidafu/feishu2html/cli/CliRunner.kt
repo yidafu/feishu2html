@@ -2,44 +2,128 @@ package dev.yidafu.feishu2html.cli
 
 import dev.yidafu.feishu2html.Feishu2Html
 import dev.yidafu.feishu2html.Feishu2HtmlOptions
+import dev.yidafu.feishu2html.TemplateMode
+import kotlinx.cli.*
 
 /**
- * Shared CLI logic for all platforms
+ * Parsed CLI arguments
+ */
+data class CliArgs(
+    val appId: String,
+    val appSecret: String,
+    val documentIds: List<String>,
+    val templateMode: TemplateMode = TemplateMode.DEFAULT,
+)
+
+/**
+ * Shared CLI logic for all platforms using kotlinx-cli
  *
  * This contains the common command-line interface logic that is reused
  * across JVM, JS, and Native platforms.
  */
 object CliRunner {
     /**
-     * Display help message
-     */
-    fun showHelp() {
-        println("Usage: feishu2html <app_id> <app_secret> <document_id> [document_id2] [document_id3] ...")
-        println()
-        println("Arguments:")
-        println("  app_id       - Feishu application App ID")
-        println("  app_secret   - Feishu application App Secret")
-        println("  document_id  - Document ID(s) to export (can specify multiple)")
-        println()
-        println("Example:")
-        println("  feishu2html cli_a1234567890abcde cli_1234567890abcdef1234567890abcd doxcnABCDEFGHIJK")
-    }
-
-    /**
-     * Parse and validate command line arguments
+     * Parse and validate command line arguments using kotlinx-cli
      *
-     * @return Triple of (appId, appSecret, documentIds) or null if invalid
+     * @return CliArgs or null if invalid
      */
-    fun parseArguments(args: List<String>): Triple<String, String, List<String>>? {
-        if (args.size < 3) {
+    fun parseArguments(args: Array<String>): CliArgs? {
+        // Check for help flag first
+        if (args.contains("--help") || args.contains("-h")) {
+            showHelp()
             return null
         }
 
-        val appId = args[0]
-        val appSecret = args[1]
-        val documentIds = args.drop(2)
+        val parser = ArgParser("feishu2html")
 
-        return Triple(appId, appSecret, documentIds)
+        // Define --template option
+        val templateValue by parser.option(
+            ArgType.String,
+            shortName = "t",
+            fullName = "template",
+            description = "HTML template mode (default, fragment, or full)"
+        ).default("default")
+
+        // Define required positional arguments
+        val appId by parser.argument(
+            ArgType.String,
+            fullName = "app-id",
+            description = "Feishu application App ID"
+        )
+
+        val appSecret by parser.argument(
+            ArgType.String,
+            fullName = "app-secret",
+            description = "Feishu application App Secret"
+        )
+
+        val documentIds by parser.argument(
+            ArgType.String,
+            fullName = "document-ids",
+            description = "Document ID(s) to export"
+        ).vararg()
+
+        return try {
+            parser.parse(args)
+
+            if (documentIds.isEmpty()) {
+                println("Error: At least one document ID is required")
+                println()
+                showHelp()
+                return null
+            }
+
+            // Convert template string to TemplateMode
+            val template = when (templateValue.lowercase()) {
+                "default" -> TemplateMode.DEFAULT
+                "fragment" -> TemplateMode.FRAGMENT
+                "full" -> TemplateMode.FULL
+                else -> {
+                    println("Error: Invalid template mode '$templateValue'. Use: default, fragment, or full")
+                    println()
+                    showHelp()
+                    return null
+                }
+            }
+
+            CliArgs(
+                appId = appId,
+                appSecret = appSecret,
+                documentIds = documentIds.toList(),
+                templateMode = template
+            )
+        } catch (e: IllegalStateException) {
+            // kotlinx-cli throws IllegalStateException for parsing errors
+            // Silently return null for tests
+            null
+        } catch (e: Exception) {
+            // Other exceptions - return null
+            null
+        }
+    }
+
+    /**
+     * Display help message
+     */
+    fun showHelp() {
+        println("Usage: feishu2html [OPTIONS] <app-id> <app-secret> <document-ids>...")
+        println()
+        println("Arguments:")
+        println("  app-id                  Feishu application App ID")
+        println("  app-secret              Feishu application App Secret")
+        println("  document-ids            Document ID(s) to export (one or more)")
+        println()
+        println("Options:")
+        println("  -t, --template <mode>   HTML template mode: default | fragment | full")
+        println("                          default:  Standard Feishu template (default)")
+        println("                          fragment: Minimal template with custom body wrapper")
+        println("                          full:     Minimal template with basic HTML structure")
+        println("  -h, --help              Show this help message")
+        println()
+        println("Examples:")
+        println("  feishu2html cli_a1234567890abcde cli_1234567890abcdef1234567890abcd doxcnABCDEFGHIJK")
+        println("  feishu2html --template fragment cli_a123 cli_1234 doxcnABC")
+        println("  feishu2html -t full cli_a123 cli_1234 doxcnABC doxcnDEF")
     }
 
     /**
@@ -67,11 +151,12 @@ object CliRunner {
     }
 
     /**
-     * Create default options
+     * Create options from CLI args
      */
     fun createOptions(
         appId: String,
         appSecret: String,
+        templateMode: TemplateMode = TemplateMode.DEFAULT,
     ): Feishu2HtmlOptions =
         Feishu2HtmlOptions(
             appId = appId,
@@ -79,6 +164,7 @@ object CliRunner {
             outputDir = "./output",
             imageDir = "./output/images",
             fileDir = "./output/files",
+            templateMode = templateMode,
         )
 
     /**
@@ -91,10 +177,12 @@ object CliRunner {
         appId: String,
         appSecret: String,
         documentIds: List<String>,
+        templateMode: TemplateMode = TemplateMode.DEFAULT,
     ) {
-        val options = createOptions(appId, appSecret)
+        val options = createOptions(appId, appSecret, templateMode)
 
         println("Initializing Feishu2Html with output directory: ${options.outputDir}")
+        println("Template mode: $templateMode")
 
         Feishu2Html(options).use { feishu2Html ->
             println("Starting document export process")
@@ -125,4 +213,3 @@ object CliRunner {
         println("=".repeat(60))
     }
 }
-

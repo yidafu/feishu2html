@@ -13,18 +13,18 @@ fun main(args: Array<String>) {
     println("Feishu2HTML application started")
     println("Received ${args.size} command line arguments")
 
-    val parsed = CliRunner.parseArguments(args.toList())
+    val parsed = CliRunner.parseArguments(args)
     if (parsed == null) {
         CliRunner.showHelp()
         return
     }
 
-    val (appId, appSecret, documentIds) = parsed
-    CliRunner.printBanner(appId, documentIds.size, "macOS")
+    println("Template mode: ${parsed.templateMode}")
+    CliRunner.printBanner(parsed.appId, parsed.documentIds.size, "macOS")
 
     runBlocking {
         try {
-            CliRunner.runExport(appId, appSecret, documentIds)
+            CliRunner.runExport(parsed.appId, parsed.appSecret, parsed.documentIds, parsed.templateMode)
         } catch (e: Exception) {
             CliRunner.handleError(e)
             e.printStackTrace()

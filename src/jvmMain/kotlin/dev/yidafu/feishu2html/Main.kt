@@ -17,23 +17,23 @@ fun main(args: Array<String>) {
     println("Feishu2HTML application started")
     println("Received ${args.size} command line arguments")
 
-    val parsed = CliRunner.parseArguments(args.toList())
+    val parsed = CliRunner.parseArguments(args)
     if (parsed == null) {
         logger.error("Insufficient arguments provided: expected at least 3, got {}", args.size)
         CliRunner.showHelp()
         return
     }
 
-    val (appId, appSecret, documentIds) = parsed
-    logger.info("Parsed arguments - App ID: {}, Document count: {}", appId, documentIds.size)
-    logger.debug("Document IDs to export: {}", documentIds.joinToString(", "))
+    logger.info("Parsed arguments - App ID: {}, Document count: {}, Template mode: {}",
+        parsed.appId, parsed.documentIds.size, parsed.templateMode)
+    logger.debug("Document IDs to export: {}", parsed.documentIds.joinToString(", "))
 
-    CliRunner.printBanner(appId, documentIds.size, "JVM")
+    CliRunner.printBanner(parsed.appId, parsed.documentIds.size, "JVM")
 
     try {
-        logger.info("Starting export process")
+        logger.info("Starting export process with template mode: {}", parsed.templateMode)
         runBlocking {
-            CliRunner.runExport(appId, appSecret, documentIds)
+            CliRunner.runExport(parsed.appId, parsed.appSecret, parsed.documentIds, parsed.templateMode)
         }
         logger.info("Export completed successfully")
     } catch (e: Exception) {
