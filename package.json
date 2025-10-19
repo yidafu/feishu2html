@@ -1,6 +1,6 @@
 {
   "name": "feishu2html",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert Feishu (Lark) documents to beautiful, standalone HTML files - Kotlin Multiplatform library and CLI tool",
   "type": "commonjs",
   "main": "./build/js/packages/feishu2html/kotlin/feishu2html.js",

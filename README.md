@@ -49,25 +49,50 @@ The generated HTML preserves typography, colors, layout, and all media content w
 
 ## 📋 Table of Contents
 
-- [✨ Features](#-features)
-- [🎨 Visual Comparison](#-visual-comparison)
-- [🚀 Quick Start](#-quick-start)
-  - [Prerequisites](#prerequisites)
-  - [Get Feishu App Credentials](#1-get-feishu-app-credentials)
-  - [Grant Document Access](#2-grant-document-access)
-  - [Installation](#3-installation)
-  - [CLI Usage](#4-cli-usage)
-  - [Library Usage](#5-library-usage)
-  - [CSS Styling Options](#6-css-styling-options)
-- [📚 Usage Guides](#-usage-guides)
-- [🌐 Multiplatform Support](#-multiplatform-support)
-- [🔍 Getting Document ID](#-getting-document-id)
-- [🔧 Troubleshooting](#-troubleshooting)
-- [⚠️ Known Limitations](#️-known-limitations)
-- [📊 Supported Block Types](#-supported-block-types)
-- [📖 API Documentation & References](#-api-documentation--references)
-- [📄 License](#-license)
-- [🤝 Contributing](#-contributing)
+- [Feishu2HTML](#feishu2html)
+  - [✨ Features](#-features)
+  - [🎨 Visual Comparison](#-visual-comparison)
+  - [📋 Table of Contents](#-table-of-contents)
+  - [🚀 Quick Start](#-quick-start)
+    - [Prerequisites](#prerequisites)
+    - [1. Get Feishu App Credentials](#1-get-feishu-app-credentials)
+    - [2. Grant Document Access](#2-grant-document-access)
+    - [3. Installation](#3-installation)
+    - [4. CLI Usage](#4-cli-usage)
+      - [Using Pre-built Binary](#using-pre-built-binary)
+      - [Building from Source](#building-from-source)
+    - [5. Library Usage](#5-library-usage)
+      - [Add to Your Project](#add-to-your-project)
+      - [Basic Example](#basic-example)
+      - [Advanced Example with Custom Options](#advanced-example-with-custom-options)
+    - [6. CSS Styling Options](#6-css-styling-options)
+      - [Using Official Feishu Styles (Default)](#using-official-feishu-styles-default)
+      - [Inline CSS Mode](#inline-css-mode)
+      - [Custom CSS Styling](#custom-css-styling)
+  - [📚 Usage Guides](#-usage-guides)
+  - [🌐 Multiplatform Support](#-multiplatform-support)
+    - [Supported Platforms](#supported-platforms)
+    - [Platform-Specific Notes](#platform-specific-notes)
+    - [Build Targets](#build-targets)
+    - [Platform-Specific Usage](#platform-specific-usage)
+  - [🔍 Getting Document ID](#-getting-document-id)
+  - [🔧 Troubleshooting](#-troubleshooting)
+    - [1. Token Acquisition Failure](#1-token-acquisition-failure)
+    - [2. Document Access Failure](#2-document-access-failure)
+    - [3. Image Download Failure](#3-image-download-failure)
+  - [⚠️ Known Limitations](#️-known-limitations)
+    - [1. External Document References](#1-external-document-references)
+    - [2. Real-time Collaboration Content](#2-real-time-collaboration-content)
+    - [3. Unsupported Block Types](#3-unsupported-block-types)
+    - [4. API Rate Limiting](#4-api-rate-limiting)
+  - [📖 API Documentation \& References](#-api-documentation--references)
+    - [API Documentation](#api-documentation)
+    - [Platform-Specific Guides](#platform-specific-guides)
+    - [Feishu API References](#feishu-api-references)
+  - [📊 Supported Block Types](#-supported-block-types)
+  - [📄 License](#-license)
+  - [🤝 Contributing](#-contributing)
+  - [🙏 Acknowledgments](#-acknowledgments)
 
 ## 🚀 Quick Start
 
@@ -116,8 +141,8 @@ Or use [Maven Central](https://central.sonatype.com/artifact/dev.yidafu.feishu2h
 **macOS/Linux:**
 ```bash
 # Download and extract
-curl -L -O https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.0-macosArm64.tar.gz
-tar -xzf feishu2html-1.0.0-macosArm64.tar.gz
+curl -L -O https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-macosArm64.tar.gz
+tar -xzf feishu2html-1.0.1-macosArm64.tar.gz
 
 # Run
 ./feishu2html.kexe <app_id> <app_secret> <document_id>
@@ -135,10 +160,10 @@ feishu2html.exe <app_id> <app_secret> <document_id>
 **JVM JAR (cross-platform):**
 ```bash
 # Download
-curl -L -O https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.0-jvm.jar
+curl -L -O https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.1-jvm.jar
 
 # Run
-java -jar feishu2html-1.0.0-jvm.jar <app_id> <app_secret> <document_id>
+java -jar feishu2html-1.0.1-jvm.jar <app_id> <app_secret> <document_id>
 ```
 
 #### Building from Source
@@ -173,7 +198,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("dev.yidafu.feishu2html:feishu2html:1.0.0")
+                implementation("dev.yidafu.feishu2html:feishu2html:1.0.1")
             }
         }
     }
@@ -184,7 +209,7 @@ kotlin {
 
 ```kotlin
 dependencies {
-    implementation("dev.yidafu.feishu2html:feishu2html-jvm:1.0.0")
+    implementation("dev.yidafu.feishu2html:feishu2html-jvm:1.0.1")
 }
 ```
 
@@ -192,7 +217,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("dev.yidafu.feishu2html:feishu2html-js:1.0.0")
+    implementation("dev.yidafu.feishu2html:feishu2html-js:1.0.1")
 }
 ```
 
