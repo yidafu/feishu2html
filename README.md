@@ -12,7 +12,9 @@ A powerful **Kotlin Multiplatform** library and CLI tool to convert Feishu (Lark
 
 **🌐 Now supports JVM, JS, and Native platforms!**
 
-> 📖 **[View API Documentation](https://yidafu.github.io/feishu2html/)** - Complete KDoc reference
+> 📦 **[Download Latest Release](https://github.com/yidafu/feishu2html/releases/latest)** - Pre-built binaries for macOS, Linux, Windows  
+> 📖 **[View API Documentation](https://yidafu.github.io/feishu2html/)** - Complete KDoc reference  
+> 🚀 **[Maven Central](https://central.sonatype.com/artifact/dev.yidafu.feishu2html/feishu2html)** - Use as library dependency
 
 ## ✨ Features
 
@@ -50,6 +52,13 @@ The generated HTML preserves typography, colors, layout, and all media content w
 - [✨ Features](#-features)
 - [🎨 Visual Comparison](#-visual-comparison)
 - [🚀 Quick Start](#-quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Get Feishu App Credentials](#1-get-feishu-app-credentials)
+  - [Grant Document Access](#2-grant-document-access)
+  - [Installation](#3-installation)
+  - [CLI Usage](#4-cli-usage)
+  - [Library Usage](#5-library-usage)
+  - [CSS Styling Options](#6-css-styling-options)
 - [📚 Usage Guides](#-usage-guides)
 - [🌐 Multiplatform Support](#-multiplatform-support)
 - [🔍 Getting Document ID](#-getting-document-id)
@@ -88,7 +97,51 @@ The generated HTML preserves typography, colors, layout, and all media content w
 
 **⚠️ Limitation**: If your document contains embedded/referenced external documents (e.g., via links or iframe blocks), you must also grant your app access to those external documents. Otherwise, the content may fail to load or appear as broken links.
 
-### 3. CLI Usage
+### 3. Installation
+
+Download pre-built binaries from [GitHub Releases](https://github.com/yidafu/feishu2html/releases/latest):
+
+- **macOS Apple Silicon**: `feishu2html-{version}-macosArm64.tar.gz`
+- **macOS Intel**: `feishu2html-{version}-macosX64.tar.gz`
+- **Linux x64**: `feishu2html-{version}-linuxX64.tar.gz`
+- **Windows x64**: `feishu2html-{version}-mingwX64.zip`
+- **JVM JAR** (cross-platform): `feishu2html-{version}-jvm.jar`
+
+Or use [Maven Central](https://central.sonatype.com/artifact/dev.yidafu.feishu2html/feishu2html) to add as a library dependency.
+
+### 4. CLI Usage
+
+#### Using Pre-built Binary
+
+**macOS/Linux:**
+```bash
+# Download and extract
+curl -L -O https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.0-macosArm64.tar.gz
+tar -xzf feishu2html-1.0.0-macosArm64.tar.gz
+
+# Run
+./feishu2html.kexe <app_id> <app_secret> <document_id>
+
+# Export multiple documents
+./feishu2html.kexe <app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>
+```
+
+**Windows:**
+```bash
+# Download and extract the .zip file, then run:
+feishu2html.exe <app_id> <app_secret> <document_id>
+```
+
+**JVM JAR (cross-platform):**
+```bash
+# Download
+curl -L -O https://github.com/yidafu/feishu2html/releases/latest/download/feishu2html-1.0.0-jvm.jar
+
+# Run
+java -jar feishu2html-1.0.0-jvm.jar <app_id> <app_secret> <document_id>
+```
+
+#### Building from Source
 
 ```bash
 # Clone the repository
@@ -98,11 +151,8 @@ cd feishu2html
 # Build the project
 ./gradlew build
 
-# Export a single document
+# Run using Gradle
 ./gradlew run --args="<app_id> <app_secret> <document_id>"
-
-# Export multiple documents
-./gradlew run --args="<app_id> <app_secret> <doc_id_1> <doc_id_2> <doc_id_3>"
 ```
 
 **Example:**
@@ -112,7 +162,7 @@ cd feishu2html
 
 Output files will be saved to `./output/` directory by default.
 
-### 4. Library Usage
+### 5. Library Usage
 
 #### Add to Your Project
 
@@ -201,7 +251,7 @@ fun main() = runBlocking {
 }
 ```
 
-### 5. CSS Styling Options
+### 6. CSS Styling Options
 
 #### Using Official Feishu Styles (Default)
 
