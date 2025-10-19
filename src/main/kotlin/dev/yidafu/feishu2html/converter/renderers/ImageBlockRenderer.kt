@@ -46,8 +46,11 @@ internal object BoardBlockRenderer : Renderable {
         val boardBlock = block as BoardBlock
         val token = boardBlock.board?.token ?: return
 
-        parent.img(src = "images/$token.png", alt = "电子画板") {
-            style = "width: 820px; height: 400px; display: block; margin: 0 auto; margin-top: 0;"
+        parent.div(classes = "board-container") {
+            style = "width: 820px; height: 400px; overflow: hidden; display: block; margin: 0 auto; margin-top: 0;"
+            img(src = "images/$token.png", alt = "电子画板") {
+                style = "display: block; margin: 0 auto;"
+            }
         }
     }
 }

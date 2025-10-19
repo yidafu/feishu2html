@@ -312,6 +312,22 @@ internal object FeishuStyles {
             overflow-x: auto;
         }
 
+        /* Board - Feishu Style */
+        .board-container {
+            width: 820px;
+            height: 400px;
+            overflow: hidden;
+            display: block;
+            margin: 0 auto;
+            margin-top: 0;
+            border-radius: 8px;
+        }
+
+        .board-container img {
+            display: block;
+            margin: 0 auto;
+        }
+
         /* iframe - Feishu Style */
         iframe {
             width: 100%;
