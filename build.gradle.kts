@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "dev.yidafu.feishu2html"
-version = "1.0.2"
+version = "1.0.3"
 
 // Load local.properties
 val localPropertiesFile = rootProject.file("local.properties")
@@ -318,18 +318,10 @@ signing {
     val signingKeyId = localProperties.getProperty("signing.keyId")
     val signingSecretKeyRingFile = localProperties.getProperty("signing.secretKeyRingFile")
 
-    when {
-        // Method 1: In-memory PGP keys (recommended for CI/CD)
-        signingKey != null && signingPassword != null -> {
-            useInMemoryPgpKeys(signingKey, signingPassword)
-            sign(publishing.publications)
-        }
-        // Method 2: Use system GPG command (easiest for local development)
-        else -> {
-            // Use gpg-agent with configured keyId
-            useGpgCmd()
-            sign(publishing.publications)
-        }
+    // Only sign when credentials are available (skip for local publishing)
+    if (signingKey != null && signingPassword != null) {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign(publishing.publications)
     }
 }
 
