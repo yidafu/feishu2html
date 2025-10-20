@@ -1,8 +1,8 @@
 package dev.yidafu.feishu2html
 
+import dev.yidafu.feishu2html.converter.HtmlTemplate
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.io.File
@@ -98,37 +98,37 @@ class Feishu2HtmlJvmTest : FunSpec({
         options.customCss shouldBe customCss
     }
 
-    test("Feishu2HtmlOptions should support DEFAULT template mode") {
+    test("Feishu2HtmlOptions should support DefaultCli template") {
         val options = Feishu2HtmlOptions(
             appId = "test_app_id",
             appSecret = "test_app_secret",
             outputDir = testOutputDir,
-            templateMode = TemplateMode.DEFAULT
+            template = HtmlTemplate.DefaultCli
         )
 
-        options.templateMode shouldBe TemplateMode.DEFAULT
+        options.template shouldBe HtmlTemplate.DefaultCli
     }
 
-    test("Feishu2HtmlOptions should support FRAGMENT template mode") {
+    test("Feishu2HtmlOptions should support FragmentCli template") {
         val options = Feishu2HtmlOptions(
             appId = "test_app_id",
             appSecret = "test_app_secret",
             outputDir = testOutputDir,
-            templateMode = TemplateMode.FRAGMENT
+            template = HtmlTemplate.FragmentCli
         )
 
-        options.templateMode shouldBe TemplateMode.FRAGMENT
+        options.template shouldBe HtmlTemplate.FragmentCli
     }
 
-    test("Feishu2HtmlOptions should support FULL template mode") {
+    test("Feishu2HtmlOptions should support PlainCli template") {
         val options = Feishu2HtmlOptions(
             appId = "test_app_id",
             appSecret = "test_app_secret",
             outputDir = testOutputDir,
-            templateMode = TemplateMode.FULL
+            template = HtmlTemplate.PlainCli
         )
 
-        options.templateMode shouldBe TemplateMode.FULL
+        options.template shouldBe HtmlTemplate.PlainCli
     }
 
     test("Feishu2Html instance should be created successfully") {
@@ -224,12 +224,11 @@ class Feishu2HtmlJvmTest : FunSpec({
         File(deepPath).exists() shouldBe true
     }
 
-    test("TemplateMode enum should have all expected values") {
-        val modes = TemplateMode.values().toList()
-        modes.size shouldBe 3
-        modes shouldContain TemplateMode.DEFAULT
-        modes shouldContain TemplateMode.FRAGMENT
-        modes shouldContain TemplateMode.FULL
+    test("HtmlTemplate should have all expected CLI constants") {
+        // Just verify they exist and are accessible
+        HtmlTemplate.DefaultCli shouldNotBe null
+        HtmlTemplate.FragmentCli shouldNotBe null
+        HtmlTemplate.PlainCli shouldNotBe null
     }
 
     test("Feishu2HtmlOptions with all custom settings") {
@@ -244,7 +243,7 @@ class Feishu2HtmlJvmTest : FunSpec({
             customCss = "body { margin: 0; }",
             externalCss = false,
             cssFileName = "my-style.css",
-            templateMode = TemplateMode.FRAGMENT,
+            template = HtmlTemplate.FragmentCli,
             inlineImages = true,
             showUnsupportedBlocks = false
         )
@@ -256,7 +255,7 @@ class Feishu2HtmlJvmTest : FunSpec({
         options.customCss shouldBe "body { margin: 0; }"
         options.externalCss shouldBe false
         options.cssFileName shouldBe "my-style.css"
-        options.templateMode shouldBe TemplateMode.FRAGMENT
+        options.template shouldBe HtmlTemplate.FragmentCli
         options.inlineImages shouldBe true
         options.showUnsupportedBlocks shouldBe false
     }
@@ -275,7 +274,7 @@ class Feishu2HtmlJvmTest : FunSpec({
         options.customCss shouldBe null
         options.externalCss shouldBe true
         options.cssFileName shouldBe "feishu-style-optimized.css"
-        options.templateMode shouldBe TemplateMode.DEFAULT
+        options.template shouldBe HtmlTemplate.DefaultCli
         options.inlineImages shouldBe false
         options.showUnsupportedBlocks shouldBe true
 

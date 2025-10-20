@@ -2,6 +2,7 @@ package dev.yidafu.feishu2html
 
 import dev.yidafu.feishu2html.api.FeishuApiClient
 import dev.yidafu.feishu2html.api.model.*
+import dev.yidafu.feishu2html.converter.HtmlTemplate
 import dev.yidafu.feishu2html.platform.PlatformFileSystem
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -648,12 +649,12 @@ class Feishu2HtmlMockTest : FunSpec({
         coEvery { mockApiClient.getOrderedBlocks(documentContent) } returns emptyList()
         every { mockApiClient.close() } just Runs
 
-        // Test each template mode (disable external CSS to avoid extra writes)
-        listOf(TemplateMode.DEFAULT, TemplateMode.FRAGMENT, TemplateMode.FULL).forEach { mode ->
-            val optionsWithMode = options.copy(templateMode = mode, externalCss = false)
-            val converter = Feishu2Html(optionsWithMode, mockApiClient, mockFileSystem)
+        // Test each template (disable external CSS to avoid extra writes)
+        listOf(HtmlTemplate.DefaultCli, HtmlTemplate.FragmentCli, HtmlTemplate.PlainCli).forEach { template ->
+            val optionsWithTemplate = options.copy(template = template, externalCss = false)
+            val converter = Feishu2Html(optionsWithTemplate, mockApiClient, mockFileSystem)
             runBlocking {
-                converter.export(documentId, "test-$mode.html")
+                converter.export(documentId, "test-${template::class.simpleName}.html")
             }
             converter.close()
         }

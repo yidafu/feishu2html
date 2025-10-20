@@ -13,7 +13,6 @@ class UnsupportedBlocksRendererTest : FunSpec({
     val context =
         RenderContext(
             textConverter = TextElementConverter(),
-            processedBlocks = mutableSetOf(),
         )
 
     test("应该渲染Bitable块占位符") {

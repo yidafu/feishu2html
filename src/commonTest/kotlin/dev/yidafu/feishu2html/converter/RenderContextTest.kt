@@ -1,54 +1,28 @@
 package dev.yidafu.feishu2html.converter
 
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 
+/**
+ * Tests for RenderContext
+ *
+ * Since processedBlocks was removed in the recursive rendering refactoring,
+ * these tests now focus on the core context properties.
+ */
 class RenderContextTest : FunSpec({
 
     test("应该正确创建RenderContext") {
         val textConverter = TextElementConverter()
-        val processedBlocks = mutableSetOf<String>()
 
         val context =
             RenderContext(
                 textConverter = textConverter,
-                processedBlocks = processedBlocks,
             )
 
         context.textConverter shouldBe textConverter
-        context.processedBlocks shouldBe processedBlocks
-    }
-
-    test("processedBlocks应该能够添加和查询") {
-        val context =
-            RenderContext(
-                textConverter = TextElementConverter(),
-                processedBlocks = mutableSetOf(),
-            )
-
-        context.processedBlocks.add("block1")
-        context.processedBlocks.add("block2")
-
-        context.processedBlocks shouldHaveSize 2
-        context.processedBlocks shouldContain "block1"
-        context.processedBlocks shouldContain "block2"
-    }
-
-    test("processedBlocks应该避免重复") {
-        val context =
-            RenderContext(
-                textConverter = TextElementConverter(),
-                processedBlocks = mutableSetOf(),
-            )
-
-        context.processedBlocks.add("block1")
-        context.processedBlocks.add("block1")
-        context.processedBlocks.add("block1")
-
-        context.processedBlocks shouldHaveSize 1
+        context.imageBase64Cache shouldBe emptyMap()
+        context.showUnsupportedBlocks shouldBe true
     }
 
     test("应该使用共享的TextElementConverter") {
@@ -56,33 +30,61 @@ class RenderContextTest : FunSpec({
         val context1 =
             RenderContext(
                 textConverter = converter,
-                processedBlocks = mutableSetOf(),
             )
         val context2 =
             RenderContext(
                 textConverter = converter,
-                processedBlocks = mutableSetOf(),
             )
 
         context1.textConverter shouldBe context2.textConverter
     }
 
-    test("不同context应该有独立的processedBlocks") {
-        val converter = TextElementConverter()
+    test("应该支持imageBase64Cache") {
+        val cache = mapOf("img1" to "data:image/png;base64,...")
+
+        val context =
+            RenderContext(
+                textConverter = TextElementConverter(),
+                imageBase64Cache = cache,
+            )
+
+        context.imageBase64Cache shouldBe cache
+        context.imageBase64Cache["img1"] shouldBe "data:image/png;base64,..."
+    }
+
+    test("应该支持showUnsupportedBlocks配置") {
+        val contextWithWarnings =
+            RenderContext(
+                textConverter = TextElementConverter(),
+                showUnsupportedBlocks = true,
+            )
+
+        val contextWithoutWarnings =
+            RenderContext(
+                textConverter = TextElementConverter(),
+                showUnsupportedBlocks = false,
+            )
+
+        contextWithWarnings.showUnsupportedBlocks shouldBe true
+        contextWithoutWarnings.showUnsupportedBlocks shouldBe false
+    }
+
+    test("RenderContext应该是data class") {
         val context1 =
             RenderContext(
-                textConverter = converter,
-                processedBlocks = mutableSetOf(),
+                textConverter = TextElementConverter(),
             )
+
         val context2 =
             RenderContext(
-                textConverter = converter,
-                processedBlocks = mutableSetOf(),
+                textConverter = context1.textConverter,
             )
 
-        context1.processedBlocks.add("block1")
+        // data class should support copy
+        val context3 = context1.copy(showUnsupportedBlocks = false)
 
-        context1.processedBlocks shouldHaveSize 1
-        context2.processedBlocks.shouldBeEmpty()
+        context3.textConverter shouldBe context1.textConverter
+        context3.showUnsupportedBlocks shouldBe false
+        context1.showUnsupportedBlocks shouldBe true
     }
 })

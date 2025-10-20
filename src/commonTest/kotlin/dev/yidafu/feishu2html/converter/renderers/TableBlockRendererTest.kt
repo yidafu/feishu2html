@@ -13,7 +13,6 @@ class TableBlockRendererTest : FunSpec({
     val context =
         RenderContext(
             textConverter = TextElementConverter(),
-            processedBlocks = mutableSetOf(),
         )
 
     test("应该正确渲染表格") {

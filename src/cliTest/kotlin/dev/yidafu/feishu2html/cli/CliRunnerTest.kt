@@ -1,6 +1,6 @@
 package dev.yidafu.feishu2html.cli
 
-import dev.yidafu.feishu2html.TemplateMode
+import dev.yidafu.feishu2html.converter.HtmlTemplate
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.nulls.shouldBeNull
@@ -19,7 +19,7 @@ class CliRunnerTest : FunSpec({
         result.appId shouldBe "app_id"
         result.appSecret shouldBe "app_secret"
         result.documentIds shouldBe listOf("doc1")
-        result.templateMode shouldBe TemplateMode.DEFAULT
+        result.template shouldBe HtmlTemplate.DefaultCli
     }
 
     test("should parse multiple document IDs") {
@@ -35,7 +35,7 @@ class CliRunnerTest : FunSpec({
         val result = CliRunner.parseArguments(args)
 
         result.shouldNotBeNull()
-        result.templateMode shouldBe TemplateMode.DEFAULT
+        result.template shouldBe HtmlTemplate.DefaultCli
         result.appId shouldBe "app_id"
         result.appSecret shouldBe "app_secret"
         result.documentIds shouldBe listOf("doc1")
@@ -46,7 +46,7 @@ class CliRunnerTest : FunSpec({
         val result = CliRunner.parseArguments(args)
 
         result.shouldNotBeNull()
-        result.templateMode shouldBe TemplateMode.FRAGMENT
+        result.template shouldBe HtmlTemplate.FragmentCli
     }
 
     test("should parse --template full option") {
@@ -54,7 +54,7 @@ class CliRunnerTest : FunSpec({
         val result = CliRunner.parseArguments(args)
 
         result.shouldNotBeNull()
-        result.templateMode shouldBe TemplateMode.FULL
+        result.template shouldBe HtmlTemplate.PlainCli
         result.documentIds shouldBe listOf("doc1", "doc2")
     }
 
@@ -63,19 +63,19 @@ class CliRunnerTest : FunSpec({
         val result = CliRunner.parseArguments(args)
 
         result.shouldNotBeNull()
-        result.templateMode shouldBe TemplateMode.FRAGMENT
+        result.template shouldBe HtmlTemplate.FragmentCli
     }
 
     test("should be case insensitive for template mode") {
         val args1 = arrayOf("--template", "FRAGMENT", "app_id", "app_secret", "doc1")
         val result1 = CliRunner.parseArguments(args1)
         result1.shouldNotBeNull()
-        result1.templateMode shouldBe TemplateMode.FRAGMENT
+        result1.template shouldBe HtmlTemplate.FragmentCli
 
         val args2 = arrayOf("--template", "Full", "app_id", "app_secret", "doc1")
         val result2 = CliRunner.parseArguments(args2)
         result2.shouldNotBeNull()
-        result2.templateMode shouldBe TemplateMode.FULL
+        result2.template shouldBe HtmlTemplate.PlainCli
     }
 
     test("should handle --template option with multiple documents") {
@@ -83,7 +83,7 @@ class CliRunnerTest : FunSpec({
         val result = CliRunner.parseArguments(args)
 
         result.shouldNotBeNull()
-        result.templateMode shouldBe TemplateMode.FRAGMENT
+        result.template shouldBe HtmlTemplate.FragmentCli
         result.documentIds shouldBe listOf("doc1", "doc2", "doc3", "doc4")
     }
 
@@ -149,7 +149,7 @@ class CliRunnerTest : FunSpec({
         val result = CliRunner.parseArguments(args)
 
         result.shouldNotBeNull()
-        result.templateMode shouldBe TemplateMode.FRAGMENT
+        result.template shouldBe HtmlTemplate.FragmentCli
         result.inlineImages shouldBe true
         result.inlineCss shouldBe true
         result.hideUnsupported shouldBe true
@@ -173,7 +173,7 @@ class CliRunnerTest : FunSpec({
         result.appSecret shouldBe "app_secret"
         result.documentIds shouldBe listOf("doc1")
         result.inlineImages shouldBe true
-        result.templateMode shouldBe TemplateMode.FULL
+        result.template shouldBe HtmlTemplate.PlainCli
     }
 
     test("should handle --help flag") {
@@ -201,7 +201,7 @@ class CliRunnerTest : FunSpec({
         val result = CliRunner.parseArguments(args)
 
         result.shouldNotBeNull()
-        result.templateMode shouldBe TemplateMode.FRAGMENT
+        result.template shouldBe HtmlTemplate.FragmentCli
         result.inlineImages shouldBe true
     }
 
