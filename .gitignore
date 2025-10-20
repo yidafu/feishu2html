@@ -51,3 +51,4 @@ build/
 # Generated
 src/**/generated/
 node_modules/
+*.md
