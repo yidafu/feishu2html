@@ -11,7 +11,7 @@ import kotlin.time.Duration.Companion.seconds
 
 /**
  * Integration tests for MetricsCollector that run on all platforms
- * 
+ *
  * These tests verify metrics collection in realistic scenarios
  */
 class MetricsCollectorIntegrationTest : FunSpec({
