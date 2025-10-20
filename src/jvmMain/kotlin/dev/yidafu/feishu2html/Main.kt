@@ -24,21 +24,21 @@ fun main(args: Array<String>) {
         return
     }
 
-    logger.info("Parsed arguments - App ID: {}, Document count: {}, Template mode: {}",
-        parsed.appId, parsed.documentIds.size, parsed.templateMode)
+    logger.info("Parsed arguments - App ID: {}, Document count: {}, Template: {}",
+        parsed.appId, parsed.documentIds.size, parsed.template::class.simpleName)
     logger.debug("Document IDs to export: {}", parsed.documentIds.joinToString(", "))
 
     CliRunner.printBanner(parsed.appId, parsed.documentIds.size, "JVM")
 
     try {
-        logger.info("Starting export process with template mode: {}, inline images: {}, inline CSS: {}, hide unsupported: {}",
-            parsed.templateMode, parsed.inlineImages, parsed.inlineCss, parsed.hideUnsupported)
+        logger.info("Starting export process with template: {}, inline images: {}, inline CSS: {}, hide unsupported: {}",
+            parsed.template::class.simpleName, parsed.inlineImages, parsed.inlineCss, parsed.hideUnsupported)
         runBlocking {
             CliRunner.runExport(
                 parsed.appId,
                 parsed.appSecret,
                 parsed.documentIds,
-                parsed.templateMode,
+                parsed.template,
                 parsed.inlineImages,
                 parsed.inlineCss,
                 parsed.hideUnsupported

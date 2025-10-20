@@ -51,13 +51,6 @@ internal object TableBlockRenderer : Renderable {
                 }
             }
         }
-
-        // 标记子块为已处理
-        children.forEach { cellId ->
-            context.processedBlocks.add(cellId)
-            val cell = allBlocks[cellId] as? TableCellBlock
-            cell?.children?.forEach { context.processedBlocks.add(it) }
-        }
     }
 
     private fun renderCellContent(
@@ -78,7 +71,7 @@ internal object TableBlockRenderer : Renderable {
             children.forEach { childId ->
                 val childBlock = allBlocks[childId]
                 if (childBlock != null) {
-                    renderBlock(childBlock, parent, allBlocks, context)
+                    childBlock.render(parent, allBlocks, context)
                 }
             }
         }

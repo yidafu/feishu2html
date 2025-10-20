@@ -31,8 +31,7 @@ internal object CalloutBlockRenderer : Renderable {
                 calloutBlock.children?.forEach { childId ->
                     val childBlock = allBlocks[childId]
                     if (childBlock != null) {
-                        context.processedBlocks.add(childId)
-                        renderBlock(childBlock, this, allBlocks, context)
+                        childBlock.render(this, allBlocks, context)
                     }
                 }
             }

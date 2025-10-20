@@ -20,8 +20,7 @@ internal object QuoteContainerBlockRenderer : Renderable {
             quoteContainer.children?.forEach { childId ->
                 val childBlock = allBlocks[childId]
                 if (childBlock != null) {
-                    context.processedBlocks.add(childId)
-                    renderBlock(childBlock, this, allBlocks, context)
+                    childBlock.render(this, allBlocks, context)
                 }
             }
         }
@@ -57,12 +56,10 @@ internal object GridBlockRenderer : Renderable {
                     columnBlock.children?.forEach { childId ->
                         val childBlock = allBlocks[childId]
                         if (childBlock != null) {
-                            context.processedBlocks.add(childId)
-                            renderBlock(childBlock, this, allBlocks, context)
+                            childBlock.render(this, allBlocks, context)
                         }
                     }
                 }
-                context.processedBlocks.add(columnBlock.blockId)
             }
         }
     }

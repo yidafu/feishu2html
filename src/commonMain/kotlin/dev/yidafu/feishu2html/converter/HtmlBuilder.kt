@@ -23,7 +23,7 @@ private val logger = KotlinLogging.logger {}
  */
 private object BlockRendererRegistry {
     private val renderers: Map<KClass<out Block>, Renderable> = mapOf(
-        // Note: PageBlock is handled specially in renderBlock() and doesn't need a renderer
+        PageBlock::class to PageBlockRenderer,
         TextBlock::class to TextBlockRenderer,
         Heading1Block::class to Heading1BlockRenderer,
         Heading2Block::class to Heading2BlockRenderer,
@@ -95,12 +95,11 @@ private object BlockRendererRegistry {
 }
 
 /**
- * Global Block rendering function - dispatches to appropriate Renderer based on Block type
+ * Block rendering extension function - dispatches to appropriate Renderer based on Block type
  *
  * Uses BlockRendererRegistry to efficiently map Block types to their corresponding Renderers.
- * This function is the entry point for the entire rendering system.
+ * This extension function is the entry point for the entire rendering system.
  *
- * @param block Block object to render
  * @param parent kotlinx.html FlowContent object
  * @param allBlocks Mapping of all blocks in the document
  * @param context Rendering context
@@ -108,21 +107,15 @@ private object BlockRendererRegistry {
  * @see Renderable
  * @see BlockRendererRegistry
  */
-internal fun renderBlock(
-    block: Block,
+internal fun Block.render(
     parent: FlowContent,
     allBlocks: Map<String, Block>,
     context: RenderContext,
 ) {
-    logger.debug { "Rendering block: type=${block::class.simpleName}, id=${block.blockId}" }
+    logger.debug { "Rendering block: type=${this::class.simpleName}, id=${this.blockId}" }
 
-    // Special case: PageBlock doesn't need rendering
-    if (block is PageBlock) {
-        return
-    }
-
-    val renderer = BlockRendererRegistry.getRenderer(block)
-    renderer.render(parent, block, allBlocks, context)
+    val renderer = BlockRendererRegistry.getRenderer(this)
+    renderer.render(parent, this, allBlocks, context)
 }
 
 /**
@@ -134,7 +127,7 @@ internal fun renderBlock(
  * @property customCss Custom CSS styles, overrides default styles if provided
  * @property styleMode Style framework to use (Feishu or GitHub)
  */
-internal data class HtmlBuildContext(
+data class HtmlBuildContext(
     val title: String,
     val cssMode: CssMode,
     val cssFileName: String,
@@ -162,7 +155,7 @@ internal data class HtmlBuildContext(
  *
  * @param context Build context containing CSS and title configuration
  */
-internal fun HEAD.buildStandardHead(context: HtmlBuildContext) {
+fun HEAD.buildStandardHead(context: HtmlBuildContext) {
     meta(charset = "UTF-8")
     meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
     title(context.title)
@@ -214,8 +207,13 @@ internal fun HEAD.buildStandardHead(context: HtmlBuildContext) {
  * - Fragment: Only HTML fragment without html/head/body tags
  *
  * Each template implements its own build logic using the Strategy pattern.
+ *
+ * Predefined templates for common use cases:
+ * - DefaultCli: Standard Feishu template with full HTML structure
+ * - FragmentCli: Minimal fragment with simple div wrapper
+ * - PlainCli: Basic HTML structure without external JS/CSS
  */
-internal sealed interface HtmlTemplate {
+sealed interface HtmlTemplate {
     /**
      * Build HTML document
      *
@@ -348,12 +346,56 @@ internal sealed interface HtmlTemplate {
             }
         }
     }
+
+    companion object {
+        /**
+         * Predefined template for CLI: Standard Feishu template with full HTML structure
+         */
+        val DefaultCli: HtmlTemplate = Default
+
+        /**
+         * Predefined template for CLI: Minimal fragment with simple div wrapper
+         */
+        val FragmentCli: HtmlTemplate = Fragment { content ->
+            div(classes = "feishu-document") {
+                content()
+            }
+        }
+
+        /**
+         * Predefined template for CLI: Basic HTML structure without external JS/CSS
+         */
+        val PlainCli: HtmlTemplate = Plain { content ->
+            lang = "zh-CN"
+            head {
+                meta(charset = "UTF-8")
+                meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
+                title("Feishu Document")
+                style {
+                    unsafe {
+                        raw("""
+                            body {
+                                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+                                line-height: 1.6;
+                                max-width: 900px;
+                                margin: 0 auto;
+                                padding: 20px;
+                            }
+                        """.trimIndent())
+                    }
+                }
+            }
+            body {
+                content()
+            }
+        }
+    }
 }
 
 /**
  * CSS mode for HTML generation
  */
-internal enum class CssMode {
+enum class CssMode {
     INLINE, // <style> tag with CSS content
     EXTERNAL, // <link> tag referencing external file
 }
@@ -367,7 +409,7 @@ internal enum class CssMode {
  * - FEISHU: Official Feishu colors and styling
  * - GITHUB: GitHub-style colors and typography
  */
-internal enum class StyleMode {
+enum class StyleMode {
     /** Feishu official style (blue accent, Feishu colors) */
     FEISHU,
     /** GitHub style (blue accent, GitHub colors, same class names) */
@@ -462,39 +504,62 @@ internal class HtmlBuilder(
         allBlocks: Map<String, Block>,
         parent: FlowContent,
     ) {
-        val processedBlocks = mutableSetOf<String>() // 记录已处理的块
-
         // 创建渲染上下文
         val context =
             RenderContext(
                 textConverter = TextElementConverter(),
-                processedBlocks = processedBlocks,
                 imageBase64Cache = imageBase64Cache,
                 showUnsupportedBlocks = showUnsupportedBlocks,
             )
 
+        // 递归渲染架构：只渲染顶层块（没有父块或父块是PAGE类型）
+        // 子块由它们的父块的 Renderer 递归渲染
+        // 这样避免了重复渲染，不需要 processedBlocks 跟踪
         for (block in blocks) {
-            // 跳过已经作为子块处理过的块
-            if (block.blockId in processedBlocks) {
-                continue
+            // 只渲染顶层块：
+            // 1. PAGE 块（文档根节点）
+            // 2. parentId 为 null 的块
+            // 3. 父块是 PAGE 类型的块（直接子块）
+            if (isTopLevelBlock(block, allBlocks)) {
+                block.render(parent, allBlocks, context)
             }
-
-            // 跳过某些块类型（它们会被父块处理）
-            if (shouldSkipBlock(block)) {
-                continue
-            }
-
-            // 渲染块 - 列表项现在是独立的 div 块，不需要 ul/ol 包裹
-            renderBlock(block, parent, allBlocks, context)
         }
     }
 
-    private fun shouldSkipBlock(block: Block): Boolean {
-        return when (block.blockType) {
-            BlockType.PAGE -> true
-            BlockType.TABLE_CELL -> true
-            BlockType.GRID_COLUMN -> true // GRID_COLUMN 由 GRID 父块处理
-            else -> false
+    /**
+     * Check if a block is a top-level block that should be rendered by buildBody
+     * 
+     * Top-level blocks are:
+     * - PAGE blocks (document root)
+     * - Blocks with no parent (parentId == null)
+     * - Blocks whose parent is a PAGE block (direct children of document)
+     * - Blocks whose parent is not in allBlocks (orphaned blocks, treat as top-level)
+     * 
+     * All other blocks are rendered recursively by their parent's Renderer.
+     */
+    private fun isTopLevelBlock(
+        block: Block,
+        allBlocks: Map<String, Block>,
+    ): Boolean {
+        // PAGE blocks are always top-level
+        if (block.blockType == BlockType.PAGE) {
+            return true
         }
+
+        // Blocks with no parent are top-level
+        if (block.parentId == null) {
+            return true
+        }
+
+        // Check if parent exists in allBlocks
+        val parent = allBlocks[block.parentId]
+        
+        // If parent doesn't exist, treat as top-level (orphaned block)
+        if (parent == null) {
+            return true
+        }
+
+        // If parent is PAGE, this is a direct child (top-level)
+        return parent.blockType == BlockType.PAGE
     }
 }

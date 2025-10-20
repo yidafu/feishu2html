@@ -5,6 +5,24 @@ import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 
+/**
+ * PageBlock Renderer - Page blocks are container blocks that don't render themselves
+ *
+ * PageBlock acts as the root container in a document hierarchy. It doesn't produce
+ * visible HTML output, but its children are rendered by the main rendering loop.
+ */
+internal object PageBlockRenderer : Renderable {
+    override fun <T> render(
+        parent: FlowContent,
+        block: T,
+        allBlocks: Map<String, Block>,
+        context: RenderContext,
+    ) {
+        // PageBlock is a container but doesn't render itself
+        // Its children are rendered by the main buildBody loop
+    }
+}
+
 internal object TextBlockRenderer : Renderable {
     private val logger = KotlinLogging.logger {}
 

@@ -41,13 +41,11 @@ internal interface Renderable {
  * Rendering context - carries shared resources needed during rendering
  *
  * @property textConverter Text element converter for converting TextElement to HTML
- * @property processedBlocks Set of processed Block IDs to avoid duplicate rendering
  * @property imageBase64Cache Map of image tokens to base64 data URLs for inline images
  * @property showUnsupportedBlocks Whether to render unsupported block warnings
  */
 internal data class RenderContext(
     val textConverter: TextElementConverter,
-    val processedBlocks: MutableSet<String>,
     val imageBase64Cache: Map<String, String> = emptyMap(),
     val showUnsupportedBlocks: Boolean = true,
 )

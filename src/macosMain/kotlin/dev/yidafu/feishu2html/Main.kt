@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
         return
     }
 
-    println("Template mode: ${parsed.templateMode}")
+    println("Template: ${parsed.template::class.simpleName}")
     CliRunner.printBanner(parsed.appId, parsed.documentIds.size, "macOS")
 
     runBlocking {
@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
                 parsed.appId,
                 parsed.appSecret,
                 parsed.documentIds,
-                parsed.templateMode,
+                parsed.template,
                 parsed.inlineImages,
                 parsed.inlineCss,
                 parsed.hideUnsupported

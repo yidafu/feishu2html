@@ -55,53 +55,6 @@ interface ExportProgressCallback {
 }
 
 /**
- * Create HtmlTemplate based on TemplateMode
- *
- * This function creates predefined templates for CLI usage:
- * - DEFAULT: Uses the standard Feishu template
- * - FRAGMENT: Uses a minimal fragment template with simple wrapper
- * - FULL: Uses a minimal full template with basic HTML structure
- */
-private fun createHtmlTemplate(mode: TemplateMode): HtmlTemplate {
-    return when (mode) {
-        TemplateMode.DEFAULT -> HtmlTemplate.Default
-
-        TemplateMode.FRAGMENT -> HtmlTemplate.Fragment { content ->
-            // Simple fragment template: just a wrapper div
-            div(classes = "feishu-document") {
-                content()
-            }
-        }
-
-        TemplateMode.FULL -> HtmlTemplate.Plain { content ->
-            // Minimal plain template with basic structure (no external JS/CSS)
-            lang = "zh-CN"
-            head {
-                meta(charset = "UTF-8")
-                meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
-                title("Feishu Document")
-                style {
-                    unsafe {
-                        raw("""
-                            body {
-                                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-                                line-height: 1.6;
-                                max-width: 900px;
-                                margin: 0 auto;
-                                padding: 20px;
-                            }
-                        """.trimIndent())
-                    }
-                }
-            }
-            body {
-                content()
-            }
-        }
-    }
-}
-
-/**
  * Main class for converting Feishu documents to HTML
  *
  * Provides functionality to export Feishu documents to standalone HTML files with automatic
@@ -227,14 +180,13 @@ internal constructor(
             logger.debug { "Output file path: $htmlPath" }
 
             logger.info { "Building HTML for document: ${document.title}" }
-            val template = createHtmlTemplate(options.templateMode)
             val htmlBuilder =
                 HtmlBuilder(
                     title = document.title,
                     cssMode = if (options.externalCss) CssMode.EXTERNAL else CssMode.INLINE,
                     cssFileName = options.cssFileName,
                     customCss = options.customCss,
-                    template = template,
+                    template = options.template,
                     imageBase64Cache = imageBase64Cache,
                     showUnsupportedBlocks = options.showUnsupportedBlocks,
                 )
@@ -482,20 +434,6 @@ internal constructor(
 }
 
 /**
- * HTML template mode for command-line interface
- */
-enum class TemplateMode {
-    /** Use the default built-in template */
-    DEFAULT,
-
-    /** Use a minimal fragment template (custom body structure) */
-    FRAGMENT,
-
-    /** Use a minimal full template (custom HTML structure) */
-    FULL
-}
-
-/**
  * Configuration options for Feishu document to HTML conversion
  *
  * @property appId Feishu app ID, obtained from Feishu Open Platform
@@ -508,7 +446,7 @@ enum class TemplateMode {
  * @property customCss Custom CSS styles, overrides default styles if provided
  * @property externalCss true = external CSS file, false = inline styles
  * @property cssFileName CSS filename when externalCss is true
- * @property templateMode HTML template mode (for CLI usage), defaults to DEFAULT
+ * @property template HTML template to use, defaults to DefaultCli
  * @property inlineImages true = embed images as base64 data URLs
  * @property showUnsupportedBlocks true = show unsupported block warnings (for debugging)
  * @property enableDebugLogging true = enable verbose debug logging
@@ -528,7 +466,7 @@ data class Feishu2HtmlOptions(
     val customCss: String? = null,
     val externalCss: Boolean = true, // true = external file, false = inline
     val cssFileName: String = "feishu-style-optimized.css", // Use optimized CSS with official Feishu rules
-    val templateMode: TemplateMode = TemplateMode.DEFAULT,
+    val template: HtmlTemplate = HtmlTemplate.DefaultCli,
     val inlineImages: Boolean = false, // true = embed images as base64 data URLs
     val showUnsupportedBlocks: Boolean = true, // true = show unsupported block warnings (for debugging)
     val enableDebugLogging: Boolean = false, // true = enable verbose debug logging

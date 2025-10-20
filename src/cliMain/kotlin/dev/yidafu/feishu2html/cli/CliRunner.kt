@@ -2,7 +2,7 @@ package dev.yidafu.feishu2html.cli
 
 import dev.yidafu.feishu2html.Feishu2Html
 import dev.yidafu.feishu2html.Feishu2HtmlOptions
-import dev.yidafu.feishu2html.TemplateMode
+import dev.yidafu.feishu2html.converter.HtmlTemplate
 import kotlinx.cli.*
 
 /**
@@ -12,7 +12,7 @@ data class CliArgs(
     val appId: String,
     val appSecret: String,
     val documentIds: List<String>,
-    val templateMode: TemplateMode = TemplateMode.DEFAULT,
+    val template: HtmlTemplate = HtmlTemplate.DefaultCli,
     val inlineImages: Boolean = false,
     val inlineCss: Boolean = false,
     val hideUnsupported: Boolean = false,
@@ -97,11 +97,11 @@ object CliRunner {
                 return null
             }
 
-            // Convert template string to TemplateMode
+            // Convert template string to HtmlTemplate
             val template = when (templateValue.lowercase()) {
-                "default" -> TemplateMode.DEFAULT
-                "fragment" -> TemplateMode.FRAGMENT
-                "full" -> TemplateMode.FULL
+                "default" -> HtmlTemplate.DefaultCli
+                "fragment" -> HtmlTemplate.FragmentCli
+                "full" -> HtmlTemplate.PlainCli
                 else -> {
                     println("Error: Invalid template mode '$templateValue'. Use: default, fragment, or full")
                     println()
@@ -114,7 +114,7 @@ object CliRunner {
                 appId = appId,
                 appSecret = appSecret,
                 documentIds = documentIds.toList(),
-                templateMode = template,
+                template = template,
                 inlineImages = inlineImages,
                 inlineCss = inlineCss,
                 hideUnsupported = hideUnsupported
@@ -187,7 +187,7 @@ object CliRunner {
     fun createOptions(
         appId: String,
         appSecret: String,
-        templateMode: TemplateMode = TemplateMode.DEFAULT,
+        template: HtmlTemplate = HtmlTemplate.DefaultCli,
         inlineImages: Boolean = false,
         inlineCss: Boolean = false,
         hideUnsupported: Boolean = false,
@@ -198,7 +198,7 @@ object CliRunner {
             outputDir = "./output",
             imageDir = "./output/images",
             fileDir = "./output/files",
-            templateMode = templateMode,
+            template = template,
             inlineImages = inlineImages,
             externalCss = !inlineCss,  // Invert logic: inlineCss = true means externalCss = false
             showUnsupportedBlocks = !hideUnsupported,  // Invert logic: hideUnsupported = true means showUnsupportedBlocks = false
@@ -214,15 +214,15 @@ object CliRunner {
         appId: String,
         appSecret: String,
         documentIds: List<String>,
-        templateMode: TemplateMode = TemplateMode.DEFAULT,
+        template: HtmlTemplate = HtmlTemplate.DefaultCli,
         inlineImages: Boolean = false,
         inlineCss: Boolean = false,
         hideUnsupported: Boolean = false,
     ) {
-        val options = createOptions(appId, appSecret, templateMode, inlineImages, inlineCss, hideUnsupported)
+        val options = createOptions(appId, appSecret, template, inlineImages, inlineCss, hideUnsupported)
 
         println("Initializing Feishu2Html with output directory: ${options.outputDir}")
-        println("Template mode: $templateMode")
+        println("Template: ${template::class.simpleName}")
         if (inlineImages) {
             println("Inline images: enabled (base64 encoding)")
         }
