@@ -32,8 +32,10 @@ external object NodePath {
 /**
  * Node.js Buffer for ES Module
  */
-external object Buffer {
-    fun from(array: Array<Byte>): dynamic
+external class NodeBuffer {
+    companion object {
+        fun from(array: Array<Byte>): dynamic
+    }
 }
 
 /**
@@ -79,7 +81,7 @@ actual class PlatformFileSystem {
         createDirectories(dirname)
 
         // Convert ByteArray to Buffer
-        val buffer = Buffer.from(content.toTypedArray())
+        val buffer = NodeBuffer.from(content.toTypedArray())
 
         // Write file
         NodeFs.writeFileSync(path, buffer)
