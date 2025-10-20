@@ -33,9 +33,11 @@ kotlin {
     // JVM 目标平台
     jvm {
         compilations.all {
-            compilerOptions.configure {
-                jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-                freeCompilerArgs.add("-Xjsr305=strict")
+            compileTaskProvider.configure {
+                compilerOptions {
+                    jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+                    freeCompilerArgs.add("-Xjsr305=strict")
+                }
             }
         }
         testRuns["test"].executionTask.configure {

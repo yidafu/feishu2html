@@ -15,6 +15,41 @@ import kotlinx.html.*
 private val logger = KotlinLogging.logger {}
 
 /**
+ * Progress callback interface for monitoring export operations
+ */
+interface ExportProgressCallback {
+    /**
+     * Called when export starts for a document
+     */
+    fun onStart(documentId: String) {}
+
+    /**
+     * Called when document metadata has been fetched
+     */
+    fun onMetadataFetched(documentId: String, title: String, blocksCount: Int) {}
+
+    /**
+     * Called when content blocks have been fetched
+     */
+    fun onContentFetched(documentId: String, blocksCount: Int) {}
+
+    /**
+     * Called during asset downloads with progress information
+     */
+    fun onAssetDownloading(documentId: String, current: Int, total: Int) {}
+
+    /**
+     * Called when export completes successfully
+     */
+    fun onComplete(documentId: String, outputPath: String) {}
+
+    /**
+     * Called when an error occurs during export
+     */
+    fun onError(documentId: String, error: Throwable) {}
+}
+
+/**
  * Create HtmlTemplate based on TemplateMode
  *
  * This function creates predefined templates for CLI usage:
@@ -84,14 +119,24 @@ private fun createHtmlTemplate(mode: TemplateMode): HtmlTemplate {
  * @property options Configuration options including app credentials and output paths
  * @see Feishu2HtmlOptions
  */
-class Feishu2Html(
+class Feishu2Html
+@PublishedApi
+internal constructor(
     private val options: Feishu2HtmlOptions,
+    @PublishedApi internal val apiClient: FeishuApiClient,
+    @PublishedApi internal val fileSystem: dev.yidafu.feishu2html.platform.PlatformFileSystem,
 ) : AutoCloseable {
-    private val apiClient = FeishuApiClient(options.appId, options.appSecret)
-    private val fileSystem = getPlatformFileSystem()
-
     // Cache for base64 encoded images (token -> base64 data URL)
     private val imageBase64Cache = mutableMapOf<String, String>()
+
+    /**
+     * Public constructor for creating Feishu2Html with default dependencies
+     */
+    constructor(options: Feishu2HtmlOptions) : this(
+        options = options,
+        apiClient = FeishuApiClient(options.appId, options.appSecret),
+        fileSystem = getPlatformFileSystem()
+    )
 
     /**
      * Export a single Feishu document to HTML file
@@ -104,6 +149,7 @@ class Feishu2Html(
      *
      * @param documentId Feishu document ID, can be extracted from document URL
      * @param outputFileName Optional output filename, defaults to document title
+     * @param progressCallback Optional callback to monitor export progress
      * @throws FeishuApiException When API call fails (e.g., insufficient permissions, document not found)
      * @throws kotlinx.io.IOException When file write operation fails
      *
@@ -112,7 +158,9 @@ class Feishu2Html(
     suspend fun export(
         documentId: String,
         outputFileName: String? = null,
+        progressCallback: ExportProgressCallback? = null,
     ) {
+        progressCallback?.onStart(documentId)
         logger.info { "Starting export for document: $documentId" }
         logger.debug {
             "Export options - outputDir: ${options.outputDir}, imageDir: ${options.imageDir}, fileDir: ${options.fileDir}"
@@ -133,6 +181,7 @@ class Feishu2Html(
             val blocks = content.blocks
 
             logger.info { "Document content loaded - Total blocks: ${blocks.size}" }
+            progressCallback?.onContentFetched(documentId, blocks.size)
 
             // Get ordered block list
             val orderedBlocks = apiClient.getOrderedBlocks(content)
@@ -172,8 +221,10 @@ class Feishu2Html(
 
             fileSystem.writeText(htmlPath, html)
             logger.info { "Document export completed successfully - File: $htmlPath" }
+            progressCallback?.onComplete(documentId, htmlPath)
         } catch (e: Exception) {
             logger.error(e) { "Failed to export document $documentId: ${e.message}" }
+            progressCallback?.onError(documentId, e)
             throw e
         }
     }
@@ -185,10 +236,14 @@ class Feishu2Html(
      * the error is logged but processing continues with subsequent documents.
      *
      * @param documentIds List of document IDs to export
+     * @param progressCallback Optional callback to monitor batch export progress
      *
      * @see export Export a single document
      */
-    suspend fun exportBatch(documentIds: List<String>) =
+    suspend fun exportBatch(
+        documentIds: List<String>,
+        progressCallback: ExportProgressCallback? = null,
+    ) =
         coroutineScope {
             logger.info { "Starting batch export for ${documentIds.size} documents" }
             logger.debug { "Document IDs: ${documentIds.joinToString(", ")}" }
@@ -199,7 +254,7 @@ class Feishu2Html(
             documentIds.forEachIndexed { index, documentId ->
                 logger.info { "Processing document ${index + 1}/${documentIds.size}: $documentId" }
                 try {
-                    export(documentId)
+                    export(documentId, progressCallback = progressCallback)
                     successCount++
                     logger.debug { "Document ${index + 1}/${documentIds.size} exported successfully" }
                 } catch (e: Exception) {
@@ -379,7 +434,13 @@ enum class TemplateMode {
  * @property imagePath Relative path for images in HTML, defaults to "images"
  * @property filePath Relative path for attachments in HTML, defaults to "files"
  * @property customCss Custom CSS styles, overrides default styles if provided
+ * @property externalCss true = external CSS file, false = inline styles
+ * @property cssFileName CSS filename when externalCss is true
  * @property templateMode HTML template mode (for CLI usage), defaults to DEFAULT
+ * @property inlineImages true = embed images as base64 data URLs
+ * @property showUnsupportedBlocks true = show unsupported block warnings (for debugging)
+ * @property enableDebugLogging true = enable verbose debug logging
+ * @property quietMode true = suppress all non-error logs
  *
  * @see Feishu2Html
  */
@@ -397,8 +458,20 @@ data class Feishu2HtmlOptions(
     val templateMode: TemplateMode = TemplateMode.DEFAULT,
     val inlineImages: Boolean = false, // true = embed images as base64 data URLs
     val showUnsupportedBlocks: Boolean = true, // true = show unsupported block warnings (for debugging)
+    val enableDebugLogging: Boolean = false, // true = enable verbose debug logging
+    val quietMode: Boolean = false, // true = suppress all non-error logs
 ) {
     init {
+        // Validate required parameters
+        require(appId.isNotBlank()) { "appId cannot be blank" }
+        require(appSecret.isNotBlank()) { "appSecret cannot be blank" }
+        require(outputDir.isNotBlank()) { "outputDir cannot be blank" }
+        require(imageDir.isNotBlank()) { "imageDir cannot be blank" }
+        require(fileDir.isNotBlank()) { "fileDir cannot be blank" }
+        require(imagePath.isNotBlank()) { "imagePath cannot be blank" }
+        require(filePath.isNotBlank()) { "filePath cannot be blank" }
+        require(cssFileName.isNotBlank()) { "cssFileName cannot be blank" }
+
         // Create output directories
         val fileSystem = getPlatformFileSystem()
         fileSystem.createDirectories(outputDir)

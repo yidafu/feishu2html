@@ -304,5 +304,109 @@ class Feishu2HtmlJvmTest : FunSpec({
         converter1.close()
         converter2.close()
     }
+
+    test("Feishu2HtmlOptions should reject blank appId") {
+        val exception = shouldThrow<IllegalArgumentException> {
+            Feishu2HtmlOptions(
+                appId = "",
+                appSecret = "test_secret",
+                outputDir = testOutputDir
+            )
+        }
+        exception.message shouldBe "appId cannot be blank"
+    }
+
+    test("Feishu2HtmlOptions should reject blank appSecret") {
+        val exception = shouldThrow<IllegalArgumentException> {
+            Feishu2HtmlOptions(
+                appId = "test_app_id",
+                appSecret = "",
+                outputDir = testOutputDir
+            )
+        }
+        exception.message shouldBe "appSecret cannot be blank"
+    }
+
+    test("Feishu2HtmlOptions should reject blank outputDir") {
+        val exception = shouldThrow<IllegalArgumentException> {
+            Feishu2HtmlOptions(
+                appId = "test_app_id",
+                appSecret = "test_secret",
+                outputDir = ""
+            )
+        }
+        exception.message shouldBe "outputDir cannot be blank"
+    }
+
+    test("Feishu2HtmlOptions should reject blank imageDir") {
+        val exception = shouldThrow<IllegalArgumentException> {
+            Feishu2HtmlOptions(
+                appId = "test_app_id",
+                appSecret = "test_secret",
+                outputDir = testOutputDir,
+                imageDir = ""
+            )
+        }
+        exception.message shouldBe "imageDir cannot be blank"
+    }
+
+    test("Feishu2HtmlOptions should reject blank fileDir") {
+        val exception = shouldThrow<IllegalArgumentException> {
+            Feishu2HtmlOptions(
+                appId = "test_app_id",
+                appSecret = "test_secret",
+                outputDir = testOutputDir,
+                fileDir = ""
+            )
+        }
+        exception.message shouldBe "fileDir cannot be blank"
+    }
+
+    test("Feishu2HtmlOptions should reject blank imagePath") {
+        val exception = shouldThrow<IllegalArgumentException> {
+            Feishu2HtmlOptions(
+                appId = "test_app_id",
+                appSecret = "test_secret",
+                outputDir = testOutputDir,
+                imagePath = ""
+            )
+        }
+        exception.message shouldBe "imagePath cannot be blank"
+    }
+
+    test("Feishu2HtmlOptions should reject blank filePath") {
+        val exception = shouldThrow<IllegalArgumentException> {
+            Feishu2HtmlOptions(
+                appId = "test_app_id",
+                appSecret = "test_secret",
+                outputDir = testOutputDir,
+                filePath = ""
+            )
+        }
+        exception.message shouldBe "filePath cannot be blank"
+    }
+
+    test("Feishu2HtmlOptions should reject blank cssFileName") {
+        val exception = shouldThrow<IllegalArgumentException> {
+            Feishu2HtmlOptions(
+                appId = "test_app_id",
+                appSecret = "test_secret",
+                outputDir = testOutputDir,
+                cssFileName = ""
+            )
+        }
+        exception.message shouldBe "cssFileName cannot be blank"
+    }
+
+    test("Feishu2HtmlOptions should accept whitespace-only as invalid") {
+        val exception = shouldThrow<IllegalArgumentException> {
+            Feishu2HtmlOptions(
+                appId = "   ",
+                appSecret = "test_secret",
+                outputDir = testOutputDir
+            )
+        }
+        exception.message shouldBe "appId cannot be blank"
+    }
 })
 
