@@ -528,13 +528,13 @@ internal class HtmlBuilder(
 
     /**
      * Check if a block is a top-level block that should be rendered by buildBody
-     * 
+     *
      * Top-level blocks are:
      * - PAGE blocks (document root)
      * - Blocks with no parent (parentId == null)
      * - Blocks whose parent is a PAGE block (direct children of document)
      * - Blocks whose parent is not in allBlocks (orphaned blocks, treat as top-level)
-     * 
+     *
      * All other blocks are rendered recursively by their parent's Renderer.
      */
     private fun isTopLevelBlock(
@@ -553,7 +553,7 @@ internal class HtmlBuilder(
 
         // Check if parent exists in allBlocks
         val parent = allBlocks[block.parentId]
-        
+
         // If parent doesn't exist, treat as top-level (orphaned block)
         if (parent == null) {
             return true
