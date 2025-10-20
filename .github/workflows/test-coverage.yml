@@ -50,13 +50,13 @@ jobs:
           script: |
             const coverage = '${{ steps.coverage.outputs.coverage }}';
             const comment = `## 📊 Test Coverage Report
-            
+
             - **Overall Coverage**: ${coverage}%
             - **Tests**: All passing ✅
-            
+
             [View Full Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
             `;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,

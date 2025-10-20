@@ -8,10 +8,13 @@ import dev.yidafu.feishu2html.converter.HtmlTemplate
 import dev.yidafu.feishu2html.platform.getPlatformFileSystem
 import dev.yidafu.feishu2html.platform.ImageEncoder
 import dev.yidafu.feishu2html.converter.EmbeddedResources
+import dev.yidafu.feishu2html.metrics.ExportMetrics
+import dev.yidafu.feishu2html.metrics.MetricsCollector
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import kotlinx.datetime.Clock
 import kotlinx.html.*
 
 private val logger = KotlinLogging.logger {}
@@ -165,6 +168,15 @@ internal constructor(
         outputFileName: String? = null,
         progressCallback: ExportProgressCallback? = null,
     ) {
+        // Performance metrics tracking
+        val startTime = Clock.System.now()
+        var blocksCount = 0
+        var imagesDownloaded = 0
+        var filesDownloaded = 0
+        var boardsExported = 0
+        var success = false
+        var errorMessage: String? = null
+
         progressCallback?.onStart(documentId)
         logger.info { "Starting export for document: $documentId" }
         logger.debug {
@@ -185,6 +197,7 @@ internal constructor(
             val document = content.document
             val blocks = content.blocks
 
+            blocksCount = blocks.size
             logger.info { "Document content loaded - Total blocks: ${blocks.size}" }
             progressCallback?.onContentFetched(documentId, blocks.size)
 
@@ -194,7 +207,10 @@ internal constructor(
 
             // Download images and files
             logger.info { "Starting asset download for document: $documentId" }
-            downloadAssets(orderedBlocks)
+            val assetStats = downloadAssets(orderedBlocks)
+            imagesDownloaded = assetStats.first
+            filesDownloaded = assetStats.second
+            boardsExported = assetStats.third
 
             // Copy CSS file if external mode enabled
             if (options.externalCss) {
@@ -227,10 +243,32 @@ internal constructor(
             fileSystem.writeText(htmlPath, html)
             logger.info { "Document export completed successfully - File: $htmlPath" }
             progressCallback?.onComplete(documentId, htmlPath)
+            success = true
         } catch (e: Exception) {
+            errorMessage = e.message
             logger.error(e) { "Failed to export document $documentId: ${e.message}" }
             progressCallback?.onError(documentId, e)
             throw e
+        } finally {
+            // Record performance metrics
+            val endTime = Clock.System.now()
+            val duration = endTime - startTime
+
+            options.metricsCollector?.recordExport(
+                ExportMetrics(
+                    documentId = documentId,
+                    startTime = startTime,
+                    endTime = endTime,
+                    duration = duration,
+                    blocksCount = blocksCount,
+                    imagesDownloaded = imagesDownloaded,
+                    filesDownloaded = filesDownloaded,
+                    boardsExported = boardsExported,
+                    totalBytes = 0, // Optional: could track if needed
+                    success = success,
+                    errorMessage = errorMessage
+                )
+            )
         }
     }
 
@@ -275,11 +313,16 @@ internal constructor(
             }
         }
 
-    private suspend fun downloadAssets(blocks: List<Block>) =
+    /**
+     * Download assets (images, files, boards) and return statistics
+     * @return Triple of (imagesDownloaded, filesDownloaded, boardsExported)
+     */
+    private suspend fun downloadAssets(blocks: List<Block>): Triple<Int, Int, Int> =
         coroutineScope {
             logger.debug { "Scanning ${blocks.size} blocks for downloadable assets" }
-            val imageJobs = mutableListOf<Deferred<Unit>>()
-            val fileJobs = mutableListOf<Deferred<Unit>>()
+            val imageJobs = mutableListOf<Deferred<Boolean>>()
+            val fileJobs = mutableListOf<Deferred<Boolean>>()
+            val boardJobs = mutableListOf<Deferred<Boolean>>()
 
             for (block in blocks) {
                 when (block) {
@@ -291,25 +334,29 @@ internal constructor(
                                     downloadSemaphore.withPermit {
                                         try {
                                             val imagePath = "${options.imageDir}/$token.png"
-                                            if (!fileSystem.exists(imagePath)) {
+                                            val downloaded = if (!fileSystem.exists(imagePath)) {
                                                 apiClient.downloadFile(token, imagePath)
                                                 logger.info { "Image downloaded: $token" }
+                                                true
                                             } else {
                                                 logger.debug { "Image already exists, skipping: $token" }
+                                                false
                                             }
 
-                                        // Convert to base64 if inline images enabled
-                                        if (options.inlineImages) {
-                                            try {
-                                                val base64 = ImageEncoder.encodeToBase64DataUrl(imagePath)
-                                                imageBase64Cache[token] = base64
-                                                logger.debug { "Image encoded to base64: $token" }
-                                            } catch (e: Exception) {
-                                                logger.error(e) { "Failed to encode image to base64: $token" }
+                                            // Convert to base64 if inline images enabled
+                                            if (options.inlineImages) {
+                                                try {
+                                                    val base64 = ImageEncoder.encodeToBase64DataUrl(imagePath)
+                                                    imageBase64Cache[token] = base64
+                                                    logger.debug { "Image encoded to base64: $token" }
+                                                } catch (e: Exception) {
+                                                    logger.error(e) { "Failed to encode image to base64: $token" }
+                                                }
                                             }
-                                        }
+                                            downloaded
                                         } catch (e: Exception) {
                                             logger.error(e) { "Failed to download image: $token" }
+                                            false
                                         }
                                     }
                                 }
@@ -329,11 +376,14 @@ internal constructor(
                                             if (!fileSystem.exists(filePath)) {
                                                 apiClient.downloadFile(token, filePath)
                                                 logger.info { "File downloaded: $fileName" }
+                                                true
                                             } else {
                                                 logger.debug { "File already exists, skipping: $fileName" }
+                                                false
                                             }
                                         } catch (e: Exception) {
                                             logger.error(e) { "Failed to download file: $token" }
+                                            false
                                         }
                                     }
                                 }
@@ -349,11 +399,13 @@ internal constructor(
                                     downloadSemaphore.withPermit {
                                         try {
                                             val imagePath = "${options.imageDir}/$token.png"
-                                            if (!fileSystem.exists(imagePath)) {
+                                            val downloaded = if (!fileSystem.exists(imagePath)) {
                                                 apiClient.exportBoard(token, imagePath)
                                                 logger.info { "Board exported as image: $token" }
+                                                true
                                             } else {
                                                 logger.debug { "Board image already exists, skipping: $token" }
+                                                false
                                             }
 
                                             // Convert to base64 if inline images enabled
@@ -366,12 +418,14 @@ internal constructor(
                                                     logger.error(e) { "Failed to encode board image to base64: $token" }
                                                 }
                                             }
+                                            downloaded
                                         } catch (e: Exception) {
                                             logger.error(e) { "Failed to export board: $token" }
+                                            false
                                         }
                                     }
                                 }
-                            imageJobs.add(job)
+                            boardJobs.add(job)
                         }
                     }
                     else -> {}
@@ -380,14 +434,21 @@ internal constructor(
 
             // Wait for all downloads to complete
             logger.debug {
-                "Waiting for ${imageJobs.size} image downloads and ${fileJobs.size} file downloads"
+                "Waiting for ${imageJobs.size} image downloads, ${fileJobs.size} file downloads, and ${boardJobs.size} board exports"
             }
-            imageJobs.awaitAll()
-            fileJobs.awaitAll()
+            val imageResults = imageJobs.awaitAll()
+            val fileResults = fileJobs.awaitAll()
+            val boardResults = boardJobs.awaitAll()
+
+            val imagesDownloaded = imageResults.count { it }
+            val filesDownloaded = fileResults.count { it }
+            val boardsExported = boardResults.count { it }
 
             logger.info {
-                "Asset download completed - Images: ${imageJobs.size}, Files: ${fileJobs.size}"
+                "Asset download completed - Images: $imagesDownloaded/${imageJobs.size}, Files: $filesDownloaded/${fileJobs.size}, Boards: $boardsExported/${boardJobs.size}"
             }
+
+            Triple(imagesDownloaded, filesDownloaded, boardsExported)
         }
 
     /**
@@ -452,6 +513,7 @@ enum class TemplateMode {
  * @property showUnsupportedBlocks true = show unsupported block warnings (for debugging)
  * @property enableDebugLogging true = enable verbose debug logging
  * @property quietMode true = suppress all non-error logs
+ * @property metricsCollector Optional metrics collector for performance monitoring
  *
  * @see Feishu2Html
  */
@@ -472,6 +534,7 @@ data class Feishu2HtmlOptions(
     val enableDebugLogging: Boolean = false, // true = enable verbose debug logging
     val quietMode: Boolean = false, // true = suppress all non-error logs
     val maxConcurrentDownloads: Int = 10, // Maximum concurrent asset downloads
+    val metricsCollector: MetricsCollector? = null, // Optional metrics collector for performance monitoring
 ) {
     init {
         // Validate required parameters
