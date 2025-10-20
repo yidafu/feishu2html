@@ -148,14 +148,14 @@ class RateLimiterTest : FunSpec({
         val counter = AtomicInteger(0)
 
         val startTime = System.currentTimeMillis()
-        
+
         // 发送3个请求
         repeat(3) {
             rateLimiter.execute {
                 counter.incrementAndGet()
             }
         }
-        
+
         val endTime = System.currentTimeMillis()
         val duration = endTime - startTime
 
@@ -238,7 +238,7 @@ class RateLimiterTest : FunSpec({
         }
 
         jobs.awaitAll()
-        
+
         successCount.get() shouldBe 50
         failureCount.get() shouldBe 0
     }
@@ -262,7 +262,7 @@ class RateLimiterTest : FunSpec({
 
         result shouldBe "success"
         attemptTimes.size shouldBe 3
-        
+
         // 验证延迟递增：第1次立即，第2次约100ms后，第3次约200-300ms后
         if (attemptTimes.size >= 2) {
             (attemptTimes[1] >= 80L) shouldBe true // 允许一些误差
@@ -277,14 +277,14 @@ class RateLimiterTest : FunSpec({
         val counter = AtomicInteger(0)
 
         val startTime = System.currentTimeMillis()
-        
+
         // 发送5个请求，每秒限制2个
         repeat(5) {
             rateLimiter.execute {
                 counter.incrementAndGet()
             }
         }
-        
+
         val duration = System.currentTimeMillis() - startTime
 
         // 应该完成所有5个请求
