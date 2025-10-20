@@ -109,40 +109,40 @@ open class FeishuApiException(
     val code: Int? = null,
     cause: Throwable? = null,
 ) : Exception(message, cause) {
-    
+
     /**
      * Network-related errors (connection timeout, DNS issues, etc.)
      */
-    class NetworkError(message: String, cause: Throwable) : 
+    class NetworkError(message: String, cause: Throwable) :
         FeishuApiException(message, cause = cause)
-    
+
     /**
      * Authentication failures (invalid credentials, token expired, etc.)
      */
-    class AuthenticationError(message: String, code: Int) : 
+    class AuthenticationError(message: String, code: Int) :
         FeishuApiException(message, code)
-    
+
     /**
      * Rate limiting errors - API quota exceeded
      */
-    class RateLimitError(val retryAfterSeconds: Int = 60) : 
+    class RateLimitError(val retryAfterSeconds: Int = 60) :
         FeishuApiException("Rate limited, please retry after $retryAfterSeconds seconds", code = 99991400)
-    
+
     /**
      * Document not found or has been deleted
      */
-    class DocumentNotFound(documentId: String) : 
+    class DocumentNotFound(documentId: String) :
         FeishuApiException("Document not found: $documentId", code = 404)
-    
+
     /**
      * Insufficient permissions to access the document
      */
-    class InsufficientPermission(documentId: String, code: Int = 1770032) : 
+    class InsufficientPermission(documentId: String, code: Int = 1770032) :
         FeishuApiException("No permission to access document: $documentId (code: $code)", code)
-    
+
     /**
      * Generic API error with error code
      */
-    class ApiError(message: String, code: Int) : 
+    class ApiError(message: String, code: Int) :
         FeishuApiException(message, code)
 }

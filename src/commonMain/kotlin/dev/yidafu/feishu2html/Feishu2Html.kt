@@ -10,6 +10,8 @@ import dev.yidafu.feishu2html.platform.ImageEncoder
 import dev.yidafu.feishu2html.converter.EmbeddedResources
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.html.*
 
 private val logger = KotlinLogging.logger {}
@@ -128,6 +130,9 @@ internal constructor(
 ) : AutoCloseable {
     // Cache for base64 encoded images (token -> base64 data URL)
     private val imageBase64Cache = mutableMapOf<String, String>()
+
+    // Semaphore to limit concurrent downloads
+    private val downloadSemaphore = Semaphore(options.maxConcurrentDownloads)
 
     /**
      * Public constructor for creating Feishu2Html with default dependencies
@@ -283,14 +288,15 @@ internal constructor(
                         if (token != null) {
                             val job =
                                 async {
-                                    try {
-                                        val imagePath = "${options.imageDir}/$token.png"
-                                        if (!fileSystem.exists(imagePath)) {
-                                            apiClient.downloadFile(token, imagePath)
-                                            logger.info { "Image downloaded: $token" }
-                                        } else {
-                                            logger.debug { "Image already exists, skipping: $token" }
-                                        }
+                                    downloadSemaphore.withPermit {
+                                        try {
+                                            val imagePath = "${options.imageDir}/$token.png"
+                                            if (!fileSystem.exists(imagePath)) {
+                                                apiClient.downloadFile(token, imagePath)
+                                                logger.info { "Image downloaded: $token" }
+                                            } else {
+                                                logger.debug { "Image already exists, skipping: $token" }
+                                            }
 
                                         // Convert to base64 if inline images enabled
                                         if (options.inlineImages) {
@@ -302,8 +308,9 @@ internal constructor(
                                                 logger.error(e) { "Failed to encode image to base64: $token" }
                                             }
                                         }
-                                    } catch (e: Exception) {
-                                        logger.error(e) { "Failed to download image: $token" }
+                                        } catch (e: Exception) {
+                                            logger.error(e) { "Failed to download image: $token" }
+                                        }
                                     }
                                 }
                             imageJobs.add(job)
@@ -315,17 +322,19 @@ internal constructor(
                         if (token != null) {
                             val job =
                                 async {
-                                    try {
-                                        val fileName = name ?: token
-                                        val filePath = "${options.fileDir}/$fileName"
-                                        if (!fileSystem.exists(filePath)) {
-                                            apiClient.downloadFile(token, filePath)
-                                            logger.info { "File downloaded: $fileName" }
-                                        } else {
-                                            logger.debug { "File already exists, skipping: $fileName" }
+                                    downloadSemaphore.withPermit {
+                                        try {
+                                            val fileName = name ?: token
+                                            val filePath = "${options.fileDir}/$fileName"
+                                            if (!fileSystem.exists(filePath)) {
+                                                apiClient.downloadFile(token, filePath)
+                                                logger.info { "File downloaded: $fileName" }
+                                            } else {
+                                                logger.debug { "File already exists, skipping: $fileName" }
+                                            }
+                                        } catch (e: Exception) {
+                                            logger.error(e) { "Failed to download file: $token" }
                                         }
-                                    } catch (e: Exception) {
-                                        logger.error(e) { "Failed to download file: $token" }
                                     }
                                 }
                             fileJobs.add(job)
@@ -337,27 +346,29 @@ internal constructor(
                         if (token != null) {
                             val job =
                                 async {
-                                    try {
-                                        val imagePath = "${options.imageDir}/$token.png"
-                                        if (!fileSystem.exists(imagePath)) {
-                                            apiClient.exportBoard(token, imagePath)
-                                            logger.info { "Board exported as image: $token" }
-                                        } else {
-                                            logger.debug { "Board image already exists, skipping: $token" }
-                                        }
-
-                                        // Convert to base64 if inline images enabled
-                                        if (options.inlineImages) {
-                                            try {
-                                                val base64 = ImageEncoder.encodeToBase64DataUrl(imagePath)
-                                                imageBase64Cache[token] = base64
-                                                logger.debug { "Board image encoded to base64: $token" }
-                                            } catch (e: Exception) {
-                                                logger.error(e) { "Failed to encode board image to base64: $token" }
+                                    downloadSemaphore.withPermit {
+                                        try {
+                                            val imagePath = "${options.imageDir}/$token.png"
+                                            if (!fileSystem.exists(imagePath)) {
+                                                apiClient.exportBoard(token, imagePath)
+                                                logger.info { "Board exported as image: $token" }
+                                            } else {
+                                                logger.debug { "Board image already exists, skipping: $token" }
                                             }
+
+                                            // Convert to base64 if inline images enabled
+                                            if (options.inlineImages) {
+                                                try {
+                                                    val base64 = ImageEncoder.encodeToBase64DataUrl(imagePath)
+                                                    imageBase64Cache[token] = base64
+                                                    logger.debug { "Board image encoded to base64: $token" }
+                                                } catch (e: Exception) {
+                                                    logger.error(e) { "Failed to encode board image to base64: $token" }
+                                                }
+                                            }
+                                        } catch (e: Exception) {
+                                            logger.error(e) { "Failed to export board: $token" }
                                         }
-                                    } catch (e: Exception) {
-                                        logger.error(e) { "Failed to export board: $token" }
                                     }
                                 }
                             imageJobs.add(job)
@@ -460,6 +471,7 @@ data class Feishu2HtmlOptions(
     val showUnsupportedBlocks: Boolean = true, // true = show unsupported block warnings (for debugging)
     val enableDebugLogging: Boolean = false, // true = enable verbose debug logging
     val quietMode: Boolean = false, // true = suppress all non-error logs
+    val maxConcurrentDownloads: Int = 10, // Maximum concurrent asset downloads
 ) {
     init {
         // Validate required parameters
@@ -471,6 +483,7 @@ data class Feishu2HtmlOptions(
         require(imagePath.isNotBlank()) { "imagePath cannot be blank" }
         require(filePath.isNotBlank()) { "filePath cannot be blank" }
         require(cssFileName.isNotBlank()) { "cssFileName cannot be blank" }
+        require(maxConcurrentDownloads > 0) { "maxConcurrentDownloads must be positive" }
 
         // Create output directories
         val fileSystem = getPlatformFileSystem()

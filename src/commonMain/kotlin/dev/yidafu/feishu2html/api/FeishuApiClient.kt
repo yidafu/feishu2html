@@ -53,7 +53,8 @@ internal class FeishuApiClient(
      * @see <a href="https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/get">Official API Documentation</a>
      */
     suspend fun getDocumentInfo(documentId: String): DocumentInfo =
-        rateLimiter.execute {
+        withRetry(retryOn = ::isRetriableException) {
+            rateLimiter.execute {
             logger.info { "Fetching document info: $documentId" }
 
             val token = authService.getAccessToken()
@@ -144,6 +145,7 @@ internal class FeishuApiClient(
                     "(ID: ${documentInfo.documentId}, Revision: ${documentInfo.revisionId})"
             }
             documentInfo
+            }
         }
 
     /**
@@ -302,7 +304,7 @@ internal class FeishuApiClient(
     suspend fun downloadFile(
         fileToken: String,
         outputPath: String,
-    ) {
+    ) = withRetry(retryOn = ::isRetriableException) {
         rateLimiter.execute {
             logger.info { "Downloading file: $fileToken" }
             logger.debug { "Output path: $outputPath" }
