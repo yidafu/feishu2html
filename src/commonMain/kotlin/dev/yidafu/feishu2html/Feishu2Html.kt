@@ -73,8 +73,8 @@ private fun createHtmlTemplate(mode: TemplateMode): HtmlTemplate {
             }
         }
 
-        TemplateMode.FULL -> HtmlTemplate.Full { content ->
-            // Minimal full template with basic structure
+        TemplateMode.FULL -> HtmlTemplate.Plain { content ->
+            // Minimal plain template with basic structure (no external JS/CSS)
             lang = "zh-CN"
             head {
                 meta(charset = "UTF-8")

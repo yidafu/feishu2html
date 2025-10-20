@@ -5,13 +5,99 @@ import dev.yidafu.feishu2html.converter.renderers.*
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlin.reflect.KClass
 
 private val logger = KotlinLogging.logger {}
 
 /**
+ * Block Renderer Registry - Maps Block types to their corresponding Renderers
+ *
+ * This registry provides a centralized mapping of Block classes to Renderable implementations,
+ * eliminating the need for large when expressions in renderBlock function.
+ *
+ * Benefits:
+ * - Cleaner code (reduces 50+ line when expression to a simple map lookup)
+ * - Easier maintenance (adding new Block types requires only one line)
+ * - Type-safe (compile-time checking of Block to Renderer mappings)
+ * - Better testability (registry can be tested independently)
+ */
+private object BlockRendererRegistry {
+    private val renderers: Map<KClass<out Block>, Renderable> = mapOf(
+        // Note: PageBlock is handled specially in renderBlock() and doesn't need a renderer
+        TextBlock::class to TextBlockRenderer,
+        Heading1Block::class to Heading1BlockRenderer,
+        Heading2Block::class to Heading2BlockRenderer,
+        Heading3Block::class to Heading3BlockRenderer,
+        Heading4Block::class to Heading4BlockRenderer,
+        Heading5Block::class to Heading5BlockRenderer,
+        Heading6Block::class to Heading6BlockRenderer,
+        Heading7Block::class to Heading7BlockRenderer,
+        Heading8Block::class to Heading8BlockRenderer,
+        Heading9Block::class to Heading9BlockRenderer,
+        BulletBlock::class to BulletBlockRenderer,
+        OrderedBlock::class to OrderedBlockRenderer,
+        CodeBlockItem::class to CodeBlockRenderer,
+        QuoteBlock::class to QuoteBlockRenderer,
+        EquationBlock::class to EquationBlockRenderer,
+        TodoBlock::class to TodoBlockRenderer,
+        BitableBlock::class to BitableBlockRenderer,
+        CalloutBlock::class to CalloutBlockRenderer,
+        ChatCardBlock::class to ChatCardBlockRenderer,
+        DiagramBlock::class to DiagramBlockRenderer,
+        DividerBlock::class to DividerBlockRenderer,
+        FileBlock::class to FileBlockRenderer,
+        GridBlock::class to GridBlockRenderer,
+        GridColumnBlock::class to GridColumnBlockRenderer,
+        IframeBlock::class to IframeBlockRenderer,
+        ImageBlock::class to ImageBlockRenderer,
+        TableBlock::class to TableBlockRenderer,
+        TableCellBlock::class to TableCellBlockRenderer,
+        QuoteContainerBlock::class to QuoteContainerBlockRenderer,
+        BoardBlock::class to BoardBlockRenderer,
+        IsvBlock::class to IsvBlockRenderer,
+        MindnoteBlock::class to MindnoteBlockRenderer,
+        SheetBlock::class to SheetBlockRenderer,
+        ViewBlock::class to ViewBlockRenderer,
+        TaskBlock::class to TaskBlockRenderer,
+        OkrBlock::class to OkrBlockRenderer,
+        OkrObjectiveBlock::class to OkrObjectiveBlockRenderer,
+        OkrKeyResultBlock::class to OkrKeyResultBlockRenderer,
+        OkrProgressBlock::class to OkrProgressBlockRenderer,
+        AddOnsBlock::class to AddOnsBlockRenderer,
+        JiraIssueBlock::class to JiraIssueBlockRenderer,
+        WikiCatalogBlock::class to WikiCatalogBlockRenderer,
+        AgendaBlock::class to AgendaBlockRenderer,
+        AgendaItemBlock::class to AgendaItemBlockRenderer,
+        AgendaItemTitleBlock::class to AgendaItemTitleBlockRenderer,
+        AgendaItemContentBlock::class to AgendaItemContentBlockRenderer,
+        LinkPreviewBlock::class to LinkPreviewBlockRenderer,
+        SourceSyncedBlock::class to SourceSyncedBlockRenderer,
+        ReferenceSyncedBlock::class to ReferenceSyncedBlockRenderer,
+        SubPageListBlock::class to SubPageListBlockRenderer,
+        AiTemplateBlock::class to AiTemplateBlockRenderer,
+        UnknownBlock::class to UnknownBlockRenderer,
+    )
+
+    /**
+     * Get the appropriate Renderer for a given Block
+     *
+     * @param block Block to find renderer for
+     * @return Corresponding Renderable instance
+     * @throws IllegalStateException if no renderer found for block type
+     */
+    fun getRenderer(block: Block): Renderable {
+        return renderers[block::class]
+            ?: throw IllegalStateException(
+                "No renderer found for block type: ${block::class.simpleName}. " +
+                    "Please ensure all Block types are registered in BlockRendererRegistry.",
+            )
+    }
+}
+
+/**
  * Global Block rendering function - dispatches to appropriate Renderer based on Block type
  *
- * Uses a when expression to dispatch blocks to their corresponding Renderer based on actual type.
+ * Uses BlockRendererRegistry to efficiently map Block types to their corresponding Renderers.
  * This function is the entry point for the entire rendering system.
  *
  * @param block Block object to render
@@ -20,6 +106,7 @@ private val logger = KotlinLogging.logger {}
  * @param context Rendering context
  *
  * @see Renderable
+ * @see BlockRendererRegistry
  */
 internal fun renderBlock(
     block: Block,
@@ -28,60 +115,93 @@ internal fun renderBlock(
     context: RenderContext,
 ) {
     logger.debug { "Rendering block: type=${block::class.simpleName}, id=${block.blockId}" }
-    when (block) {
-        is PageBlock -> { /* Page blocks typically don't need rendering */ }
-        is TextBlock -> TextBlockRenderer.render(parent, block, allBlocks, context)
-        is Heading1Block -> Heading1BlockRenderer.render(parent, block, allBlocks, context)
-        is Heading2Block -> Heading2BlockRenderer.render(parent, block, allBlocks, context)
-        is Heading3Block -> Heading3BlockRenderer.render(parent, block, allBlocks, context)
-        is Heading4Block -> Heading4BlockRenderer.render(parent, block, allBlocks, context)
-        is Heading5Block -> Heading5BlockRenderer.render(parent, block, allBlocks, context)
-        is Heading6Block -> Heading6BlockRenderer.render(parent, block, allBlocks, context)
-        is Heading7Block -> Heading7BlockRenderer.render(parent, block, allBlocks, context)
-        is Heading8Block -> Heading8BlockRenderer.render(parent, block, allBlocks, context)
-        is Heading9Block -> Heading9BlockRenderer.render(parent, block, allBlocks, context)
-        is BulletBlock -> BulletBlockRenderer.render(parent, block, allBlocks, context)
-        is OrderedBlock -> OrderedBlockRenderer.render(parent, block, allBlocks, context)
-        is CodeBlockItem -> CodeBlockRenderer.render(parent, block, allBlocks, context)
-        is QuoteBlock -> QuoteBlockRenderer.render(parent, block, allBlocks, context)
-        is EquationBlock -> EquationBlockRenderer.render(parent, block, allBlocks, context)
-        is TodoBlock -> TodoBlockRenderer.render(parent, block, allBlocks, context)
-        is BitableBlock -> BitableBlockRenderer.render(parent, block, allBlocks, context)
-        is CalloutBlock -> CalloutBlockRenderer.render(parent, block, allBlocks, context)
-        is ChatCardBlock -> ChatCardBlockRenderer.render(parent, block, allBlocks, context)
-        is DiagramBlock -> DiagramBlockRenderer.render(parent, block, allBlocks, context)
-        is DividerBlock -> DividerBlockRenderer.render(parent, block, allBlocks, context)
-        is FileBlock -> FileBlockRenderer.render(parent, block, allBlocks, context)
-        is GridBlock -> GridBlockRenderer.render(parent, block, allBlocks, context)
-        is GridColumnBlock -> GridColumnBlockRenderer.render(parent, block, allBlocks, context)
-        is IframeBlock -> IframeBlockRenderer.render(parent, block, allBlocks, context)
-        is ImageBlock -> ImageBlockRenderer.render(parent, block, allBlocks, context)
-        is TableBlock -> TableBlockRenderer.render(parent, block, allBlocks, context)
-        is TableCellBlock -> TableCellBlockRenderer.render(parent, block, allBlocks, context)
-        is QuoteContainerBlock -> QuoteContainerBlockRenderer.render(parent, block, allBlocks, context)
-        is BoardBlock -> BoardBlockRenderer.render(parent, block, allBlocks, context)
-        is IsvBlock -> IsvBlockRenderer.render(parent, block, allBlocks, context)
-        is MindnoteBlock -> MindnoteBlockRenderer.render(parent, block, allBlocks, context)
-        is SheetBlock -> SheetBlockRenderer.render(parent, block, allBlocks, context)
-        is ViewBlock -> ViewBlockRenderer.render(parent, block, allBlocks, context)
-        is TaskBlock -> TaskBlockRenderer.render(parent, block, allBlocks, context)
-        is OkrBlock -> OkrBlockRenderer.render(parent, block, allBlocks, context)
-        is OkrObjectiveBlock -> OkrObjectiveBlockRenderer.render(parent, block, allBlocks, context)
-        is OkrKeyResultBlock -> OkrKeyResultBlockRenderer.render(parent, block, allBlocks, context)
-        is OkrProgressBlock -> OkrProgressBlockRenderer.render(parent, block, allBlocks, context)
-        is AddOnsBlock -> AddOnsBlockRenderer.render(parent, block, allBlocks, context)
-        is JiraIssueBlock -> JiraIssueBlockRenderer.render(parent, block, allBlocks, context)
-        is WikiCatalogBlock -> WikiCatalogBlockRenderer.render(parent, block, allBlocks, context)
-        is AgendaBlock -> AgendaBlockRenderer.render(parent, block, allBlocks, context)
-        is AgendaItemBlock -> AgendaItemBlockRenderer.render(parent, block, allBlocks, context)
-        is AgendaItemTitleBlock -> AgendaItemTitleBlockRenderer.render(parent, block, allBlocks, context)
-        is AgendaItemContentBlock -> AgendaItemContentBlockRenderer.render(parent, block, allBlocks, context)
-        is LinkPreviewBlock -> LinkPreviewBlockRenderer.render(parent, block, allBlocks, context)
-        is SourceSyncedBlock -> SourceSyncedBlockRenderer.render(parent, block, allBlocks, context)
-        is ReferenceSyncedBlock -> ReferenceSyncedBlockRenderer.render(parent, block, allBlocks, context)
-        is SubPageListBlock -> SubPageListBlockRenderer.render(parent, block, allBlocks, context)
-        is AiTemplateBlock -> AiTemplateBlockRenderer.render(parent, block, allBlocks, context)
-        is UnknownBlock -> UnknownBlockRenderer.render(parent, block, allBlocks, context)
+
+    // Special case: PageBlock doesn't need rendering
+    if (block is PageBlock) {
+        return
+    }
+
+    val renderer = BlockRendererRegistry.getRenderer(block)
+    renderer.render(parent, block, allBlocks, context)
+}
+
+/**
+ * HTML build context - encapsulates common build parameters
+ *
+ * @property title HTML document title
+ * @property cssMode CSS inclusion mode (inline or external)
+ * @property cssFileName CSS file name when using external mode
+ * @property customCss Custom CSS styles, overrides default styles if provided
+ * @property styleMode Style framework to use (Feishu or GitHub)
+ */
+internal data class HtmlBuildContext(
+    val title: String,
+    val cssMode: CssMode,
+    val cssFileName: String,
+    val customCss: String?,
+    val styleMode: StyleMode = StyleMode.FEISHU,
+) {
+    /**
+     * Get the default CSS content based on style mode
+     *
+     * Both styles use the same Feishu class names (.protyle-wysiwyg, .b3-typography, etc.)
+     * but apply different visual styles (Feishu official colors vs GitHub colors)
+     */
+    fun getDefaultCss(): String {
+        return when (styleMode) {
+            StyleMode.FEISHU -> FeishuStyles.generateCSS()
+            StyleMode.GITHUB -> GitHubStyles.CSS
+        }
+    }
+}
+
+/**
+ * Build standard HTML head section with CSS and MathJax configuration
+ *
+ * This function provides the common head structure used by Default and Fragment templates.
+ *
+ * @param context Build context containing CSS and title configuration
+ */
+internal fun HEAD.buildStandardHead(context: HtmlBuildContext) {
+    meta(charset = "UTF-8")
+    meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
+    title(context.title)
+
+    if (context.cssMode == CssMode.INLINE) {
+        style {
+            unsafe {
+                raw(context.customCss ?: context.getDefaultCss())
+            }
+        }
+    } else {
+        link(rel = "stylesheet", href = context.cssFileName)
+    }
+
+    // MathJax 支持数学公式渲染
+    script {
+        src = "https://polyfill.io/v3/polyfill.min.js?features=es6"
+    }
+    script {
+        attributes["id"] = "MathJax-script"
+        async = true
+        src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    }
+    script {
+        unsafe {
+            raw(
+                """
+                window.MathJax = {
+                    tex: {
+                        inlineMath: [['$', '$'], ['\\(', '\\)']],
+                        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+                    },
+                    svg: {
+                        fontCache: 'global'
+                    }
+                };
+                """.trimIndent(),
+            )
+        }
     }
 }
 
@@ -89,43 +209,122 @@ internal fun renderBlock(
  * HTML template type for customizing HTML output structure
  *
  * Supports three template modes:
- * - Default: Uses the built-in template
- * - Full: User has full control over the entire HTML document structure
- * - Fragment: Only replaces body content, head section is managed by HtmlBuilder
+ * - Default: Complete HTML with head and body, includes external JS and CSS
+ * - Plain: Complete HTML with head and body, but without external JS and CSS (inline CSS only)
+ * - Fragment: Only HTML fragment without html/head/body tags
+ *
+ * Each template implements its own build logic using the Strategy pattern.
  */
-sealed interface HtmlTemplate {
+internal sealed interface HtmlTemplate {
     /**
-     * Full HTML template - user has complete control over the entire document structure
+     * Build HTML document
      *
-     * The builder function receives:
-     * - HTML context (this)
-     * - content: FlowContent builder for rendering the document blocks
+     * @param content Content builder for rendering document blocks
+     * @param context Build context containing CSS and title configuration
+     * @return Complete HTML string or HTML fragment
+     */
+    fun build(
+        content: FlowContent.() -> Unit,
+        context: HtmlBuildContext,
+    ): String
+
+    /**
+     * Default template - complete HTML with external CSS and JS
+     *
+     * Generates a full HTML document with:
+     * - Standard head section with meta tags
+     * - External CSS file link (or inline CSS based on cssMode)
+     * - External MathJax scripts for equation rendering
+     * - Standard body with content
+     */
+    data object Default : HtmlTemplate {
+        override fun build(
+            content: FlowContent.() -> Unit,
+            context: HtmlBuildContext,
+        ): String {
+            return createHTML().html {
+                lang = "zh-CN"
+                head {
+                    buildStandardHead(context)
+                }
+                body {
+                    content()
+                }
+            }
+        }
+    }
+
+    /**
+     * Plain template - complete HTML without external JS and CSS
+     *
+     * This template provides two modes:
+     * 1. Default Plain mode: Standard HTML with inline CSS and no external resources
+     * 2. Custom mode: User has full control over the HTML structure
+     *
+     * The Plain template is useful for standalone, self-contained HTML files that don't
+     * depend on external resources, making them easier to distribute and archive.
      *
      * Example:
      * ```kotlin
-     * HtmlTemplate.Full { content ->
+     * // Default Plain mode
+     * HtmlTemplate.Plain()
+     *
+     * // Custom mode
+     * HtmlTemplate.Plain { content ->
      *     lang = "en"
      *     head {
-     *         title("My Custom Title")
-     *         // Add custom head elements
+     *         title("Custom")
+     *         style { /* custom inline styles */ }
      *     }
-     *     body {
-     *         content()
-     *     }
+     *     body { content() }
      * }
      * ```
      */
-    class Full(
-        val builder: HTML.(content: FlowContent.() -> Unit) -> Unit,
-    ) : HtmlTemplate
+    class Plain(
+        private val builder: (HTML.(content: FlowContent.() -> Unit) -> Unit)? = null,
+    ) : HtmlTemplate {
+        override fun build(
+            content: FlowContent.() -> Unit,
+            context: HtmlBuildContext,
+        ): String {
+            return createHTML().html {
+                if (builder != null) {
+                    // User has full control
+                    builder(this, content)
+                } else {
+                    // Default Plain mode: inline CSS, no external JS
+                    lang = "zh-CN"
+                    head {
+                        meta(charset = "UTF-8")
+                        meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
+                        title(context.title)
+
+                    // Always use inline CSS for Plain template
+                    style {
+                        unsafe {
+                            raw(context.customCss ?: context.getDefaultCss())
+                        }
+                    }
+                        // No external JavaScript - equations won't be rendered
+                    }
+                    body {
+                        content()
+                    }
+                }
+            }
+        }
+
+        companion object {
+            /**  Default Plain template instance */
+            operator fun invoke(): Plain = Plain(null)
+        }
+    }
 
     /**
-     * Fragment template - only replaces body content
+     * Fragment template - HTML fragment only
      *
-     * The head section (CSS, MathJax, etc.) is still managed by HtmlBuilder.
-     * The builder function receives:
-     * - BODY context (this)
-     * - content: FlowContent builder for rendering the document blocks
+     * Generates only the content fragment without html, head, or body tags.
+     * This is useful for embedding content into existing HTML pages.
      *
      * Example:
      * ```kotlin
@@ -137,13 +336,18 @@ sealed interface HtmlTemplate {
      * ```
      */
     class Fragment(
-        val builder: BODY.(content: FlowContent.() -> Unit) -> Unit,
-    ) : HtmlTemplate
-
-    /**
-     * Default template - uses the built-in template
-     */
-    data object Default : HtmlTemplate
+        val builder: FlowContent.(content: FlowContent.() -> Unit) -> Unit = { it() },
+    ) : HtmlTemplate {
+        override fun build(
+            content: FlowContent.() -> Unit,
+            context: HtmlBuildContext,
+        ): String {
+            // Create a temporary div to build the fragment
+            return createHTML().div {
+                builder(this, content)
+            }
+        }
+    }
 }
 
 /**
@@ -152,6 +356,22 @@ sealed interface HtmlTemplate {
 internal enum class CssMode {
     INLINE, // <style> tag with CSS content
     EXTERNAL, // <link> tag referencing external file
+}
+
+/**
+ * Style mode for HTML generation
+ *
+ * Determines the visual styling to apply (colors, fonts, spacing).
+ * Both modes use the same Feishu class structure (.protyle-wysiwyg, .b3-typography, etc.)
+ *
+ * - FEISHU: Official Feishu colors and styling
+ * - GITHUB: GitHub-style colors and typography
+ */
+internal enum class StyleMode {
+    /** Feishu official style (blue accent, Feishu colors) */
+    FEISHU,
+    /** GitHub style (blue accent, GitHub colors, same class names) */
+    GITHUB,
 }
 
 /**
@@ -166,11 +386,13 @@ internal enum class CssMode {
  * @property title HTML document title
  * @property cssMode CSS inclusion mode (inline or external)
  * @property cssFileName CSS file name when using external mode
- * @property customCss Custom CSS styles, overrides default Feishu styles if provided
+ * @property customCss Custom CSS styles, overrides default styles if provided
+ * @property styleMode Style framework to use (Feishu or GitHub)
  * @property template HTML template for customizing output structure
  *
  * @see renderBlock
  * @see FeishuStyles
+ * @see GitHubStyles
  * @see HtmlTemplate
  */
 internal class HtmlBuilder(
@@ -178,6 +400,7 @@ internal class HtmlBuilder(
     private val cssMode: CssMode = CssMode.EXTERNAL,
     private val cssFileName: String = "feishu-style.css",
     private val customCss: String? = null,
+    private val styleMode: StyleMode = StyleMode.FEISHU,
     private val template: HtmlTemplate = HtmlTemplate.Default,
     private val imageBase64Cache: Map<String, String> = emptyMap(),
     private val showUnsupportedBlocks: Boolean = true,
@@ -204,7 +427,17 @@ internal class HtmlBuilder(
         builderLogger.debug { "Using template mode: ${template::class.simpleName}" }
 
         try {
+            // Create build context
+            val buildContext = HtmlBuildContext(
+                title = title,
+                cssMode = cssMode,
+                cssFileName = cssFileName,
+                customCss = customCss,
+                styleMode = styleMode,
+            )
+
             // Create content builder that will be passed to templates
+            // Use unified Feishu class names for both styles
             val contentBuilder: FlowContent.() -> Unit = {
                 div(classes = "protyle-wysiwyg b3-typography") {
                     attributes["data-node-id"] = "root"
@@ -212,12 +445,8 @@ internal class HtmlBuilder(
                 }
             }
 
-            val html =
-                when (template) {
-                    is HtmlTemplate.Full -> buildWithFullTemplate(contentBuilder)
-                    is HtmlTemplate.Fragment -> buildWithFragmentTemplate(contentBuilder)
-                    HtmlTemplate.Default -> buildWithDefaultTemplate(contentBuilder)
-                }
+            // Use polymorphism - let each template build itself
+            val html = template.build(contentBuilder, buildContext)
 
             builderLogger.info { "HTML build completed successfully for document: $title" }
             builderLogger.debug { "Generated HTML size: ${html.length} characters" }
@@ -225,144 +454,6 @@ internal class HtmlBuilder(
         } catch (e: Exception) {
             builderLogger.error(e) { "Failed to build HTML for document $title: ${e.message}" }
             throw e
-        }
-    }
-
-    /**
-     * Build HTML with default template
-     *
-     * Uses the built-in template with standard head (CSS, MathJax) and body structure.
-     *
-     * @param content Content builder for document blocks
-     * @return HTML string
-     */
-    private fun buildWithDefaultTemplate(content: FlowContent.() -> Unit): String {
-        return createHTML().html {
-            lang = "zh-CN"
-
-            head {
-                meta(charset = "UTF-8")
-                meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
-                title(this@HtmlBuilder.title)
-
-                if (cssMode == CssMode.INLINE) {
-                    style {
-                        unsafe {
-                            raw(customCss ?: FeishuStyles.generateCSS())
-                        }
-                    }
-                } else {
-                    link(rel = "stylesheet", href = cssFileName)
-                }
-
-                // MathJax 支持数学公式渲染
-                script {
-                    src = "https://polyfill.io/v3/polyfill.min.js?features=es6"
-                }
-                script {
-                    attributes["id"] = "MathJax-script"
-                    async = true
-                    src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-                }
-                script {
-                    unsafe {
-                        raw(
-                            """
-                            window.MathJax = {
-                                tex: {
-                                    inlineMath: [['$', '$'], ['\\(', '\\)']],
-                                    displayMath: [['$$', '$$'], ['\\[', '\\]']]
-                                },
-                                svg: {
-                                    fontCache: 'global'
-                                }
-                            };
-                            """.trimIndent(),
-                        )
-                    }
-                }
-            }
-
-            body {
-                content()
-            }
-        }
-    }
-
-    /**
-     * Build HTML with full custom template
-     *
-     * User has complete control over the entire HTML document structure.
-     * CSS, MathJax, and other head elements must be configured by the user.
-     *
-     * @param content Content builder for document blocks
-     * @return HTML string
-     */
-    private fun buildWithFullTemplate(content: FlowContent.() -> Unit): String {
-        return createHTML().html {
-            (template as HtmlTemplate.Full).builder(this, content)
-        }
-    }
-
-    /**
-     * Build HTML with fragment template
-     *
-     * Preserves the default head section (CSS, MathJax, etc.) but allows
-     * customization of the body structure.
-     *
-     * @param content Content builder for document blocks
-     * @return HTML string
-     */
-    private fun buildWithFragmentTemplate(content: FlowContent.() -> Unit): String {
-        return createHTML().html {
-            lang = "zh-CN"
-
-            head {
-                meta(charset = "UTF-8")
-                meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
-                title(this@HtmlBuilder.title)
-
-                if (cssMode == CssMode.INLINE) {
-                    style {
-                        unsafe {
-                            raw(customCss ?: FeishuStyles.generateCSS())
-                        }
-                    }
-                } else {
-                    link(rel = "stylesheet", href = cssFileName)
-                }
-
-                // MathJax 支持数学公式渲染
-                script {
-                    src = "https://polyfill.io/v3/polyfill.min.js?features=es6"
-                }
-                script {
-                    attributes["id"] = "MathJax-script"
-                    async = true
-                    src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-                }
-                script {
-                    unsafe {
-                        raw(
-                            """
-                            window.MathJax = {
-                                tex: {
-                                    inlineMath: [['$', '$'], ['\\(', '\\)']],
-                                    displayMath: [['$$', '$$'], ['\\[', '\\]']]
-                                },
-                                svg: {
-                                    fontCache: 'global'
-                                }
-                            };
-                            """.trimIndent(),
-                        )
-                    }
-                }
-            }
-
-            body {
-                (template as HtmlTemplate.Fragment).builder(this, content)
-            }
         }
     }
 

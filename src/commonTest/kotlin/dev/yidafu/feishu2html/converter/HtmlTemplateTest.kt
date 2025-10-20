@@ -33,8 +33,8 @@ class HtmlTemplateTest : FunSpec({
         html shouldContain "MathJax"
     }
 
-    test("should use full template with complete control") {
-        val customTemplate = HtmlTemplate.Full { content ->
+    test("should use plain template with complete control") {
+        val customTemplate = HtmlTemplate.Plain { content ->
             lang = "en"
             head {
                 title("Custom Full Template")
@@ -49,7 +49,7 @@ class HtmlTemplateTest : FunSpec({
         }
 
         val builder = HtmlBuilder(
-            title = "Will be ignored", // Title parameter will be ignored in full template
+            title = "Will be ignored", // Title parameter will be ignored in plain template with custom builder
             template = customTemplate,
         )
         val blocks = listOf(
@@ -68,11 +68,11 @@ class HtmlTemplateTest : FunSpec({
         html shouldContain """<div class="my-custom-wrapper">"""
         html shouldContain "<h1>Custom Header</h1>"
         html shouldContain """<div class="protyle-wysiwyg b3-typography" data-node-id="root">"""
-        // Full template doesn't include MathJax by default
+        // Plain template doesn't include MathJax by default
         html shouldNotContain "MathJax"
     }
 
-    test("should use fragment template with default head") {
+    test("should use fragment template without html/head/body tags") {
         val customTemplate = HtmlTemplate.Fragment { content ->
             div(classes = "custom-body-wrapper") {
                 header {
@@ -101,11 +101,12 @@ class HtmlTemplateTest : FunSpec({
         )
         val html = builder.build(blocks, blocks.associateBy { it.blockId })
 
-        html shouldContain "<html"
-        html shouldContain "<title>Fragment Template Test</title>"
-        // Fragment template preserves default head including MathJax
-        html shouldContain "MathJax"
-        // Custom body structure
+        // Fragment template should NOT contain html/head/body tags
+        html shouldNotContain "<html"
+        html shouldNotContain "<title>"
+        html shouldNotContain "<head>"
+        html shouldNotContain "MathJax"
+        // Only contains the fragment content
         html shouldContain """<div class="custom-body-wrapper">"""
         html shouldContain "<header>"
         html shouldContain "<h1>My Custom Header</h1>"
@@ -115,7 +116,7 @@ class HtmlTemplateTest : FunSpec({
         html shouldContain "© 2025 Custom Footer"
     }
 
-    test("should work with fragment template and inline CSS") {
+    test("should work with fragment template as pure HTML fragment") {
         val customTemplate = HtmlTemplate.Fragment { content ->
             div(classes = "wrapper") {
                 content()
@@ -137,12 +138,16 @@ class HtmlTemplateTest : FunSpec({
         )
         val html = builder.build(blocks, blocks.associateBy { it.blockId })
 
-        html shouldContain "<style>"
+        // Fragment should NOT contain style tags or html structure
+        html shouldNotContain "<style>"
+        html shouldNotContain "<html"
+        html shouldNotContain "<body>"
+        // Only the fragment content
         html shouldContain """<div class="wrapper">"""
     }
 
-    test("should allow full template with custom MathJax config") {
-        val customTemplate = HtmlTemplate.Full { content ->
+    test("should allow plain template with custom MathJax config") {
+        val customTemplate = HtmlTemplate.Plain { content ->
             lang = "en"
             head {
                 title("Custom MathJax")
