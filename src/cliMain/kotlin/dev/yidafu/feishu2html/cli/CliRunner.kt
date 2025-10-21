@@ -3,6 +3,9 @@ package dev.yidafu.feishu2html.cli
 import dev.yidafu.feishu2html.Feishu2Html
 import dev.yidafu.feishu2html.Feishu2HtmlOptions
 import dev.yidafu.feishu2html.converter.HtmlTemplate
+import dev.yidafu.feishu2html.utils.LogFormatter
+import dev.yidafu.feishu2html.utils.ConsoleProgressCallback
+import dev.yidafu.feishu2html.utils.LogIcons
 import kotlinx.cli.*
 
 /**
@@ -172,12 +175,9 @@ object CliRunner {
                 "Feishu Document to HTML Converter"
             }
 
-        println("=".repeat(60))
-        println(title)
-        println("=".repeat(60))
-        println("App ID: $appId")
-        println("Documents to export: $documentCount")
-        println("=".repeat(60))
+        println(LogFormatter.banner(title))
+        println(LogFormatter.keyValue("App ID", appId, LogIcons.STAR))
+        println(LogFormatter.keyValue("Documents", documentCount.toString(), LogIcons.DOCUMENT))
         println()
     }
 
@@ -221,34 +221,31 @@ object CliRunner {
     ) {
         val options = createOptions(appId, appSecret, template, inlineImages, inlineCss, hideUnsupported)
 
-        println("Initializing Feishu2Html with output directory: ${options.outputDir}")
-        println("Template: ${template::class.simpleName}")
-        if (inlineImages) {
-            println("Inline images: enabled (base64 encoding)")
-        }
-        if (inlineCss) {
-            println("Inline CSS: enabled")
-        }
-        if (hideUnsupported) {
-            println("Hide unsupported blocks: enabled")
-        }
+        println(LogFormatter.section("Configuration"))
+        println(LogFormatter.keyValue("Output Directory", options.outputDir, LogIcons.FOLDER))
+        println(LogFormatter.keyValue("Template", template::class.simpleName ?: "Default", LogIcons.DOCUMENT))
+        println(LogFormatter.keyValue("Inline Images", if (inlineImages) "Enabled" else "Disabled", LogIcons.IMAGE))
+        println(LogFormatter.keyValue("Inline CSS", if (inlineCss) "Enabled" else "Disabled", LogIcons.PROCESSING))
+        println(LogFormatter.keyValue("Hide Unsupported", if (hideUnsupported) "Yes" else "No", LogIcons.INFO))
+
+        val progressCallback = ConsoleProgressCallback(verbose = true)
 
         Feishu2Html(options).use { feishu2Html ->
-            println("Starting document export process")
+            println(LogFormatter.section("Export Process"))
 
             if (documentIds.size == 1) {
-                println("Exporting single document: ${documentIds[0]}")
-                feishu2Html.export(documentIds[0])
+                println(LogFormatter.processing("Exporting single document: ${documentIds[0]}"))
+                feishu2Html.export(documentIds[0], progressCallback = progressCallback)
             } else {
-                println("Batch exporting ${documentIds.size} documents")
-                feishu2Html.exportBatch(documentIds)
+                println(LogFormatter.processing("Batch exporting ${documentIds.size} documents"))
+                feishu2Html.exportBatch(documentIds, progressCallback = progressCallback)
             }
 
             println()
-            println("=".repeat(60))
-            println("Export completed!")
-            println("Output directory: ${options.outputDir}")
-            println("=".repeat(60))
+            println(LogFormatter.section("Summary"))
+            println(LogFormatter.success("Export completed successfully!"))
+            println(LogFormatter.keyValue("Output Directory", options.outputDir, LogIcons.FOLDER))
+            println()
         }
     }
 
@@ -257,8 +254,8 @@ object CliRunner {
      */
     fun handleError(e: Exception) {
         println()
-        println("=".repeat(60))
-        println("Error: ${e.message}")
-        println("=".repeat(60))
+        println(LogFormatter.error("Export failed"))
+        println(LogFormatter.keyValue("Error Message", e.message ?: "Unknown error", LogIcons.CROSS))
+        println()
     }
 }

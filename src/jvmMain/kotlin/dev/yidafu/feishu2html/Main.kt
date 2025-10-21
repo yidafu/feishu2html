@@ -1,6 +1,8 @@
 package dev.yidafu.feishu2html
 
 import dev.yidafu.feishu2html.cli.CliRunner
+import dev.yidafu.feishu2html.utils.LogFormatter
+import dev.yidafu.feishu2html.utils.LogIcons
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 
@@ -14,8 +16,11 @@ private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.Main")
  */
 fun main(args: Array<String>) {
     logger.info("Feishu2HTML application started (JVM)")
-    println("Feishu2HTML application started")
-    println("Received ${args.size} command line arguments")
+
+    // Visual startup message
+    println(LogFormatter.info("Feishu2HTML application started"))
+    println(LogFormatter.keyValue("Platform", "JVM", LogIcons.PROCESSING))
+    println(LogFormatter.keyValue("Arguments", args.size.toString(), LogIcons.INFO))
 
     val parsed = CliRunner.parseArguments(args)
     if (parsed == null) {
@@ -45,11 +50,15 @@ fun main(args: Array<String>) {
             )
         }
         logger.info("Export completed successfully")
+        println(LogFormatter.success("All operations completed successfully!"))
     } catch (e: Exception) {
         logger.error("Export failed: {}", e.message, e)
         CliRunner.handleError(e)
-        e.printStackTrace()
+        if (logger.isDebugEnabled) {
+            e.printStackTrace()
+        }
     }
 
     logger.info("Feishu2HTML application terminated")
+    println(LogFormatter.info("Application terminated"))
 }
