@@ -517,6 +517,9 @@ internal class HtmlBuilder(
     private val template: HtmlTemplate = HtmlTemplate.Default,
     private val imageBase64Cache: Map<String, String> = emptyMap(),
     private val showUnsupportedBlocks: Boolean = true,
+    private val publicPath: String = "",
+    private val imagePath: String = "images",
+    private val filePath: String = "files",
 ) {
     private val builderLogger = KotlinLogging.logger {}
 
@@ -576,6 +579,9 @@ internal class HtmlBuilder(
                 textConverter = TextElementConverter(),
                 imageBase64Cache = imageBase64Cache,
                 showUnsupportedBlocks = showUnsupportedBlocks,
+                publicPath = publicPath,
+                imagePath = imagePath,
+                filePath = filePath,
             )
 
         // 树形渲染：直接渲染所有顶层节点

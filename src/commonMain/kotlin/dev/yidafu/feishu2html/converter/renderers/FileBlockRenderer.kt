@@ -20,6 +20,16 @@ internal object FileBlockRenderer : Renderable<FileBlock> {
 
         // Use actual filename for href, matching the download logic in Feishu2Html.kt
         val fileName = fileBlock.file?.name ?: token
+        
+        // Construct file URL with publicPath if provided
+        val fileUrl = run {
+            val relativePath = "${context.filePath}/$fileName"
+            if (context.publicPath.isNotEmpty()) {
+                "${context.publicPath}/$relativePath"
+            } else {
+                relativePath
+            }
+        }
 
         // Render Feishu-style file attachment card using official class names
         parent.div(classes = "docx-file-block-container docx-view-type-Card") {
@@ -43,7 +53,7 @@ internal object FileBlockRenderer : Renderable<FileBlock> {
 
                     // Download button section
                     div(classes = "layout-row file-btn") {
-                        a(href = "files/$fileName", classes = "btn-preview") {
+                        a(href = fileUrl, classes = "btn-preview") {
                             attributes["download"] = name
                             attributes["title"] = "下载 $name"
                             span(classes = "download-icon") { +"⬇" }

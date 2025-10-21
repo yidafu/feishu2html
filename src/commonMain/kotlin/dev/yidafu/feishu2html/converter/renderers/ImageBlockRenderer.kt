@@ -20,8 +20,15 @@ internal object ImageBlockRenderer : Renderable<ImageBlock> {
         val height = imageBlock.image?.height
         val alignClass = getAlignClass(imageBlock.image?.align)
 
-        // Use base64 data URL if available, otherwise use relative path
-        val imageSrc = context.imageBase64Cache[token] ?: "images/$token.png"
+        // Use base64 data URL if available, otherwise construct path with publicPath
+        val imageSrc = context.imageBase64Cache[token] ?: run {
+            val relativePath = "${context.imagePath}/$token.png"
+            if (context.publicPath.isNotEmpty()) {
+                "${context.publicPath}/$relativePath"
+            } else {
+                relativePath
+            }
+        }
 
         parent.img(src = imageSrc, alt = "image") {
             if (alignClass.isNotEmpty()) {
@@ -47,8 +54,15 @@ internal object BoardBlockRenderer : Renderable<BoardBlock> {
         val boardBlock = blockNode.data
         val token = boardBlock.board?.token ?: return
 
-        // Use base64 data URL if available, otherwise use relative path
-        val imageSrc = context.imageBase64Cache[token] ?: "images/$token.png"
+        // Use base64 data URL if available, otherwise construct path with publicPath
+        val imageSrc = context.imageBase64Cache[token] ?: run {
+            val relativePath = "${context.imagePath}/$token.png"
+            if (context.publicPath.isNotEmpty()) {
+                "${context.publicPath}/$relativePath"
+            } else {
+                relativePath
+            }
+        }
 
         parent.div(classes = "board-container") {
             style = "width: 820px; height: 400px; overflow: hidden; display: block; margin: 0 auto; margin-top: 0;"

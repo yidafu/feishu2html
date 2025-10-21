@@ -189,6 +189,9 @@ internal constructor(
                     template = options.template,
                     imageBase64Cache = imageBase64Cache,
                     showUnsupportedBlocks = options.showUnsupportedBlocks,
+                    publicPath = options.publicPath,
+                    imagePath = options.imagePath,
+                    filePath = options.filePath,
                 )
             val html = htmlBuilder.build(blockNodes)
 
@@ -480,6 +483,7 @@ data class Feishu2HtmlOptions(
     val fileDir: String = "./output/files",
     val imagePath: String = "images",
     val filePath: String = "files",
+    val publicPath: String = "", // Public path prefix for assets (e.g., "https://cdn.example.com" or "/static")
     val customCss: String? = null,
     val externalCss: Boolean = true, // true = external file, false = inline
     val cssFileName: String = "feishu-style-optimized.css", // Use optimized CSS with official Feishu rules

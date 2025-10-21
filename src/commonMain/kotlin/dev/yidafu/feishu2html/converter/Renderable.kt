@@ -62,6 +62,9 @@ internal data class RenderContext(
     val textConverter: TextElementConverter,
     val imageBase64Cache: Map<String, String> = emptyMap(),
     val showUnsupportedBlocks: Boolean = true,
+    val publicPath: String = "", // Public path prefix for assets
+    val imagePath: String = "images", // Relative image path
+    val filePath: String = "files", // Relative file path
 )
 
 /**
