@@ -33,7 +33,7 @@ fun main() {
         return
     }
 
-    println("Template mode: ${parsed.templateMode}")
+    println("Template: ${parsed.template::class.simpleName}")
     CliRunner.printBanner(parsed.appId, parsed.documentIds.size, "Node.js")
 
     // Use GlobalScope.promise to return a Promise for Node.js async handling
@@ -43,7 +43,7 @@ fun main() {
                 parsed.appId,
                 parsed.appSecret,
                 parsed.documentIds,
-                parsed.templateMode,
+                parsed.template,
                 parsed.inlineImages,
                 parsed.inlineCss,
                 parsed.hideUnsupported
