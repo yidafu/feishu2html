@@ -227,7 +227,7 @@ fun HEAD.buildStandardHead(context: HtmlBuildContext) {
  * - FragmentCli: Minimal fragment with simple div wrapper
  * - PlainCli: Basic HTML structure without external JS/CSS
  */
-sealed interface HtmlTemplate {
+interface HtmlTemplate {
     /**
      * Build HTML document
      *
