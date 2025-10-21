@@ -152,8 +152,8 @@ kotlin {
                 // Ktor CIO 引擎 (JVM)
                 implementation(libs.ktor.client.cio)
 
-                // JVM 日志实现
-                implementation(libs.logback.classic)
+                // JVM 日志实现 - 使用轻量级 slf4j-simple
+                implementation(libs.slf4j.simple)
             }
         }
 

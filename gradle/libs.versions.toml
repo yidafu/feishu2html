@@ -12,7 +12,7 @@ ktor = "3.0.2"
 
 # Logging
 kotlin-logging = "6.0.3"
-logback = "1.4.14"
+slf4j = "2.0.9"
 
 # Testing
 kotest = "5.9.1"
@@ -45,7 +45,7 @@ ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 
 # Logging
 kotlin-logging = { module = "io.github.oshai:kotlin-logging", version.ref = "kotlin-logging" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 
 # Testing
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
