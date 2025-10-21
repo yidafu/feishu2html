@@ -22,7 +22,7 @@ private val logger = KotlinLogging.logger {}
  * - Better testability (registry can be tested independently)
  */
 private object BlockRendererRegistry {
-    private val renderers: Map<KClass<out Block>, Renderable> = mapOf(
+    private val renderers: Map<KClass<out Block>, Renderable<*>> = mapOf(
         PageBlock::class to PageBlockRenderer,
         TextBlock::class to TextBlockRenderer,
         Heading1Block::class to Heading1BlockRenderer,
@@ -79,43 +79,57 @@ private object BlockRendererRegistry {
     )
 
     /**
-     * Get the appropriate Renderer for a given Block
+     * Render a BlockNode using the appropriate Renderer
      *
-     * @param block Block to find renderer for
-     * @return Corresponding Renderable instance
+     * Inline function that directly dispatches to the correct renderer without
+     * intermediate getRenderer() call. Reduces function call overhead.
+     *
+     * @param blockNode BlockNode to render
+     * @param parent Parent HTML element to render into
+     * @param context Rendering context
      * @throws IllegalStateException if no renderer found for block type
      */
-    fun getRenderer(block: Block): Renderable {
-        return renderers[block::class]
+    @Suppress("UNCHECKED_CAST")
+    inline fun render(
+        blockNode: BlockNode<out Block>,
+        parent: FlowContent,
+        context: RenderContext,
+    ) {
+        val block = blockNode.data
+        val renderer = renderers[block::class]
             ?: throw IllegalStateException(
                 "No renderer found for block type: ${block::class.simpleName}. " +
                     "Please ensure all Block types are registered in BlockRendererRegistry.",
             )
+
+        (renderer as Renderable<Block>).render(parent, blockNode as BlockNode<Block>, context)
     }
 }
 
 /**
- * Block rendering extension function - dispatches to appropriate Renderer based on Block type
+ * BlockNode rendering extension function - dispatches to appropriate Renderer based on Block type
  *
  * Uses BlockRendererRegistry to efficiently map Block types to their corresponding Renderers.
  * This extension function is the entry point for the entire rendering system.
  *
+ * Benefits of inline delegation:
+ * - No intermediate function calls (inlined at call site)
+ * - Type casting centralized in Registry.render()
+ * - Cleaner code without explicit casts
+ *
  * @param parent kotlinx.html FlowContent object
- * @param allBlocks Mapping of all blocks in the document
  * @param context Rendering context
  *
  * @see Renderable
  * @see BlockRendererRegistry
+ * @see BlockNode
  */
-internal fun Block.render(
+internal fun BlockNode<out Block>.render(
     parent: FlowContent,
-    allBlocks: Map<String, Block>,
     context: RenderContext,
 ) {
-    logger.debug { "Rendering block: type=${this::class.simpleName}, id=${this.blockId}" }
-
-    val renderer = BlockRendererRegistry.getRenderer(this)
-    renderer.render(parent, this, allBlocks, context)
+    logger.debug { "Rendering block: type=${this.data::class.simpleName}, id=${this.data.blockId}" }
+    BlockRendererRegistry.render(this, parent, context)
 }
 
 /**
@@ -453,18 +467,14 @@ internal class HtmlBuilder(
      * Build complete HTML document
      *
      * Generates a complete HTML5 document with head and body sections.
-     * The head contains CSS styles and MathJax configuration, body renders all Blocks.
+     * The head contains CSS styles and MathJax configuration, body renders all BlockNodes.
      *
-     * @param blocks Ordered Block list (sorted by document structure)
-     * @param allBlocks Mapping of all blocks (blockId -> Block)
+     * @param blockNodes Tree of BlockNodes representing document structure
      * @return Complete HTML string
      */
-    fun build(
-        blocks: List<Block>,
-        allBlocks: Map<String, Block>,
-    ): String {
+    fun build(blockNodes: List<BlockNode<out Block>>): String {
         builderLogger.info { "Starting HTML build for document: $title" }
-        builderLogger.debug { "Building with ${blocks.size} blocks (total ${allBlocks.size} in map)" }
+        builderLogger.debug { "Building with ${blockNodes.size} root nodes" }
         builderLogger.debug { "Using ${if (customCss != null) "custom" else "default"} CSS" }
         builderLogger.debug { "Using template mode: ${template::class.simpleName}" }
 
@@ -483,7 +493,7 @@ internal class HtmlBuilder(
             val contentBuilder: FlowContent.() -> Unit = {
                 div(classes = "protyle-wysiwyg b3-typography") {
                     attributes["data-node-id"] = "root"
-                    buildBody(blocks, allBlocks, this)
+                    buildBody(blockNodes, this)
                 }
             }
 
@@ -500,8 +510,7 @@ internal class HtmlBuilder(
     }
 
     private fun buildBody(
-        blocks: List<Block>,
-        allBlocks: Map<String, Block>,
+        blockNodes: List<BlockNode<out Block>>,
         parent: FlowContent,
     ) {
         // 创建渲染上下文
@@ -512,54 +521,11 @@ internal class HtmlBuilder(
                 showUnsupportedBlocks = showUnsupportedBlocks,
             )
 
-        // 递归渲染架构：只渲染顶层块（没有父块或父块是PAGE类型）
-        // 子块由它们的父块的 Renderer 递归渲染
-        // 这样避免了重复渲染，不需要 processedBlocks 跟踪
-        for (block in blocks) {
-            // 只渲染顶层块：
-            // 1. PAGE 块（文档根节点）
-            // 2. parentId 为 null 的块
-            // 3. 父块是 PAGE 类型的块（直接子块）
-            if (isTopLevelBlock(block, allBlocks)) {
-                block.render(parent, allBlocks, context)
-            }
+        // 树形渲染：直接渲染所有顶层节点
+        // 每个节点的子节点由其 Renderer 递归渲染
+        // 不需要复杂的过滤逻辑，因为 getOrderedBlocks() 已返回正确的顶层节点
+        for (node in blockNodes) {
+            node.render(parent, context)
         }
-    }
-
-    /**
-     * Check if a block is a top-level block that should be rendered by buildBody
-     *
-     * Top-level blocks are:
-     * - PAGE blocks (document root)
-     * - Blocks with no parent (parentId == null)
-     * - Blocks whose parent is a PAGE block (direct children of document)
-     * - Blocks whose parent is not in allBlocks (orphaned blocks, treat as top-level)
-     *
-     * All other blocks are rendered recursively by their parent's Renderer.
-     */
-    private fun isTopLevelBlock(
-        block: Block,
-        allBlocks: Map<String, Block>,
-    ): Boolean {
-        // PAGE blocks are always top-level
-        if (block.blockType == BlockType.PAGE) {
-            return true
-        }
-
-        // Blocks with no parent are top-level
-        if (block.parentId == null) {
-            return true
-        }
-
-        // Check if parent exists in allBlocks
-        val parent = allBlocks[block.parentId]
-
-        // If parent doesn't exist, treat as top-level (orphaned block)
-        if (parent == null) {
-            return true
-        }
-
-        // If parent is PAGE, this is a direct child (top-level)
-        return parent.blockType == BlockType.PAGE
     }
 }

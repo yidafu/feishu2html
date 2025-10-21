@@ -1,5 +1,7 @@
 package dev.yidafu.feishu2html.converter.renderers
 
+import dev.yidafu.feishu2html.toBlockNode
+
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.RenderContext
 import dev.yidafu.feishu2html.converter.TextElementConverter
@@ -31,7 +33,7 @@ class TextBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                TextBlockRenderer.render(this, block, emptyMap(), context)
+                TextBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<p"
@@ -51,7 +53,7 @@ class TextBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                TextBlockRenderer.render(this, block, emptyMap(), context)
+                TextBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<div></div>"
@@ -86,12 +88,12 @@ class TextBlockRendererTest : FunSpec({
 
         val htmlLeft =
             createHTML().div {
-                TextBlockRenderer.render(this, blockLeft, emptyMap(), context)
+                TextBlockRenderer.render(this, blockLeft.toBlockNode(), context)
             }
 
         val htmlCenter =
             createHTML().div {
-                TextBlockRenderer.render(this, blockCenter, emptyMap(), context)
+                TextBlockRenderer.render(this, blockCenter.toBlockNode(), context)
             }
 
         htmlLeft shouldContain "Left"
@@ -124,7 +126,7 @@ class TextBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                TextBlockRenderer.render(this, block, emptyMap(), context)
+                TextBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "Normal"

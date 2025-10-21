@@ -5,19 +5,18 @@ import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-internal object CalloutBlockRenderer : Renderable {
+internal object CalloutBlockRenderer : Renderable<CalloutBlock> {
     private val logger = KotlinLogging.logger {}
 
-    override fun <T> render(
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<CalloutBlock>,
         context: RenderContext,
     ) {
-        val calloutBlock = block as CalloutBlock
+        val calloutBlock = blockNode.data
         val colorClass = BlockColor.getColorClass(calloutBlock.callout?.backgroundColor) ?: "default"
         val emoji = Emoji.fromId(calloutBlock.callout?.emojiId)
-        logger.debug { "Rendering callout block: color=$colorClass, children=${calloutBlock.children?.size ?: 0}" }
+        logger.debug { "Rendering callout block: color=$colorClass, children=${blockNode.children.size}" }
 
         parent.div(classes = "callout-block callout-$colorClass") {
             if (emoji != null) {
@@ -27,13 +26,8 @@ internal object CalloutBlockRenderer : Renderable {
             }
 
             div(classes = "callout-block-children") {
-                // 递归渲染子块
-                calloutBlock.children?.forEach { childId ->
-                    val childBlock = allBlocks[childId]
-                    if (childBlock != null) {
-                        childBlock.render(this, allBlocks, context)
-                    }
-                }
+                // 递归渲染子节点
+                blockNode.renderChildren(this, context)
             }
         }
     }

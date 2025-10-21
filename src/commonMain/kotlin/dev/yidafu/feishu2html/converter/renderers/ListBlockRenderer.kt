@@ -7,14 +7,13 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-internal object BulletBlockRenderer : Renderable {
-    override fun <T> render(
+internal object BulletBlockRenderer : Renderable<BulletBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<BulletBlock>,
         context: RenderContext,
     ) {
-        val bulletBlock = block as BulletBlock
+        val bulletBlock = blockNode.data
         val elements = bulletBlock.bullet?.elements ?: return
         logger.debug { "Rendering bullet list item with ${elements.size} elements" }
 
@@ -34,16 +33,15 @@ internal object BulletBlockRenderer : Renderable {
     }
 }
 
-internal object OrderedBlockRenderer : Renderable {
+internal object OrderedBlockRenderer : Renderable<OrderedBlock> {
     private var listCounter = 0
 
-    override fun <T> render(
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<OrderedBlock>,
         context: RenderContext,
     ) {
-        val orderedBlock = block as OrderedBlock
+        val orderedBlock = blockNode.data
         val elements = orderedBlock.ordered?.elements ?: return
         val sequence = orderedBlock.ordered?.style?.sequence
 

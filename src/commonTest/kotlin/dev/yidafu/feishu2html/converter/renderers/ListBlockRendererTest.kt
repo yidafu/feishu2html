@@ -1,5 +1,7 @@
 package dev.yidafu.feishu2html.converter.renderers
 
+import dev.yidafu.feishu2html.toBlockNode
+
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.RenderContext
 import dev.yidafu.feishu2html.converter.TextElementConverter
@@ -32,7 +34,7 @@ class ListBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                BulletBlockRenderer.render(this, block, emptyMap(), context)
+                BulletBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         // 渲染结果包含内容即可
@@ -55,7 +57,7 @@ class ListBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                OrderedBlockRenderer.render(this, block, emptyMap(), context)
+                OrderedBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         // 渲染结果包含内容即可
@@ -74,7 +76,7 @@ class ListBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                BulletBlockRenderer.render(this, block, emptyMap(), context)
+                BulletBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<div></div>"
@@ -92,7 +94,7 @@ class ListBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                OrderedBlockRenderer.render(this, block, emptyMap(), context)
+                OrderedBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<div></div>"

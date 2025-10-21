@@ -1,5 +1,7 @@
 package dev.yidafu.feishu2html.converter.renderers
 
+import dev.yidafu.feishu2html.toBlockNode
+
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.RenderContext
 import dev.yidafu.feishu2html.converter.TextElementConverter
@@ -31,7 +33,7 @@ class CodeBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                CodeBlockRenderer.render(this, block, emptyMap(), context)
+                CodeBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<pre"
@@ -53,7 +55,7 @@ class CodeBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                CodeBlockRenderer.render(this, block, emptyMap(), context)
+                CodeBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<div></div>"
@@ -75,7 +77,7 @@ class CodeBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                CodeBlockRenderer.render(this, block, emptyMap(), context)
+                CodeBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "function test() {}"
@@ -103,7 +105,7 @@ class CodeBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                CodeBlockRenderer.render(this, block, emptyMap(), context)
+                CodeBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "line 1"

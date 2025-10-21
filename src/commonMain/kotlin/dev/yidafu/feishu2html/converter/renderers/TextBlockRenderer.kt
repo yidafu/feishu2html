@@ -5,41 +5,32 @@ import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 
+private val logger = KotlinLogging.logger {}
+
 /**
- * PageBlock Renderer - Page blocks are container blocks that don't render themselves
- *
- * PageBlock acts as the root container in a document hierarchy. It doesn't produce
- * visible HTML output, but its children are rendered by the main rendering loop.
+ * Helper function to determine paragraph alignment class
  */
-internal object PageBlockRenderer : Renderable {
-    override fun <T> render(
-        parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
-        context: RenderContext,
-    ) {
-        // PageBlock is a container but doesn't render itself
-        // Its children are rendered by the main buildBody loop
+private fun getAlignmentClass(align: Int?): String? {
+    return when (align) {
+        2 -> "align-center"
+        3 -> "align-right"
+        else -> null
     }
 }
 
-internal object TextBlockRenderer : Renderable {
-    private val logger = KotlinLogging.logger {}
-
-    override fun <T> render(
+internal object TextBlockRenderer : Renderable<TextBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<TextBlock>,
         context: RenderContext,
     ) {
-        val textBlock = block as TextBlock
+        val textBlock = blockNode.data
         val elements = textBlock.text?.elements ?: return
         logger.debug { "Rendering text block with ${elements.size} elements" }
-        val alignClass = getAlignClass(textBlock.text?.style?.align)
-        val textClass = "text-block" + if (alignClass.isNotEmpty()) " $alignClass" else ""
-
-        parent.p(classes = textClass) {
+        val alignClass = getAlignmentClass(textBlock.text?.style?.align)
+        parent.p(classes = alignClass) {
             context.textConverter.convertElements(elements, this)
         }
     }
 }
+

@@ -7,6 +7,20 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * PageBlock Renderer - Page blocks are container blocks that don't render themselves
+ */
+internal object PageBlockRenderer : Renderable<PageBlock> {
+    override fun render(
+        parent: FlowContent,
+        blockNode: BlockNode<PageBlock>,
+        context: RenderContext,
+    ) {
+        // PageBlock is a container but doesn't render itself
+        // Its children are rendered by the main buildBody loop
+    }
+}
+
 private fun renderUnsupportedBlock(
     parent: FlowContent,
     blockType: String,
@@ -23,233 +37,212 @@ private fun renderUnsupportedBlock(
     }
 }
 
-internal object IsvBlockRenderer : Renderable {
-    override fun <T> render(
+internal object IsvBlockRenderer : Renderable<IsvBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<IsvBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "ISV", block as Block, context)
+        renderUnsupportedBlock(parent, "ISV", blockNode.data, context)
     }
 }
 
-internal object MindnoteBlockRenderer : Renderable {
-    override fun <T> render(
+internal object MindnoteBlockRenderer : Renderable<MindnoteBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<MindnoteBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Mindnote", block as Block, context)
+        renderUnsupportedBlock(parent, "Mindnote", blockNode.data, context)
     }
 }
 
-internal object SheetBlockRenderer : Renderable {
-    override fun <T> render(
+internal object SheetBlockRenderer : Renderable<SheetBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<SheetBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Sheet", block as Block, context)
+        renderUnsupportedBlock(parent, "Sheet", blockNode.data, context)
     }
 }
 
-internal object ViewBlockRenderer : Renderable {
-    override fun <T> render(
+internal object ViewBlockRenderer : Renderable<ViewBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<ViewBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "View", block as Block, context)
+        renderUnsupportedBlock(parent, "View", blockNode.data, context)
     }
 }
 
-internal object TaskBlockRenderer : Renderable {
-    override fun <T> render(
+internal object TaskBlockRenderer : Renderable<TaskBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<TaskBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Task", block as Block, context)
+        renderUnsupportedBlock(parent, "Task", blockNode.data, context)
     }
 }
 
-internal object OkrBlockRenderer : Renderable {
-    override fun <T> render(
+internal object OkrBlockRenderer : Renderable<OkrBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<OkrBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "OKR", block as Block, context)
+        renderUnsupportedBlock(parent, "OKR", blockNode.data, context)
     }
 }
 
-internal object OkrObjectiveBlockRenderer : Renderable {
-    override fun <T> render(
+internal object OkrObjectiveBlockRenderer : Renderable<OkrObjectiveBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<OkrObjectiveBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "OKR Objective", block as Block, context)
+        renderUnsupportedBlock(parent, "OKR Objective", blockNode.data, context)
     }
 }
 
-internal object OkrKeyResultBlockRenderer : Renderable {
-    override fun <T> render(
+internal object OkrKeyResultBlockRenderer : Renderable<OkrKeyResultBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<OkrKeyResultBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "OKR Key Result", block as Block, context)
+        renderUnsupportedBlock(parent, "OKR Key Result", blockNode.data, context)
     }
 }
 
-internal object OkrProgressBlockRenderer : Renderable {
-    override fun <T> render(
+internal object OkrProgressBlockRenderer : Renderable<OkrProgressBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<OkrProgressBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "OKR Progress", block as Block, context)
+        renderUnsupportedBlock(parent, "OKR Progress", blockNode.data, context)
     }
 }
 
-internal object AddOnsBlockRenderer : Renderable {
-    override fun <T> render(
+internal object AddOnsBlockRenderer : Renderable<AddOnsBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<AddOnsBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Add-ons", block as Block, context)
+        renderUnsupportedBlock(parent, "Add-ons", blockNode.data, context)
     }
 }
 
-internal object JiraIssueBlockRenderer : Renderable {
-    override fun <T> render(
+internal object JiraIssueBlockRenderer : Renderable<JiraIssueBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<JiraIssueBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Jira Issue", block as Block, context)
+        renderUnsupportedBlock(parent, "Jira Issue", blockNode.data, context)
     }
 }
 
-internal object WikiCatalogBlockRenderer : Renderable {
-    override fun <T> render(
+internal object WikiCatalogBlockRenderer : Renderable<WikiCatalogBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<WikiCatalogBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Wiki Catalog (Legacy)", block as Block, context)
+        renderUnsupportedBlock(parent, "Wiki Catalog (Legacy)", blockNode.data, context)
     }
 }
 
-internal object AgendaBlockRenderer : Renderable {
-    override fun <T> render(
+internal object AgendaBlockRenderer : Renderable<AgendaBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<AgendaBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Agenda", block as Block, context)
+        renderUnsupportedBlock(parent, "Agenda", blockNode.data, context)
     }
 }
 
-internal object AgendaItemBlockRenderer : Renderable {
-    override fun <T> render(
+internal object AgendaItemBlockRenderer : Renderable<AgendaItemBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<AgendaItemBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Agenda Item", block as Block, context)
+        renderUnsupportedBlock(parent, "Agenda Item", blockNode.data, context)
     }
 }
 
-internal object AgendaItemTitleBlockRenderer : Renderable {
-    override fun <T> render(
+internal object AgendaItemTitleBlockRenderer : Renderable<AgendaItemTitleBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<AgendaItemTitleBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Agenda Item Title", block as Block, context)
+        renderUnsupportedBlock(parent, "Agenda Item Title", blockNode.data, context)
     }
 }
 
-internal object AgendaItemContentBlockRenderer : Renderable {
-    override fun <T> render(
+internal object AgendaItemContentBlockRenderer : Renderable<AgendaItemContentBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<AgendaItemContentBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Agenda Item Content", block as Block, context)
+        renderUnsupportedBlock(parent, "Agenda Item Content", blockNode.data, context)
     }
 }
 
-internal object LinkPreviewBlockRenderer : Renderable {
-    override fun <T> render(
+internal object LinkPreviewBlockRenderer : Renderable<LinkPreviewBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<LinkPreviewBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Link Preview", block as Block, context)
+        renderUnsupportedBlock(parent, "Link Preview", blockNode.data, context)
     }
 }
 
-internal object SourceSyncedBlockRenderer : Renderable {
-    override fun <T> render(
+internal object SourceSyncedBlockRenderer : Renderable<SourceSyncedBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<SourceSyncedBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Source Synced", block as Block, context)
+        renderUnsupportedBlock(parent, "Source Synced", blockNode.data, context)
     }
 }
 
-internal object ReferenceSyncedBlockRenderer : Renderable {
-    override fun <T> render(
+internal object ReferenceSyncedBlockRenderer : Renderable<ReferenceSyncedBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<ReferenceSyncedBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Reference Synced", block as Block, context)
+        renderUnsupportedBlock(parent, "Reference Synced", blockNode.data, context)
     }
 }
 
-internal object SubPageListBlockRenderer : Renderable {
-    override fun <T> render(
+internal object SubPageListBlockRenderer : Renderable<SubPageListBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<SubPageListBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "Sub Page List", block as Block, context)
+        renderUnsupportedBlock(parent, "Sub Page List", blockNode.data, context)
     }
 }
 
-internal object AiTemplateBlockRenderer : Renderable {
-    override fun <T> render(
+internal object AiTemplateBlockRenderer : Renderable<AiTemplateBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<AiTemplateBlock>,
         context: RenderContext,
     ) {
-        renderUnsupportedBlock(parent, "AI Template", block as Block, context)
+        renderUnsupportedBlock(parent, "AI Template", blockNode.data, context)
     }
 }

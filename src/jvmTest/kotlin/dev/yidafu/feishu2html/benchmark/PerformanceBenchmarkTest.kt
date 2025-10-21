@@ -60,29 +60,12 @@ class PerformanceBenchmarkTest : FunSpec({
         // Use real implementation for getOrderedBlocks - it correctly traverses the block tree
         every { mockApiClient.getOrderedBlocks(any()) } answers {
             val content = firstArg<DocumentRawContent>()
-            val blocks = content.blocks
-            val result = mutableListOf<Block>()
-            val visited = mutableSetOf<String>()
-
-            fun traverse(blockId: String) {
-                if (blockId in visited) return
-                visited.add(blockId)
-
-                val block = blocks[blockId] ?: return
-                result.add(block)
-
-                block.children?.forEach { childId ->
-                    traverse(childId)
-                }
-            }
-
-            // Traverse from document root (PAGE block)
-            val pageBlock = blocks.values.firstOrNull { it.blockType == BlockType.PAGE }
-            pageBlock?.children?.forEach { childId ->
-                traverse(childId)
-            }
-
-            result
+            // Use the actual implementation from FeishuApiClient
+            val realClient = FeishuApiClient(
+                appId = "test",
+                appSecret = "test"
+            )
+            realClient.getOrderedBlocks(content)
         }
 
         coEvery { mockApiClient.downloadFile(any(), any()) } coAnswers {

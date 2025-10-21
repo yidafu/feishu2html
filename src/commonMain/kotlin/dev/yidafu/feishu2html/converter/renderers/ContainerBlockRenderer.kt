@@ -7,42 +7,35 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-internal object QuoteContainerBlockRenderer : Renderable {
-    override fun <T> render(
+internal object QuoteContainerBlockRenderer : Renderable<QuoteContainerBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<QuoteContainerBlock>,
         context: RenderContext,
     ) {
-        val quoteContainer = block as QuoteContainerBlock
-        logger.debug { "Rendering quote container with ${quoteContainer.children?.size ?: 0} children" }
+        val quoteContainer = blockNode.data
+        logger.debug { "Rendering quote container with ${blockNode.children.size} children" }
         parent.blockQuote(classes = "quote-container-block") {
-            quoteContainer.children?.forEach { childId ->
-                val childBlock = allBlocks[childId]
-                if (childBlock != null) {
-                    childBlock.render(this, allBlocks, context)
-                }
-            }
+            blockNode.renderChildren(this, context)
         }
     }
 }
 
-internal object GridBlockRenderer : Renderable {
-    override fun <T> render(
+internal object GridBlockRenderer : Renderable<GridBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<GridBlock>,
         context: RenderContext,
     ) {
-        val gridBlock = block as GridBlock
-        logger.debug { "Rendering grid layout with ${gridBlock.children?.size ?: 0} children" }
-        val columns = mutableListOf<Pair<GridColumnBlock, Int>>()
-        gridBlock.children?.forEach { childId ->
-            val childBlock = allBlocks[childId]
-            if (childBlock is GridColumnBlock) {
-                val widthRatio = childBlock.gridColumn?.widthRatio ?: 1
-                columns.add(childBlock to widthRatio)
-            }
+        val gridBlock = blockNode.data
+        logger.debug { "Rendering grid layout with ${blockNode.children.size} children" }
+
+        // Extract grid columns from children
+        val columnNodes = blockNode.children.filter { it.data is GridColumnBlock }
+        val columns = columnNodes.map { columnNode ->
+            val columnBlock = columnNode.data as GridColumnBlock
+            val widthRatio = columnBlock.gridColumn?.widthRatio ?: 1
+            columnNode to widthRatio
         }
 
         val gridTemplate = columns.joinToString(" ") { "${it.second}fr" }
@@ -51,25 +44,19 @@ internal object GridBlockRenderer : Renderable {
         parent.div(classes = "grid-layout") {
             style = "display: grid; grid-template-columns: $gridTemplate; gap: 20px;"
 
-            columns.forEach { (columnBlock, _) ->
+            columns.forEach { (columnNode, _) ->
                 div(classes = "grid-column") {
-                    columnBlock.children?.forEach { childId ->
-                        val childBlock = allBlocks[childId]
-                        if (childBlock != null) {
-                            childBlock.render(this, allBlocks, context)
-                        }
-                    }
+                    columnNode.renderChildren(this, context)
                 }
             }
         }
     }
 }
 
-internal object GridColumnBlockRenderer : Renderable {
-    override fun <T> render(
+internal object GridColumnBlockRenderer : Renderable<GridColumnBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<GridColumnBlock>,
         context: RenderContext,
     ) {
         // GridColumn 由 GridBlockRenderer 处理

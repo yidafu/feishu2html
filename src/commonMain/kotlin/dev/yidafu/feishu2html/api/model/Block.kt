@@ -22,9 +22,9 @@ import kotlinx.serialization.json.*
  * - BlockData.kt: All BlockData data classes
  */
 @Serializable(with = BlockSerializer::class)
-internal sealed class Block {
+sealed class Block {
     abstract val blockId: String
-    abstract val blockType: BlockType
+    internal abstract val blockType: BlockType
     abstract val parentId: String?
     abstract val children: List<String>?
     abstract val commentIds: List<String>?

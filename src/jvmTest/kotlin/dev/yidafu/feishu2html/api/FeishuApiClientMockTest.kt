@@ -104,9 +104,9 @@ class FeishuApiClientMockTest : FunSpec({
         val ordered = apiClient.getOrderedBlocks(content)
 
         ordered shouldHaveSize 3
-        ordered[0].blockId shouldBe "text1"
-        ordered[1].blockId shouldBe "text2"
-        ordered[2].blockId shouldBe "text3"
+        ordered[0].data.blockId shouldBe "text1"
+        ordered[1].data.blockId shouldBe "text2"
+        ordered[2].data.blockId shouldBe "text3"
     }
 
     test("getOrderedBlocks应该正确处理深度嵌套") {
@@ -172,10 +172,13 @@ class FeishuApiClientMockTest : FunSpec({
 
         val ordered = apiClient.getOrderedBlocks(content)
 
-        ordered shouldHaveSize 3
-        ordered[0].blockId shouldBe "callout1"
-        ordered[1].blockId shouldBe "bullet1"
-        ordered[2].blockId shouldBe "text1"
+        // 验证深度嵌套的树结构
+        ordered shouldHaveSize 1
+        ordered[0].data.blockId shouldBe "callout1"
+        ordered[0].children shouldHaveSize 1
+        ordered[0].children[0].data.blockId shouldBe "bullet1"
+        ordered[0].children[0].children shouldHaveSize 1
+        ordered[0].children[0].children[0].data.blockId shouldBe "text1"
     }
 
     test("getOrderedBlocks应该处理多个顶层块") {
@@ -256,10 +259,10 @@ class FeishuApiClientMockTest : FunSpec({
         val ordered = apiClient.getOrderedBlocks(content)
 
         ordered shouldHaveSize 4
-        ordered[0].blockId shouldBe "h1"
-        ordered[1].blockId shouldBe "text1"
-        ordered[2].blockId shouldBe "div1"
-        ordered[3].blockId shouldBe "text2"
+        ordered[0].data.blockId shouldBe "h1"
+        ordered[1].data.blockId shouldBe "text1"
+        ordered[2].data.blockId shouldBe "div1"
+        ordered[3].data.blockId shouldBe "text2"
     }
 
     test("getOrderedBlocks应该处理表格结构") {
@@ -335,9 +338,14 @@ class FeishuApiClientMockTest : FunSpec({
 
         val ordered = apiClient.getOrderedBlocks(content)
 
-        ordered shouldHaveSize 4
-        ordered[0].blockId shouldBe "table1"
-        ordered[1].blockId shouldBe "cell1"
+        // 验证表格树结构
+        ordered shouldHaveSize 1
+        ordered[0].data.blockId shouldBe "table1"
+        ordered[0].children shouldHaveSize 2  // cell1, cell2
+        ordered[0].children[0].data.blockId shouldBe "cell1"
+        ordered[0].children[0].children shouldHaveSize 1  // text1
+        ordered[0].children[0].children[0].data.blockId shouldBe "text1"
+        ordered[0].children[1].data.blockId shouldBe "cell2"
     }
 
     test("getOrderedBlocks应该处理Grid结构") {
@@ -409,8 +417,14 @@ class FeishuApiClientMockTest : FunSpec({
 
         val ordered = apiClient.getOrderedBlocks(content)
 
-        ordered shouldHaveSize 4
-        ordered[0].blockId shouldBe "grid1"
+        // 验证Grid树结构
+        ordered shouldHaveSize 1
+        ordered[0].data.blockId shouldBe "grid1"
+        ordered[0].children shouldHaveSize 2  // col1, col2
+        ordered[0].children[0].data.blockId shouldBe "col1"
+        ordered[0].children[0].children shouldHaveSize 1  // text1
+        ordered[0].children[0].children[0].data.blockId shouldBe "text1"
+        ordered[0].children[1].data.blockId shouldBe "col2"
     }
 
     test("getOrderedBlocks应该处理孤儿块") {
@@ -492,8 +506,15 @@ class FeishuApiClientMockTest : FunSpec({
 
         val ordered = apiClient.getOrderedBlocks(content)
 
-        // 应该只访问每个块一次
-        ordered shouldHaveSize 2
+        // 循环引用应该被正确处理：block1是根节点，block2是其子节点
+        ordered shouldHaveSize 1
+        ordered[0].data.blockId shouldBe "block1"
+        ordered[0].children shouldHaveSize 1
+        ordered[0].children[0].data.blockId shouldBe "block2"
+        // 由于循环引用，block2的children会包含对block1的引用
+        // 但缓存机制确保不会无限递归构建
+        ordered[0].children[0].children shouldHaveSize 1
+        ordered[0].children[0].children[0].data.blockId shouldBe "block1"
     }
 
     test("getOrderedBlocks应该处理只有Page块的文档") {
@@ -576,8 +597,8 @@ class FeishuApiClientMockTest : FunSpec({
         val ordered = apiClient.getOrderedBlocks(content)
 
         ordered shouldHaveSize 2
-        ordered[0].blockId shouldBe "img1"
-        ordered[1].blockId shouldBe "text1"
+        ordered[0].data.blockId shouldBe "img1"
+        ordered[1].data.blockId shouldBe "text1"
     }
 
     test("getOrderedBlocks应该处理包含代码块的文档") {
@@ -620,7 +641,7 @@ class FeishuApiClientMockTest : FunSpec({
         val ordered = apiClient.getOrderedBlocks(content)
 
         ordered shouldHaveSize 1
-        ordered[0].blockId shouldBe "code1"
+        ordered[0].data.blockId shouldBe "code1"
     }
 
     test("getOrderedBlocks应该处理包含文件块的文档") {
@@ -663,7 +684,7 @@ class FeishuApiClientMockTest : FunSpec({
         val ordered = apiClient.getOrderedBlocks(content)
 
         ordered shouldHaveSize 1
-        ordered[0].blockId shouldBe "file1"
+        ordered[0].data.blockId shouldBe "file1"
     }
 
     test("getOrderedBlocks应该处理有序列表和无序列表混合") {
@@ -720,8 +741,8 @@ class FeishuApiClientMockTest : FunSpec({
         val ordered = apiClient.getOrderedBlocks(content)
 
         ordered shouldHaveSize 2
-        ordered[0].blockId shouldBe "bullet1"
-        ordered[1].blockId shouldBe "ordered1"
+        ordered[0].data.blockId shouldBe "bullet1"
+        ordered[1].data.blockId shouldBe "ordered1"
     }
 
     test("API客户端应该支持不同的凭证") {
@@ -774,8 +795,8 @@ class FeishuApiClientMockTest : FunSpec({
         val ordered = apiClient.getOrderedBlocks(content)
 
         ordered shouldHaveSize 5
-        ordered.forEachIndexed { index, block ->
-            block.blockId shouldBe "text${index + 1}"
+        ordered.forEachIndexed { index, blockNode ->
+            blockNode.data.blockId shouldBe "text${index + 1}"
         }
     }
 })

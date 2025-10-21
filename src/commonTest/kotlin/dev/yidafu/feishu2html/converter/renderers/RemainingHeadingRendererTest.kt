@@ -1,5 +1,7 @@
 package dev.yidafu.feishu2html.converter.renderers
 
+import dev.yidafu.feishu2html.toBlockNode
+
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.RenderContext
 import dev.yidafu.feishu2html.converter.TextElementConverter
@@ -31,7 +33,7 @@ class RemainingHeadingRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                Heading4BlockRenderer.render(this, block, emptyMap(), context)
+                Heading4BlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<h4"
@@ -54,7 +56,7 @@ class RemainingHeadingRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                Heading5BlockRenderer.render(this, block, emptyMap(), context)
+                Heading5BlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<h5"
@@ -77,7 +79,7 @@ class RemainingHeadingRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                Heading6BlockRenderer.render(this, block, emptyMap(), context)
+                Heading6BlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<h6"
@@ -100,7 +102,7 @@ class RemainingHeadingRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                Heading7BlockRenderer.render(this, block, emptyMap(), context)
+                Heading7BlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "Heading 7"
@@ -122,7 +124,7 @@ class RemainingHeadingRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                Heading8BlockRenderer.render(this, block, emptyMap(), context)
+                Heading8BlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "Heading 8"
@@ -144,7 +146,7 @@ class RemainingHeadingRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                Heading9BlockRenderer.render(this, block, emptyMap(), context)
+                Heading9BlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "Heading 9"

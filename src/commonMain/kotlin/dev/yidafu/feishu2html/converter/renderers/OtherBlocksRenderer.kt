@@ -7,14 +7,13 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-internal object BitableBlockRenderer : Renderable {
-    override fun <T> render(
+internal object BitableBlockRenderer : Renderable<BitableBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<BitableBlock>,
         context: RenderContext,
     ) {
-        logger.warn { "Rendering partially supported block: Bitable (block_id: ${(block as Block).blockId})" }
+        logger.warn { "Rendering partially supported block: Bitable (block_id: ${blockNode.data.blockId})" }
         // Bitable not yet supported - optionally show warning
         if (context.showUnsupportedBlocks) {
             parent.div(classes = "unsupported-block") {
@@ -24,14 +23,13 @@ internal object BitableBlockRenderer : Renderable {
     }
 }
 
-internal object ChatCardBlockRenderer : Renderable {
-    override fun <T> render(
+internal object ChatCardBlockRenderer : Renderable<ChatCardBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<ChatCardBlock>,
         context: RenderContext,
     ) {
-        logger.warn { "Rendering partially supported block: ChatCard (block_id: ${(block as Block).blockId})" }
+        logger.warn { "Rendering partially supported block: ChatCard (block_id: ${blockNode.data.blockId})" }
         // ChatCard not yet supported - optionally show warning
         if (context.showUnsupportedBlocks) {
             parent.div(classes = "unsupported-block") {
@@ -41,14 +39,13 @@ internal object ChatCardBlockRenderer : Renderable {
     }
 }
 
-internal object UnknownBlockRenderer : Renderable {
-    override fun <T> render(
+internal object UnknownBlockRenderer : Renderable<UnknownBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<UnknownBlock>,
         context: RenderContext,
     ) {
-        val unknownBlock = block as UnknownBlock
+        val unknownBlock = blockNode.data
         logger.warn { "Rendering unknown block type: UNDEFINED (block_id: ${unknownBlock.blockId})" }
         // UNDEFINED may be other unknown block types
         val quoteData = unknownBlock.quote

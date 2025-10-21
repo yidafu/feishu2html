@@ -1,5 +1,7 @@
 package dev.yidafu.feishu2html.converter.renderers
 
+import dev.yidafu.feishu2html.toBlockNode
+
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.RenderContext
 import dev.yidafu.feishu2html.converter.TextElementConverter
@@ -33,7 +35,7 @@ class MediaBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                ImageBlockRenderer.render(this, block, emptyMap(), context)
+                ImageBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<img"
@@ -56,7 +58,7 @@ class MediaBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                FileBlockRenderer.render(this, block, emptyMap(), context)
+                FileBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "document.pdf"
@@ -86,7 +88,7 @@ class MediaBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                BoardBlockRenderer.render(this, block, emptyMap(), context)
+                BoardBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<img"
@@ -107,7 +109,7 @@ class MediaBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                DiagramBlockRenderer.render(this, block, emptyMap(), context)
+                DiagramBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length // 基本验证
@@ -132,7 +134,7 @@ class MediaBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                IframeBlockRenderer.render(this, block, emptyMap(), context)
+                IframeBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<iframe"
@@ -151,7 +153,7 @@ class MediaBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                ImageBlockRenderer.render(this, block, emptyMap(), context)
+                ImageBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<div></div>"
@@ -169,7 +171,7 @@ class MediaBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                FileBlockRenderer.render(this, block, emptyMap(), context)
+                FileBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<div></div>"
@@ -192,7 +194,7 @@ class MediaBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                BoardBlockRenderer.render(this, block, emptyMap(), context)
+                BoardBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "width: 820px"

@@ -401,49 +401,96 @@ internal class FeishuApiClient(
     }
 
     /**
-     * Get ordered list of document blocks (sorted by document structure)
+     * Get ordered list of document blocks as a tree structure
+     *
+     * Converts the flat block list from Feishu API into a tree of BlockNodes,
+     * where each node contains its Block data, children, and parent reference.
+     *
+     * @param content Document raw content containing blocks map
+     * @return List of top-level BlockNodes (children of PAGE block)
      */
-    fun getOrderedBlocks(content: DocumentRawContent): List<Block> {
+    fun getOrderedBlocks(content: DocumentRawContent): List<BlockNode<out Block>> {
         val blocks = content.blocks
-        val result = mutableListOf<Block>()
-        val visited = mutableSetOf<String>()
+        val nodeCache = mutableMapOf<String, BlockNode<out Block>>()
 
-        fun traverse(blockId: String) {
-            if (blockId in visited) return
-            visited.add(blockId)
-
-            val block = blocks[blockId] ?: return
-            result.add(block)
-
-            block.children?.forEach { childId ->
-                traverse(childId)
+        /**
+         * Recursively build BlockNode tree
+         *
+         * @param blockId ID of the block to build node for
+         * @param parent Parent BlockNode (null for root)
+         * @return Built BlockNode or null if block not found
+         */
+        fun buildNode(
+            blockId: String,
+            parent: BlockNode<out Block>? = null,
+        ): BlockNode<out Block>? {
+            // Check cache to avoid rebuilding
+            if (blockId in nodeCache) {
+                return nodeCache[blockId]
             }
+
+            val block = blocks[blockId] ?: return null
+
+            // Create node without children first (will be set later)
+            // This avoids infinite recursion for circular references
+            val node =
+                BlockNode(
+                    data = block,
+                    children = emptyList(),
+                    parent = parent,
+                )
+
+            // Cache the node before building children to handle circular refs
+            nodeCache[blockId] = node
+
+            // Build children recursively
+            val children =
+                block.children?.mapNotNull { childId ->
+                    buildNode(childId, node)
+                } ?: emptyList()
+
+            // Update node with built children
+            // Create new instance with children (can't use copy due to parent circular ref)
+            val completeNode = BlockNode(
+                data = node.data,
+                children = children,
+                parent = node.parent
+            )
+            nodeCache[blockId] = completeNode
+
+            return completeNode
         }
 
-        // Traverse from document root (PAGE block)
-        // In the new blocks list API, the first block is the PAGE block (document root)
+        // Build tree from PAGE block
         val pageBlock = blocks.values.firstOrNull { it is PageBlock } as? PageBlock
-        if (pageBlock != null) {
+
+        return if (pageBlock != null) {
             logger.debug {
                 "Found PAGE block - ID: ${pageBlock.blockId}, children count: ${pageBlock.children?.size ?: 0}"
             }
 
-            // Traverse all children of PAGE block (excluding PAGE block itself)
-            pageBlock.children?.forEach { childId ->
-                traverse(childId)
-            }
-        } else {
-            // If no PAGE block found, use fallback method (compatibility with old API)
-            logger.warn { "PAGE block not found, using all blocks as fallback" }
-            blocks.values.forEach { block ->
-                if (block !is PageBlock) {
-                    result.add(block)
-                }
-            }
-        }
+            // Build tree for all direct children of PAGE block
+            val rootNodes =
+                pageBlock.children?.mapNotNull { childId ->
+                    buildNode(childId, parent = null) // Top-level nodes have no parent
+                } ?: emptyList()
 
-        logger.debug { "Ordered blocks list size: ${result.size}" }
-        return result
+            logger.debug { "Built tree with ${rootNodes.size} root nodes" }
+            rootNodes
+        } else {
+            logger.warn { "PAGE block not found, building flat list as fallback" }
+
+            // Fallback: treat all non-PAGE blocks as root nodes
+            blocks.values
+                .filter { it !is PageBlock }
+                .map { block ->
+                    BlockNode(
+                        data = block,
+                        children = emptyList(),
+                        parent = null,
+                    )
+                }
+        }
     }
 
     /**

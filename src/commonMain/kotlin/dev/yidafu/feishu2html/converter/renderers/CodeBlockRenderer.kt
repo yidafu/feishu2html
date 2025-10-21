@@ -7,14 +7,13 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-internal object CodeBlockRenderer : Renderable {
-    override fun <T> render(
+internal object CodeBlockRenderer : Renderable<CodeBlockItem> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<CodeBlockItem>,
         context: RenderContext,
     ) {
-        val codeBlock = block as CodeBlockItem
+        val codeBlock = blockNode.data
         val codeData = codeBlock.code ?: return
         val elements = codeData.elements
         val language = getLanguageName(codeData.language)
@@ -31,14 +30,13 @@ internal object CodeBlockRenderer : Renderable {
     }
 }
 
-internal object QuoteBlockRenderer : Renderable {
-    override fun <T> render(
+internal object QuoteBlockRenderer : Renderable<QuoteBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<QuoteBlock>,
         context: RenderContext,
     ) {
-        val quoteBlock = block as QuoteBlock
+        val quoteBlock = blockNode.data
         val elements = quoteBlock.quote?.elements ?: return
         logger.debug { "Rendering quote block with ${elements.size} elements" }
         parent.blockQuote {
@@ -47,14 +45,13 @@ internal object QuoteBlockRenderer : Renderable {
     }
 }
 
-internal object EquationBlockRenderer : Renderable {
-    override fun <T> render(
+internal object EquationBlockRenderer : Renderable<EquationBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<EquationBlock>,
         context: RenderContext,
     ) {
-        val equationBlock = block as EquationBlock
+        val equationBlock = blockNode.data
         val content = equationBlock.equation?.content ?: return
         logger.debug { "Rendering equation block: content length=${content.length}" }
         parent.div(classes = "equation") {
@@ -63,14 +60,13 @@ internal object EquationBlockRenderer : Renderable {
     }
 }
 
-internal object TodoBlockRenderer : Renderable {
-    override fun <T> render(
+internal object TodoBlockRenderer : Renderable<TodoBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<TodoBlock>,
         context: RenderContext,
     ) {
-        val todoBlock = block as TodoBlock
+        val todoBlock = blockNode.data
         val elements = todoBlock.todo?.elements ?: return
         val checked = todoBlock.todo?.style?.done == true
         logger.debug { "Rendering todo block: checked=$checked, elements=${elements.size}" }
@@ -91,11 +87,10 @@ internal object TodoBlockRenderer : Renderable {
     }
 }
 
-internal object DividerBlockRenderer : Renderable {
-    override fun <T> render(
+internal object DividerBlockRenderer : Renderable<DividerBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<DividerBlock>,
         context: RenderContext,
     ) {
         parent.hr {}

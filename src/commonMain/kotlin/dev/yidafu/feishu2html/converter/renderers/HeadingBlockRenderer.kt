@@ -7,110 +7,101 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-internal object Heading1BlockRenderer : Renderable {
-    override fun <T> render(
+internal object Heading1BlockRenderer : Renderable<Heading1Block> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<Heading1Block>,
         context: RenderContext,
     ) {
-        val heading = block as Heading1Block
+        val heading = blockNode.data
         renderHeading(heading.heading1, 1, parent, context)
     }
 }
 
-internal object Heading2BlockRenderer : Renderable {
-    override fun <T> render(
+internal object Heading2BlockRenderer : Renderable<Heading2Block> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<Heading2Block>,
         context: RenderContext,
     ) {
-        val heading = block as Heading2Block
+        val heading = blockNode.data
         renderHeading(heading.heading2, 2, parent, context)
     }
 }
 
-internal object Heading3BlockRenderer : Renderable {
-    override fun <T> render(
+internal object Heading3BlockRenderer : Renderable<Heading3Block> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<Heading3Block>,
         context: RenderContext,
     ) {
-        val heading = block as Heading3Block
+        val heading = blockNode.data
         renderHeading(heading.heading3, 3, parent, context)
     }
 }
 
-internal object Heading4BlockRenderer : Renderable {
-    override fun <T> render(
+internal object Heading4BlockRenderer : Renderable<Heading4Block> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<Heading4Block>,
         context: RenderContext,
     ) {
-        val heading = block as Heading4Block
+        val heading = blockNode.data
         renderHeading(heading.heading4, 4, parent, context)
     }
 }
 
-internal object Heading5BlockRenderer : Renderable {
-    override fun <T> render(
+internal object Heading5BlockRenderer : Renderable<Heading5Block> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<Heading5Block>,
         context: RenderContext,
     ) {
-        val heading = block as Heading5Block
+        val heading = blockNode.data
         renderHeading(heading.heading5, 5, parent, context)
     }
 }
 
-internal object Heading6BlockRenderer : Renderable {
-    override fun <T> render(
+internal object Heading6BlockRenderer : Renderable<Heading6Block> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<Heading6Block>,
         context: RenderContext,
     ) {
-        val heading = block as Heading6Block
+        val heading = blockNode.data
         renderHeading(heading.heading6, 6, parent, context)
     }
 }
 
-internal object Heading7BlockRenderer : Renderable {
-    override fun <T> render(
+internal object Heading7BlockRenderer : Renderable<Heading7Block> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<Heading7Block>,
         context: RenderContext,
     ) {
-        val heading = block as Heading7Block
+        val heading = blockNode.data
         renderHeading(heading.heading7, 7, parent, context)
     }
 }
 
-internal object Heading8BlockRenderer : Renderable {
-    override fun <T> render(
+internal object Heading8BlockRenderer : Renderable<Heading8Block> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<Heading8Block>,
         context: RenderContext,
     ) {
-        val heading = block as Heading8Block
+        val heading = blockNode.data
         renderHeading(heading.heading8, 8, parent, context)
     }
 }
 
-internal object Heading9BlockRenderer : Renderable {
-    override fun <T> render(
+internal object Heading9BlockRenderer : Renderable<Heading9Block> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<Heading9Block>,
         context: RenderContext,
     ) {
-        val heading = block as Heading9Block
+        val heading = blockNode.data
         renderHeading(heading.heading9, 9, parent, context)
     }
 }

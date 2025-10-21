@@ -1,5 +1,8 @@
 package dev.yidafu.feishu2html.converter.renderers
 
+import dev.yidafu.feishu2html.toBlockNode
+import dev.yidafu.feishu2html.buildBlockTree
+
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.RenderContext
 import dev.yidafu.feishu2html.converter.TextElementConverter
@@ -44,15 +47,14 @@ class ContainerBlockRendererTest : FunSpec({
                     ),
             )
 
-        val allBlocks =
-            mapOf(
-                "callout1" to block,
-                "text1" to textBlock,
-            )
+        val allBlocks = listOf(block, textBlock)
+        val tree = buildBlockTree(allBlocks)
+        val calloutNode = tree.first()
 
+        @Suppress("UNCHECKED_CAST")
         val html =
             createHTML().div {
-                CalloutBlockRenderer.render(this, block, allBlocks, context)
+                CalloutBlockRenderer.render(this, calloutNode as BlockNode<CalloutBlock>, context)
             }
 
         html shouldContain "callout"
@@ -87,16 +89,14 @@ class ContainerBlockRendererTest : FunSpec({
                 grid = GridBlockData(columnSize = 2),
             )
 
-        val allBlocks =
-            mapOf(
-                "grid1" to block,
-                "col1" to col1,
-                "col2" to col2,
-            )
+        val allBlocks = listOf(block, col1, col2)
+        val tree = buildBlockTree(allBlocks)
+        val gridNode = tree.first()
 
+        @Suppress("UNCHECKED_CAST")
         val html =
             createHTML().div {
-                GridBlockRenderer.render(this, block, allBlocks, context)
+                GridBlockRenderer.render(this, gridNode as BlockNode<GridBlock>, context)
             }
 
         html shouldContain "display: grid"
@@ -134,7 +134,7 @@ class ContainerBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                GridColumnBlockRenderer.render(this, block, allBlocks, context)
+                GridColumnBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length // 基本验证
@@ -163,15 +163,14 @@ class ContainerBlockRendererTest : FunSpec({
                 quoteContainer = QuoteContainerBlockData(),
             )
 
-        val allBlocks =
-            mapOf(
-                "qc1" to block,
-                "text1" to textBlock,
-            )
+        val allBlocks = listOf(block, textBlock)
+        val tree = buildBlockTree(allBlocks)
+        val qcNode = tree.first()
 
+        @Suppress("UNCHECKED_CAST")
         val html =
             createHTML().div {
-                QuoteContainerBlockRenderer.render(this, block, allBlocks, context)
+                QuoteContainerBlockRenderer.render(this, qcNode as BlockNode<QuoteContainerBlock>, context)
             }
 
         html shouldContain "quote-container"
@@ -209,7 +208,7 @@ class ContainerBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                TableCellBlockRenderer.render(this, block, allBlocks, context)
+                TableCellBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length // 基本验证
@@ -227,7 +226,7 @@ class ContainerBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                CalloutBlockRenderer.render(this, block, emptyMap(), context)
+                CalloutBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "callout"
@@ -245,7 +244,7 @@ class ContainerBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                GridBlockRenderer.render(this, block, emptyMap(), context)
+                GridBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length // 基本验证

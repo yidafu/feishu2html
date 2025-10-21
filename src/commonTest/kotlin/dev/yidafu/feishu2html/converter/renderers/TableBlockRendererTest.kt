@@ -1,5 +1,8 @@
 package dev.yidafu.feishu2html.converter.renderers
 
+import dev.yidafu.feishu2html.toBlockNode
+import dev.yidafu.feishu2html.buildBlockTree
+
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.RenderContext
 import dev.yidafu.feishu2html.converter.TextElementConverter
@@ -51,16 +54,14 @@ class TableBlockRendererTest : FunSpec({
                     ),
             )
 
-        val allBlocks =
-            mapOf(
-                "table1" to tableBlock,
-                "cell1" to cellBlock,
-                "text1" to textBlock,
-            )
+        val allBlocks = listOf(tableBlock, cellBlock, textBlock)
+        val tree = buildBlockTree(allBlocks)
+        val tableNode = tree.first()
 
+        @Suppress("UNCHECKED_CAST")
         val html =
             createHTML().div {
-                TableBlockRenderer.render(this, tableBlock, allBlocks, context)
+                TableBlockRenderer.render(this, tableNode as BlockNode<TableBlock>, context)
             }
 
         html shouldContain "<table"
@@ -82,7 +83,7 @@ class TableBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                TableBlockRenderer.render(this, tableBlock, emptyMap(), context)
+                TableBlockRenderer.render(this, tableBlock.toBlockNode(), context)
             }
 
         html shouldContain "<div></div>"
@@ -135,11 +136,14 @@ class TableBlockRendererTest : FunSpec({
                     ),
             )
 
-        val allBlocks = cells + ("table1" to tableBlock)
+        val allBlocksList = cells.values.toList() + tableBlock
+        val tree = buildBlockTree(allBlocksList)
+        val tableNode = tree.first { it.data.blockId == "table1" }
 
+        @Suppress("UNCHECKED_CAST")
         val html =
             createHTML().div {
-                TableBlockRenderer.render(this, tableBlock, allBlocks, context)
+                TableBlockRenderer.render(this, tableNode as BlockNode<TableBlock>, context)
             }
 
         html shouldContain "<table"

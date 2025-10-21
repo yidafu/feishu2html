@@ -88,7 +88,7 @@ class Feishu2HtmlMockTest : FunSpec({
         // Setup mocks
         coEvery { mockApiClient.getDocumentInfo(documentId) } returns documentInfo
         coEvery { mockApiClient.getDocumentRawContent(documentId) } returns documentContent
-        coEvery { mockApiClient.getOrderedBlocks(documentContent) } returns listOf(textBlock)
+        coEvery { mockApiClient.getOrderedBlocks(documentContent) } returns listOf(textBlock).toBlockNodes()
         every { mockApiClient.close() } just Runs
 
         // Execute
@@ -145,7 +145,7 @@ class Feishu2HtmlMockTest : FunSpec({
 
         coEvery { mockApiClient.getDocumentInfo(documentId) } returns documentInfo
         coEvery { mockApiClient.getDocumentRawContent(documentId) } returns documentContent
-        coEvery { mockApiClient.getOrderedBlocks(documentContent) } returns listOf(imageBlock)
+        coEvery { mockApiClient.getOrderedBlocks(documentContent) } returns listOf(imageBlock).toBlockNodes()
         coEvery { mockApiClient.downloadFile(imageToken, any()) } just Runs
         every { mockApiClient.close() } just Runs
 
@@ -199,7 +199,7 @@ class Feishu2HtmlMockTest : FunSpec({
 
         coEvery { mockApiClient.getDocumentInfo(documentId) } returns documentInfo
         coEvery { mockApiClient.getDocumentRawContent(documentId) } returns documentContent
-        coEvery { mockApiClient.getOrderedBlocks(documentContent) } returns listOf(fileBlock)
+        coEvery { mockApiClient.getOrderedBlocks(documentContent) } returns listOf(fileBlock).toBlockNodes()
         coEvery { mockApiClient.downloadFile(fileToken, any()) } just Runs
         every { mockApiClient.close() } just Runs
 
@@ -502,7 +502,7 @@ class Feishu2HtmlMockTest : FunSpec({
 
         coEvery { mockApiClient.getDocumentInfo(documentId) } returns documentInfo
         coEvery { mockApiClient.getDocumentRawContent(documentId) } returns documentContent
-        coEvery { mockApiClient.getOrderedBlocks(documentContent) } returns listOf(imageBlock)
+        coEvery { mockApiClient.getOrderedBlocks(documentContent) } returns listOf(imageBlock).toBlockNodes()
         every { mockFileSystem.exists(any()) } returns true  // Image already exists
         every { mockApiClient.close() } just Runs
 
@@ -552,7 +552,7 @@ class Feishu2HtmlMockTest : FunSpec({
 
         coEvery { mockApiClient.getDocumentInfo(documentId) } returns documentInfo
         coEvery { mockApiClient.getDocumentRawContent(documentId) } returns documentContent
-        coEvery { mockApiClient.getOrderedBlocks(documentContent) } returns listOf(boardBlock)
+        coEvery { mockApiClient.getOrderedBlocks(documentContent) } returns listOf(boardBlock).toBlockNodes()
         coEvery { mockApiClient.exportBoard(boardToken, any()) } just Runs
         every { mockApiClient.close() } just Runs
 

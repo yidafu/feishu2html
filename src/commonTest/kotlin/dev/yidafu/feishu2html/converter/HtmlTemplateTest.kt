@@ -1,5 +1,7 @@
 package dev.yidafu.feishu2html.converter
 
+import dev.yidafu.feishu2html.toBlockNodes
+
 import dev.yidafu.feishu2html.api.model.TextBlock
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -25,7 +27,7 @@ class HtmlTemplateTest : FunSpec({
                 blockType = dev.yidafu.feishu2html.api.model.BlockType.TEXT,
             ),
         )
-        val html = builder.build(blocks, blocks.associateBy { it.blockId })
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<html"
         html shouldContain "<title>Default Template Test</title>"
@@ -60,7 +62,7 @@ class HtmlTemplateTest : FunSpec({
                 blockType = dev.yidafu.feishu2html.api.model.BlockType.TEXT,
             ),
         )
-        val html = builder.build(blocks, blocks.associateBy { it.blockId })
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<html"
         html shouldContain "<title>Custom Full Template</title>"
@@ -99,7 +101,7 @@ class HtmlTemplateTest : FunSpec({
                 blockType = dev.yidafu.feishu2html.api.model.BlockType.TEXT,
             ),
         )
-        val html = builder.build(blocks, blocks.associateBy { it.blockId })
+        val html = builder.build(blocks.toBlockNodes())
 
         // Fragment template should NOT contain html/head/body tags
         html shouldNotContain "<html"
@@ -136,7 +138,7 @@ class HtmlTemplateTest : FunSpec({
                 blockType = dev.yidafu.feishu2html.api.model.BlockType.TEXT,
             ),
         )
-        val html = builder.build(blocks, blocks.associateBy { it.blockId })
+        val html = builder.build(blocks.toBlockNodes())
 
         // Fragment should NOT contain style tags or html structure
         html shouldNotContain "<style>"
@@ -172,7 +174,7 @@ class HtmlTemplateTest : FunSpec({
                 blockType = dev.yidafu.feishu2html.api.model.BlockType.TEXT,
             ),
         )
-        val html = builder.build(blocks, blocks.associateBy { it.blockId })
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "mathjax@4"
         html shouldNotContain "mathjax@3"
@@ -192,7 +194,7 @@ class HtmlTemplateTest : FunSpec({
                 blockType = dev.yidafu.feishu2html.api.model.BlockType.TEXT,
             ),
         )
-        val html = builder.build(blocks, blocks.associateBy { it.blockId })
+        val html = builder.build(blocks.toBlockNodes())
 
         // Should have standard HTML structure
         html shouldContain "<html"
@@ -224,7 +226,7 @@ class HtmlTemplateTest : FunSpec({
                 blockType = dev.yidafu.feishu2html.api.model.BlockType.TEXT,
             ),
         )
-        val html = builder.build(blocks, blocks.associateBy { it.blockId })
+        val html = builder.build(blocks.toBlockNodes())
 
         // Plain template should not have external JS
         html shouldNotContain "MathJax"
@@ -257,7 +259,7 @@ class HtmlTemplateTest : FunSpec({
                 blockType = dev.yidafu.feishu2html.api.model.BlockType.TEXT,
             ),
         )
-        val html = builder.build(blocks, blocks.associateBy { it.blockId })
+        val html = builder.build(blocks.toBlockNodes())
 
         // Fragment should not contain html/head/body
         html shouldNotContain "<html"
@@ -290,8 +292,8 @@ class HtmlTemplateTest : FunSpec({
             ),
         )
 
-        val feishuHtml = feishuBuilder.build(blocks, blocks.associateBy { it.blockId })
-        val githubHtml = githubBuilder.build(blocks, blocks.associateBy { it.blockId })
+        val feishuHtml = feishuBuilder.build(blocks.toBlockNodes())
+        val githubHtml = githubBuilder.build(blocks.toBlockNodes())
 
         // Both should use the same class names
         val feishuHasClass = feishuHtml.contains("""<div class="protyle-wysiwyg b3-typography" data-node-id="root">""")

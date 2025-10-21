@@ -5,16 +5,15 @@ import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-internal object FileBlockRenderer : Renderable {
+internal object FileBlockRenderer : Renderable<FileBlock> {
     private val logger = KotlinLogging.logger {}
 
-    override fun <T> render(
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<FileBlock>,
         context: RenderContext,
     ) {
-        val fileBlock = block as FileBlock
+        val fileBlock = blockNode.data
         val token = fileBlock.file?.token ?: return
         val name = fileBlock.file?.name ?: "未命名文件"
         logger.debug { "Rendering file block: name=$name, token=$token" }

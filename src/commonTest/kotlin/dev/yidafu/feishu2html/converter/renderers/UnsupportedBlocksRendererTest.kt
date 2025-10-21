@@ -1,5 +1,7 @@
 package dev.yidafu.feishu2html.converter.renderers
 
+import dev.yidafu.feishu2html.toBlockNode
+
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.RenderContext
 import dev.yidafu.feishu2html.converter.TextElementConverter
@@ -27,7 +29,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                BitableBlockRenderer.render(this, block, emptyMap(), context)
+                BitableBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length
@@ -45,7 +47,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                ChatCardBlockRenderer.render(this, block, emptyMap(), context)
+                ChatCardBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length
@@ -62,7 +64,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                IsvBlockRenderer.render(this, block, emptyMap(), context)
+                IsvBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length
@@ -79,7 +81,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                MindnoteBlockRenderer.render(this, block, emptyMap(), context)
+                MindnoteBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length
@@ -96,7 +98,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                SheetBlockRenderer.render(this, block, emptyMap(), context)
+                SheetBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length
@@ -113,7 +115,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                ViewBlockRenderer.render(this, block, emptyMap(), context)
+                ViewBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length
@@ -130,7 +132,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                TaskBlockRenderer.render(this, block, emptyMap(), context)
+                TaskBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length
@@ -147,7 +149,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                OkrBlockRenderer.render(this, block, emptyMap(), context)
+                OkrBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html.length shouldBe html.length
@@ -165,7 +167,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                AddOnsBlockRenderer.render(this, block, emptyMap(), context)
+                AddOnsBlockRenderer.render(this, block.toBlockNode() as BlockNode<AddOnsBlock>, context)
             }
 
         html.length shouldBe html.length
@@ -182,7 +184,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                JiraIssueBlockRenderer.render(this, block, emptyMap(), context)
+                JiraIssueBlockRenderer.render(this, block.toBlockNode() as BlockNode<JiraIssueBlock>, context)
             }
 
         html.length shouldBe html.length
@@ -199,7 +201,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                WikiCatalogBlockRenderer.render(this, block, emptyMap(), context)
+                WikiCatalogBlockRenderer.render(this, block.toBlockNode() as BlockNode<WikiCatalogBlock>, context)
             }
 
         html.length shouldBe html.length
@@ -216,7 +218,7 @@ class UnsupportedBlocksRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                AgendaBlockRenderer.render(this, block, emptyMap(), context)
+                AgendaBlockRenderer.render(this, block.toBlockNode() as BlockNode<AgendaBlock>, context)
             }
 
         html.length shouldBe html.length

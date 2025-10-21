@@ -5,35 +5,33 @@ import dev.yidafu.feishu2html.converter.*
 import kotlinx.html.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-internal object TableBlockRenderer : Renderable {
+internal object TableBlockRenderer : Renderable<TableBlock> {
     private val logger = KotlinLogging.logger {}
 
-    override fun <T> render(
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<TableBlock>,
         context: RenderContext,
     ) {
-        val tableBlock = block as TableBlock
+        val tableBlock = blockNode.data
         val property = tableBlock.table?.property ?: return
-        val children = tableBlock.children ?: return
+        val cellNodes = blockNode.children.filter { it.data is TableCellBlock }
 
         logger.debug {
-            "Rendering table: ${property.rowSize}x${property.columnSize} (${children.size}cells)"
+            "Rendering table: ${property.rowSize}x${property.columnSize} (${cellNodes.size} cells)"
         }
 
         parent.table(classes = "table-block") {
-            var currentRowCells = mutableListOf<TableCellBlock>()
+            var currentRowCells = mutableListOf<BlockNode<out Block>>()
 
-            for (childId in children) {
-                val cell = allBlocks[childId] as? TableCellBlock ?: continue
-                currentRowCells.add(cell)
+            for (cellNode in cellNodes) {
+                currentRowCells.add(cellNode)
 
                 if (currentRowCells.size >= property.columnSize) {
                     tr {
-                        currentRowCells.forEach { cellBlock ->
+                        currentRowCells.forEach { cellNode ->
                             td {
-                                renderCellContent(cellBlock, allBlocks, context, this)
+                                renderCellContent(cellNode, context, this)
                             }
                         }
                     }
@@ -43,9 +41,9 @@ internal object TableBlockRenderer : Renderable {
 
             if (currentRowCells.isNotEmpty()) {
                 tr {
-                    currentRowCells.forEach { cellBlock ->
+                    currentRowCells.forEach { cellNode ->
                         td {
-                            renderCellContent(cellBlock, allBlocks, context, this)
+                            renderCellContent(cellNode, context, this)
                         }
                     }
                 }
@@ -54,35 +52,28 @@ internal object TableBlockRenderer : Renderable {
     }
 
     private fun renderCellContent(
-        cellBlock: TableCellBlock,
-        allBlocks: Map<String, Block>,
+        cellNode: BlockNode<out Block>,
         context: RenderContext,
         parent: FlowContent,
     ) {
+        val cellBlock = cellNode.data as TableCellBlock
         val elements = cellBlock.tableCell?.elements ?: emptyList()
-        val children = cellBlock.children
         logger.debug {
-            "Rendering table cell: ID=${cellBlock.blockId}, elements=${elements.size}, children=${children?.size ?: 0}"
+            "Rendering table cell: ID=${cellBlock.blockId}, elements=${elements.size}, children=${cellNode.children.size}"
         }
 
         if (elements.isNotEmpty()) {
             context.textConverter.convertElements(elements, parent)
-        } else if (children != null && children.isNotEmpty()) {
-            children.forEach { childId ->
-                val childBlock = allBlocks[childId]
-                if (childBlock != null) {
-                    childBlock.render(parent, allBlocks, context)
-                }
-            }
+        } else if (cellNode.children.isNotEmpty()) {
+            cellNode.renderChildren(parent, context)
         }
     }
 }
 
-internal object TableCellBlockRenderer : Renderable {
-    override fun <T> render(
+internal object TableCellBlockRenderer : Renderable<TableCellBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<TableCellBlock>,
         context: RenderContext,
     ) {
         // TableCell 由 TableBlockRenderer 处理，这里不做任何事

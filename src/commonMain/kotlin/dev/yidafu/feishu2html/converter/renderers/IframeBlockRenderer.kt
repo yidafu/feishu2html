@@ -8,14 +8,13 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-internal object IframeBlockRenderer : Renderable {
-    override fun <T> render(
+internal object IframeBlockRenderer : Renderable<IframeBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<IframeBlock>,
         context: RenderContext,
     ) {
-        val iframeBlock = block as IframeBlock
+        val iframeBlock = blockNode.data
         val url = iframeBlock.iframe?.component?.url ?: iframeBlock.iframe?.url
         val iframeType =
             iframeBlock.iframe?.component?.iframeType?.let {
@@ -90,14 +89,13 @@ internal object IframeBlockRenderer : Renderable {
     }
 }
 
-internal object DiagramBlockRenderer : Renderable {
-    override fun <T> render(
+internal object DiagramBlockRenderer : Renderable<DiagramBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<DiagramBlock>,
         context: RenderContext,
     ) {
-        val diagramBlock = block as DiagramBlock
+        val diagramBlock = blockNode.data as DiagramBlock
         val content = diagramBlock.diagram?.content ?: return
         val type = diagramBlock.diagram?.diagramType
         logger.debug { "Rendering diagram block: type=$type, content length=${content.length}" }

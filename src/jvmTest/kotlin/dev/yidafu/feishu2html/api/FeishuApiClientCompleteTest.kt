@@ -77,8 +77,8 @@ class FeishuApiClientCompleteTest : FunSpec({
         val ordered = apiClient.getOrderedBlocks(content)
 
         ordered shouldHaveSize 2
-        ordered[0].blockId shouldBe "text1"
-        ordered[1].blockId shouldBe "text2"
+        ordered[0].data.blockId shouldBe "text1"
+        ordered[1].data.blockId shouldBe "text2"
 
         apiClient.close()
     }
@@ -135,9 +135,11 @@ class FeishuApiClientCompleteTest : FunSpec({
         val apiClient = FeishuApiClient("test_app", "test_secret")
         val ordered = apiClient.getOrderedBlocks(content)
 
-        ordered shouldHaveSize 2
-        ordered[0].blockId shouldBe "bullet1"
-        ordered[1].blockId shouldBe "text1"
+        // 验证树结构：bullet1 是根节点，text1 是其子节点
+        ordered shouldHaveSize 1
+        ordered[0].data.blockId shouldBe "bullet1"
+        ordered[0].children shouldHaveSize 1
+        ordered[0].children[0].data.blockId shouldBe "text1"
 
         apiClient.close()
     }
@@ -212,7 +214,15 @@ class FeishuApiClientCompleteTest : FunSpec({
         val ordered = apiClient.getOrderedBlocks(content)
 
         // 应该只访问每个块一次，避免无限循环
-        ordered shouldHaveSize 2
+        // block1 是根节点，block2 是其子节点
+        ordered shouldHaveSize 1
+        ordered[0].data.blockId shouldBe "block1"
+        ordered[0].children shouldHaveSize 1
+        ordered[0].children[0].data.blockId shouldBe "block2"
+        // 由于循环引用，block2的children会包含对block1的引用
+        // 但缓存机制确保不会无限递归构建
+        ordered[0].children[0].children shouldHaveSize 1
+        ordered[0].children[0].children[0].data.blockId shouldBe "block1"
 
         apiClient.close()
     }

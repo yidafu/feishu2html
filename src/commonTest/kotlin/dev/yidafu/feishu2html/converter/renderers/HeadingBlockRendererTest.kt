@@ -1,5 +1,7 @@
 package dev.yidafu.feishu2html.converter.renderers
 
+import dev.yidafu.feishu2html.toBlockNode
+
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.RenderContext
 import dev.yidafu.feishu2html.converter.TextElementConverter
@@ -31,7 +33,7 @@ class HeadingBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                Heading1BlockRenderer.render(this, block, emptyMap(), context)
+                Heading1BlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<h1"
@@ -55,7 +57,7 @@ class HeadingBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                Heading2BlockRenderer.render(this, block, emptyMap(), context)
+                Heading2BlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<h2"
@@ -79,7 +81,7 @@ class HeadingBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                Heading3BlockRenderer.render(this, block, emptyMap(), context)
+                Heading3BlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<h3"
@@ -99,7 +101,7 @@ class HeadingBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                Heading1BlockRenderer.render(this, block, emptyMap(), context)
+                Heading1BlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<div></div>"
@@ -121,7 +123,7 @@ class HeadingBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                Heading1BlockRenderer.render(this, blockCenter, emptyMap(), context)
+                Heading1BlockRenderer.render(this, blockCenter.toBlockNode(), context)
             }
 
         html shouldContain "Centered"

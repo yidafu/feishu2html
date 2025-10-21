@@ -7,14 +7,13 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-internal object ImageBlockRenderer : Renderable {
-    override fun <T> render(
+internal object ImageBlockRenderer : Renderable<ImageBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<ImageBlock>,
         context: RenderContext,
     ) {
-        val imageBlock = block as ImageBlock
+        val imageBlock = blockNode.data
         val token = imageBlock.image?.token ?: return
         logger.debug { "Rendering image: token=$token" }
         val width = imageBlock.image?.width
@@ -39,14 +38,13 @@ internal object ImageBlockRenderer : Renderable {
     }
 }
 
-internal object BoardBlockRenderer : Renderable {
-    override fun <T> render(
+internal object BoardBlockRenderer : Renderable<BoardBlock> {
+    override fun render(
         parent: FlowContent,
-        block: T,
-        allBlocks: Map<String, Block>,
+        blockNode: BlockNode<BoardBlock>,
         context: RenderContext,
     ) {
-        val boardBlock = block as BoardBlock
+        val boardBlock = blockNode.data
         val token = boardBlock.board?.token ?: return
 
         // Use base64 data URL if available, otherwise use relative path

@@ -1,5 +1,7 @@
 package dev.yidafu.feishu2html
 
+import dev.yidafu.feishu2html.toBlockNodes
+
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.HtmlBuilder
 import io.kotest.core.spec.style.FunSpec
@@ -13,7 +15,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = emptyMap<String, Block>()
 
         val builder = HtmlBuilder(title = "Empty", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<html"
         html shouldContain "Empty"
@@ -39,7 +41,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Single", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "Only one"
     }
@@ -62,7 +64,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "XSS Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "&lt;script&gt;"
         html shouldNotContain "<script>alert"
@@ -86,7 +88,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Unicode Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "表情符号😀🎉中文字符测试"
     }
@@ -110,7 +112,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Long Text Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain longText
     }
@@ -137,7 +139,7 @@ class EdgeCaseTest : FunSpec({
         }
 
         val builder = HtmlBuilder(title = "Deep Nesting Test", customCss = null)
-        val html = builder.build(childrenList, blocks)
+        val html = builder.build(childrenList.toBlockNodes())
 
         html shouldContain "callout"
     }
@@ -170,7 +172,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Mixed Elements Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "Normal"
         html shouldContain "<strong>Bold</strong>"
@@ -194,7 +196,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Empty Elements Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<html"
     }
@@ -217,7 +219,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Null Children Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "No children"
     }
@@ -241,7 +243,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Large Document Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "Text 1"
         html shouldContain "Text 50"
@@ -278,7 +280,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Mixed Lists Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "bullet-list"
         html shouldContain "ordered-list"
@@ -325,7 +327,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Alignment Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "Left"
         html shouldContain "Center"
@@ -352,7 +354,7 @@ class EdgeCaseTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Languages Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "code for lang 1"
         html shouldContain "code for lang 5"

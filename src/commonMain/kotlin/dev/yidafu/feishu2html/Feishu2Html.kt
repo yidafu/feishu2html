@@ -154,13 +154,13 @@ internal constructor(
             logger.info { "Document content loaded - Total blocks: ${blocks.size}" }
             progressCallback?.onContentFetched(documentId, blocks.size)
 
-            // Get ordered block list
-            val orderedBlocks = apiClient.getOrderedBlocks(content)
-            logger.debug { "Ordered blocks count: ${orderedBlocks.size}" }
+            // Get ordered block tree
+            val blockNodes = apiClient.getOrderedBlocks(content)
+            logger.debug { "Root block nodes count: ${blockNodes.size}" }
 
             // Download images and files
             logger.info { "Starting asset download for document: $documentId" }
-            val assetStats = downloadAssets(orderedBlocks)
+            val assetStats = downloadAssets(blockNodes)
             imagesDownloaded = assetStats.first
             filesDownloaded = assetStats.second
             boardsExported = assetStats.third
@@ -190,7 +190,7 @@ internal constructor(
                     imageBase64Cache = imageBase64Cache,
                     showUnsupportedBlocks = options.showUnsupportedBlocks,
                 )
-            val html = htmlBuilder.build(orderedBlocks, blocks)
+            val html = htmlBuilder.build(blockNodes)
 
             fileSystem.writeText(htmlPath, html)
             logger.info { "Document export completed successfully - File: $htmlPath" }
@@ -267,16 +267,23 @@ internal constructor(
 
     /**
      * Download assets (images, files, boards) and return statistics
+     *
+     * Traverses the BlockNode tree recursively to find all downloadable assets.
+     *
+     * @param blockNodes Root block nodes to traverse
      * @return Triple of (imagesDownloaded, filesDownloaded, boardsExported)
      */
-    private suspend fun downloadAssets(blocks: List<Block>): Triple<Int, Int, Int> =
+    private suspend fun downloadAssets(blockNodes: List<BlockNode<out Block>>): Triple<Int, Int, Int> =
         coroutineScope {
-            logger.debug { "Scanning ${blocks.size} blocks for downloadable assets" }
+            logger.debug { "Scanning block tree for downloadable assets" }
             val imageJobs = mutableListOf<Deferred<Boolean>>()
             val fileJobs = mutableListOf<Deferred<Boolean>>()
             val boardJobs = mutableListOf<Deferred<Boolean>>()
 
-            for (block in blocks) {
+            // Recursively traverse tree to find all blocks
+            fun traverseTree(node: BlockNode<out Block>) {
+                val block = node.data
+
                 when (block) {
                     is ImageBlock -> {
                         val token = block.image?.token
@@ -382,6 +389,16 @@ internal constructor(
                     }
                     else -> {}
                 }
+
+                // Recursively process children
+                node.children.forEach { childNode ->
+                    traverseTree(childNode)
+                }
+            }
+
+            // Traverse all root nodes
+            blockNodes.forEach { rootNode ->
+                traverseTree(rootNode)
             }
 
             // Wait for all downloads to complete

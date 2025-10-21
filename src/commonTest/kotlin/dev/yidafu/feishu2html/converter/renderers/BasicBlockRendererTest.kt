@@ -1,5 +1,7 @@
 package dev.yidafu.feishu2html.converter.renderers
 
+import dev.yidafu.feishu2html.toBlockNode
+
 import dev.yidafu.feishu2html.api.model.*
 import dev.yidafu.feishu2html.converter.RenderContext
 import dev.yidafu.feishu2html.converter.TextElementConverter
@@ -27,7 +29,7 @@ class BasicBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                DividerBlockRenderer.render(this, block, emptyMap(), context)
+                DividerBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<hr"
@@ -48,7 +50,7 @@ class BasicBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                QuoteBlockRenderer.render(this, block, emptyMap(), context)
+                QuoteBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<blockquote"
@@ -68,7 +70,7 @@ class BasicBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                EquationBlockRenderer.render(this, block, emptyMap(), context)
+                EquationBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "E = mc^2"
@@ -90,7 +92,7 @@ class BasicBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                TodoBlockRenderer.render(this, block, emptyMap(), context)
+                TodoBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "Todo item"
@@ -113,7 +115,7 @@ class BasicBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                TodoBlockRenderer.render(this, block, emptyMap(), context)
+                TodoBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "Done item"
@@ -132,7 +134,7 @@ class BasicBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                QuoteBlockRenderer.render(this, block, emptyMap(), context)
+                QuoteBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<div></div>"
@@ -150,7 +152,7 @@ class BasicBlockRendererTest : FunSpec({
 
         val html =
             createHTML().div {
-                EquationBlockRenderer.render(this, block, emptyMap(), context)
+                EquationBlockRenderer.render(this, block.toBlockNode(), context)
             }
 
         html shouldContain "<div></div>"

@@ -1,5 +1,7 @@
 package dev.yidafu.feishu2html.converter
 
+import dev.yidafu.feishu2html.toBlockNodes
+
 import dev.yidafu.feishu2html.api.model.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -31,7 +33,7 @@ class HtmlBuilderSimpleTest : FunSpec({
                 customCss = null,
             )
 
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<html"
         html shouldContain "<head>"
@@ -52,7 +54,7 @@ class HtmlBuilderSimpleTest : FunSpec({
                 customCss = null,
             )
 
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "MathJax"
         html shouldContain "tex-mml-chtml.js"
@@ -69,7 +71,7 @@ class HtmlBuilderSimpleTest : FunSpec({
                 customCss = null,
             )
 
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<style>"
         html shouldContain "</style>"
@@ -87,7 +89,7 @@ class HtmlBuilderSimpleTest : FunSpec({
                 customCss = customCss,
             )
 
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain customCss
     }
@@ -102,7 +104,7 @@ class HtmlBuilderSimpleTest : FunSpec({
                 customCss = null,
             )
 
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<html"
         html shouldContain "Empty Document"
@@ -121,7 +123,7 @@ class HtmlBuilderSimpleTest : FunSpec({
                 styleMode = StyleMode.FEISHU,
             )
 
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         // Should use Feishu class names
         html shouldContain """<div class="protyle-wysiwyg b3-typography" data-node-id="root">"""
@@ -146,7 +148,7 @@ class HtmlBuilderSimpleTest : FunSpec({
                 styleMode = StyleMode.GITHUB,
             )
 
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         // Should use the SAME Feishu class names
         html shouldContain """<div class="protyle-wysiwyg b3-typography" data-node-id="root">"""
@@ -184,8 +186,8 @@ class HtmlBuilderSimpleTest : FunSpec({
             styleMode = StyleMode.GITHUB,
         )
 
-        val feishuHtml = feishuBuilder.build(blocks, allBlocks)
-        val githubHtml = githubBuilder.build(blocks, allBlocks)
+        val feishuHtml = feishuBuilder.build(blocks.toBlockNodes())
+        val githubHtml = githubBuilder.build(blocks.toBlockNodes())
 
         // Extract the div class from both
         val classPattern = """<div class="protyle-wysiwyg b3-typography" data-node-id="root">"""
@@ -209,7 +211,7 @@ class HtmlBuilderSimpleTest : FunSpec({
                 styleMode = StyleMode.GITHUB,
             )
 
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         // Should have media query for dark mode
         html shouldContain "@media (prefers-color-scheme: dark)"

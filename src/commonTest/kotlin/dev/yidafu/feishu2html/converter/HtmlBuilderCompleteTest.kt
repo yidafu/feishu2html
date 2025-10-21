@@ -1,5 +1,8 @@
 package dev.yidafu.feishu2html.converter
 
+import dev.yidafu.feishu2html.toBlockNodes
+import dev.yidafu.feishu2html.buildBlockTree
+
 import dev.yidafu.feishu2html.api.model.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -43,7 +46,7 @@ class HtmlBuilderCompleteTest : FunSpec({
 
         val allBlocks = blocks.associateBy { it.blockId }
         val builder = HtmlBuilder(title = "Complete Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<h1"
         html shouldContain "Title"
@@ -91,7 +94,7 @@ class HtmlBuilderCompleteTest : FunSpec({
 
         val allBlocks = blocks.associateBy { it.blockId }
         val builder = HtmlBuilder(title = "List Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "bullet-list"
         html shouldContain "Item 1"
@@ -128,7 +131,7 @@ class HtmlBuilderCompleteTest : FunSpec({
 
         val allBlocks = blocks.associateBy { it.blockId }
         val builder = HtmlBuilder(title = "Ordered List Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "ordered-list"
         html shouldContain "First"
@@ -175,7 +178,7 @@ class HtmlBuilderCompleteTest : FunSpec({
 
         val allBlocks = blocks.associateBy { it.blockId }
         val builder = HtmlBuilder(title = "List Break Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         // 应该有两个独立的bullet-list
         val listCount = Regex("bullet-list").findAll(html).count()
@@ -222,7 +225,7 @@ class HtmlBuilderCompleteTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Table Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         // "Cell Content"应该只出现一次（在table内，不在table外）
         val occurrences = Regex("Cell Content").findAll(html).count()
@@ -274,18 +277,11 @@ class HtmlBuilderCompleteTest : FunSpec({
                 grid = GridBlockData(columnSize = 2),
             )
 
-        val blocks = listOf(gridBlock)
-        val allBlocks =
-            mapOf(
-                "grid1" to gridBlock,
-                "col1" to col1,
-                "col2" to col2,
-                "text1" to textInCol1,
-                "text2" to textInCol2,
-            )
+        val allBlocksList = listOf(gridBlock, col1, col2, textInCol1, textInCol2)
+        val tree = buildBlockTree(allBlocksList)
 
         val builder = HtmlBuilder(title = "Grid Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(tree)
 
         html shouldContain "Col1"
         html shouldContain "Col2"
@@ -325,7 +321,7 @@ class HtmlBuilderCompleteTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Skip Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         // "In Cell"应该只出现一次（在table内）
         val occurrences = Regex("In Cell").findAll(html).count()
@@ -350,7 +346,7 @@ class HtmlBuilderCompleteTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Code Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<pre"
         html shouldContain "<code"
@@ -388,7 +384,7 @@ class HtmlBuilderCompleteTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Todo Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "Task 1"
         html shouldContain "Task 2"
@@ -419,15 +415,11 @@ class HtmlBuilderCompleteTest : FunSpec({
                 callout = CalloutBlockData(backgroundColor = 1, borderColor = 1),
             )
 
-        val blocks = listOf(calloutBlock)
-        val allBlocks =
-            mapOf(
-                "callout1" to calloutBlock,
-                "text1" to textInCallout,
-            )
+        val allBlocksList = listOf(calloutBlock, textInCallout)
+        val tree = buildBlockTree(allBlocksList)
 
         val builder = HtmlBuilder(title = "Callout Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(tree)
 
         html shouldContain "callout"
         html shouldContain "Important Note"
@@ -450,7 +442,7 @@ class HtmlBuilderCompleteTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Quote Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<blockquote"
         html shouldContain "Famous quote"
@@ -470,7 +462,7 @@ class HtmlBuilderCompleteTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Equation Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "x^2 + y^2 = z^2"
     }
@@ -489,7 +481,7 @@ class HtmlBuilderCompleteTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Image Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<img"
         html shouldContain "img_token"
@@ -538,7 +530,7 @@ class HtmlBuilderCompleteTest : FunSpec({
 
         val allBlocks = blocks.associateBy { it.blockId }
         val builder = HtmlBuilder(title = "Mixed Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         html shouldContain "<h1"
         html shouldContain "<p"
@@ -569,11 +561,11 @@ class HtmlBuilderCompleteTest : FunSpec({
                 quoteContainer = QuoteContainerBlockData(),
             )
 
-        val blocks = listOf(qcBlock)
-        val allBlocks = mapOf("qc1" to qcBlock, "text1" to textBlock)
+        val allBlocksList = listOf(qcBlock, textBlock)
+        val tree = buildBlockTree(allBlocksList)
 
         val builder = HtmlBuilder(title = "QC Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(tree)
 
         html shouldContain "quote-container"
         html shouldContain "Quote content"
@@ -610,7 +602,7 @@ class HtmlBuilderCompleteTest : FunSpec({
         val allBlocks = blocks.associateBy { it.blockId }
 
         val builder = HtmlBuilder(title = "Page Test", customCss = null)
-        val html = builder.build(blocks, allBlocks)
+        val html = builder.build(blocks.toBlockNodes())
 
         // 应该包含body文本
         html shouldContain "Body text"
