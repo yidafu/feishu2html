@@ -33,8 +33,8 @@ package dev.yidafu.feishu2html.api.model
  */
 class BlockNode<out T : Block>(
     val data: T,
-    val children: List<BlockNode<out Block>>,
-    val parent: BlockNode<out Block>? = null,
+    val children: List<BlockNode<Block>>,
+    val parent: BlockNode<Block>? = null,
 ) {
     /**
      * Custom equals that excludes parent to avoid circular reference
@@ -76,8 +76,8 @@ class BlockNode<out T : Block>(
     /**
      * Get all ancestors of this node (from immediate parent to root)
      */
-    fun ancestors(): List<BlockNode<out Block>> {
-        val result = mutableListOf<BlockNode<out Block>>()
+    fun ancestors(): List<BlockNode<Block>> {
+        val result = mutableListOf<BlockNode<Block>>()
         var current = parent
         while (current != null) {
             result.add(current)

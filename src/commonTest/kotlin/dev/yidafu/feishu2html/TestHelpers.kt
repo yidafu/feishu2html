@@ -28,7 +28,7 @@ fun <T : Block> T.toBlockNode(): BlockNode<T> {
  *
  * For testing with hierarchical structures, use [buildBlockTree] instead.
  */
-fun List<Block>.toBlockNodes(): List<BlockNode<out Block>> {
+fun List<Block>.toBlockNodes(): List<BlockNode<Block>> {
     return this.map { it.toBlockNode() }
 }
 

@@ -409,9 +409,9 @@ internal class FeishuApiClient(
      * @param content Document raw content containing blocks map
      * @return List of top-level BlockNodes (children of PAGE block)
      */
-    fun getOrderedBlocks(content: DocumentRawContent): List<BlockNode<out Block>> {
+    fun getOrderedBlocks(content: DocumentRawContent): List<BlockNode<Block>> {
         val blocks = content.blocks
-        val nodeCache = mutableMapOf<String, BlockNode<out Block>>()
+        val nodeCache = mutableMapOf<String, BlockNode<Block>>()
 
         /**
          * Recursively build BlockNode tree
@@ -422,8 +422,8 @@ internal class FeishuApiClient(
          */
         fun buildNode(
             blockId: String,
-            parent: BlockNode<out Block>? = null,
-        ): BlockNode<out Block>? {
+            parent: BlockNode<Block>? = null,
+        ): BlockNode<Block>? {
             // Check cache to avoid rebuilding
             if (blockId in nodeCache) {
                 return nodeCache[blockId]

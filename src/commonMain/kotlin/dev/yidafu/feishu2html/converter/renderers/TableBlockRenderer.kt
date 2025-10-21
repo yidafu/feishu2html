@@ -22,7 +22,7 @@ internal object TableBlockRenderer : Renderable<TableBlock> {
         }
 
         parent.table(classes = "table-block") {
-            var currentRowCells = mutableListOf<BlockNode<out Block>>()
+            var currentRowCells = mutableListOf<BlockNode<Block>>()
 
             for (cellNode in cellNodes) {
                 currentRowCells.add(cellNode)
@@ -52,7 +52,7 @@ internal object TableBlockRenderer : Renderable<TableBlock> {
     }
 
     private fun renderCellContent(
-        cellNode: BlockNode<out Block>,
+        cellNode: BlockNode<Block>,
         context: RenderContext,
         parent: FlowContent,
     ) {

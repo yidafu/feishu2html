@@ -273,7 +273,7 @@ internal constructor(
      * @param blockNodes Root block nodes to traverse
      * @return Triple of (imagesDownloaded, filesDownloaded, boardsExported)
      */
-    private suspend fun downloadAssets(blockNodes: List<BlockNode<out Block>>): Triple<Int, Int, Int> =
+    private suspend fun downloadAssets(blockNodes: List<BlockNode<Block>>): Triple<Int, Int, Int> =
         coroutineScope {
             logger.debug { "Scanning block tree for downloadable assets" }
             val imageJobs = mutableListOf<Deferred<Boolean>>()
@@ -281,7 +281,7 @@ internal constructor(
             val boardJobs = mutableListOf<Deferred<Boolean>>()
 
             // Recursively traverse tree to find all blocks
-            fun traverseTree(node: BlockNode<out Block>) {
+            fun traverseTree(node: BlockNode<Block>) {
                 val block = node.data
 
                 when (block) {

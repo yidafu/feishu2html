@@ -80,7 +80,7 @@ internal data class RenderContext(
  * @param parent Parent HTML element to render children into
  * @param context Rendering context
  */
-internal fun BlockNode<out Block>.renderChildren(
+internal fun BlockNode<Block>.renderChildren(
     parent: FlowContent,
     context: RenderContext,
 ) {
@@ -106,10 +106,10 @@ internal fun BlockNode<out Block>.renderChildren(
  * @param context Rendering context
  * @param predicate Filter condition for children to render
  */
-internal fun BlockNode<out Block>.renderChildrenFiltered(
+internal fun BlockNode<Block>.renderChildrenFiltered(
     parent: FlowContent,
     context: RenderContext,
-    predicate: (BlockNode<out Block>) -> Boolean,
+    predicate: (BlockNode<Block>) -> Boolean,
 ) {
     children.filter(predicate).forEach { childNode ->
         childNode.render(parent, context)

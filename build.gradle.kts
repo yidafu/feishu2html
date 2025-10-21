@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "dev.yidafu.feishu2html"
-version = "1.0.3"
+version = "1.0.3-dev.2"
 
 // Load local.properties
 val localPropertiesFile = rootProject.file("local.properties")

@@ -91,7 +91,7 @@ private object BlockRendererRegistry {
      */
     @Suppress("UNCHECKED_CAST")
     inline fun render(
-        blockNode: BlockNode<out Block>,
+        blockNode: BlockNode<Block>,
         parent: FlowContent,
         context: RenderContext,
     ) {
@@ -124,7 +124,7 @@ private object BlockRendererRegistry {
  * @see BlockRendererRegistry
  * @see BlockNode
  */
-internal fun BlockNode<out Block>.render(
+internal fun BlockNode<Block>.render(
     parent: FlowContent,
     context: RenderContext,
 ) {
@@ -472,7 +472,7 @@ internal class HtmlBuilder(
      * @param blockNodes Tree of BlockNodes representing document structure
      * @return Complete HTML string
      */
-    fun build(blockNodes: List<BlockNode<out Block>>): String {
+    fun build(blockNodes: List<BlockNode<Block>>): String {
         builderLogger.info { "Starting HTML build for document: $title" }
         builderLogger.debug { "Building with ${blockNodes.size} root nodes" }
         builderLogger.debug { "Using ${if (customCss != null) "custom" else "default"} CSS" }
@@ -510,7 +510,7 @@ internal class HtmlBuilder(
     }
 
     private fun buildBody(
-        blockNodes: List<BlockNode<out Block>>,
+        blockNodes: List<BlockNode<Block>>,
         parent: FlowContent,
     ) {
         // 创建渲染上下文

@@ -8,7 +8,7 @@ kotlinx-html = "0.11.0"
 kotlinx-cli = "0.3.6"
 
 # Ktor
-ktor = "2.3.7"
+ktor = "3.3.0"
 
 # Logging
 kotlin-logging = "6.0.3"
