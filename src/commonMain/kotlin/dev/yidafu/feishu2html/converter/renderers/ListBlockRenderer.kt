@@ -15,7 +15,7 @@ internal object BulletBlockRenderer : Renderable<BulletBlock> {
     ) {
         val bulletBlock = blockNode.data
         val elements = bulletBlock.bullet?.elements ?: return
-        logger.debug { "Rendering bullet list item with ${elements.size} elements" }
+        logger.debug { "Rendering bullet list item with ${elements.size} elements, children=${blockNode.children.size}" }
 
         // Feishu-style structure with div instead of ul/li
         parent.div(classes = "list-wrapper bullet-list") {
@@ -26,6 +26,12 @@ internal object BulletBlockRenderer : Renderable<BulletBlock> {
                 div(classes = "list-content") {
                     p {
                         context.textConverter.convertElements(elements, this)
+                    }
+                    // 渲染嵌套子节点
+                    if (blockNode.children.isNotEmpty()) {
+                        div(classes = "nested-list") {
+                            blockNode.renderChildren(this, context)
+                        }
                     }
                 }
             }
@@ -53,7 +59,7 @@ internal object OrderedBlockRenderer : Renderable<OrderedBlock> {
                 else -> listCounter + 1
             }
 
-        logger.debug { "Rendering ordered list item with ${elements.size} elements" }
+        logger.debug { "Rendering ordered list item with ${elements.size} elements, children=${blockNode.children.size}" }
 
         // Feishu-style structure with div instead of ul/li
         parent.div(classes = "list-wrapper ordered-list") {
@@ -64,6 +70,12 @@ internal object OrderedBlockRenderer : Renderable<OrderedBlock> {
                 div(classes = "list-content") {
                     p {
                         context.textConverter.convertElements(elements, this)
+                    }
+                    // 渲染嵌套子节点
+                    if (blockNode.children.isNotEmpty()) {
+                        div(classes = "nested-list") {
+                            blockNode.renderChildren(this, context)
+                        }
                     }
                 }
             }

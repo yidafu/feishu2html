@@ -50,7 +50,7 @@ class ViewBlockIntegrationTest : FunSpec({
         html shouldContain "file-card"
         html shouldContain "sample.txt"
         html shouldContain "files/sample.txt"
-        
+
         // Should contain Feishu's official file attachment class structure
         html shouldContain "docx-file-block-container"
         html shouldContain "file-block"
@@ -100,7 +100,7 @@ class ViewBlockIntegrationTest : FunSpec({
         html shouldContain "image.png"
         html shouldContain "files/document.pdf"
         html shouldContain "files/image.png"
-        
+
         // Should not show any unsupported warnings
         html shouldNotContain "Unsupported block type: View"
     }
@@ -153,7 +153,7 @@ class ViewBlockIntegrationTest : FunSpec({
         html shouldContain "附件"
         html shouldContain "report.docx"
         html shouldContain "请查看附件"
-        
+
         // No unsupported warnings
         html shouldNotContain "Unsupported block type"
     }

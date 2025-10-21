@@ -69,7 +69,7 @@ internal object SheetBlockRenderer : Renderable<SheetBlock> {
 
 /**
  * ViewBlock Renderer - Container for file attachments
- * 
+ *
  * ViewBlock is a container block used for file attachments in Feishu documents.
  * It contains a single FileBlock child that represents the actual file.
  * This renderer simply passes through to render its children.

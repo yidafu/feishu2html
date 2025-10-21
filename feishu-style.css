@@ -19527,7 +19527,8 @@ span.equation-leaf {
 
 .docx-chat_card-block-container,
 .docx-file-block-container {
-  border-radius: 8px
+  border-radius: 8px;
+  margin: 16px 0
 }
 
 .docx-file-block-container.docx-view-type-Card {
@@ -40382,4 +40383,69 @@ html[data-theme=dark] .opendoc .bear-web-x-container {
 .docx-sync-im-chat::-webkit-scrollbar-corner,
 .docx-sync-im-chat::-webkit-scrollbar-track {
   background-color: initial
+}
+
+/* ========================================
+   Custom Container Block Styles
+   Added for feishu2html container support
+   ======================================== */
+
+/* Text block with children */
+.text-block-container {
+  margin: 8px 0;
+}
+
+.text-block-children {
+  margin-left: 2em;
+  margin-top: 0.5em;
+}
+
+/* Nested lists */
+.nested-list {
+  margin-left: 2em;
+  margin-top: 0.5em;
+}
+
+/* ========================================
+   Collapsible Heading Styles
+   ======================================== */
+
+/* Heading container for collapsible headings */
+.heading-container {
+  position: relative;
+}
+
+/* Trigger cursor style */
+.collapsible-trigger {
+  cursor: pointer;
+  user-select: none;
+}
+
+.collapsible-trigger:hover {
+  opacity: 0.8;
+}
+
+/* Collapse indicator (arrow) */
+.collapse-indicator {
+  display: inline-block;
+  margin-right: 0.5em;
+  transition: transform 0.2s ease;
+  font-size: 0.8em;
+  color: #646a73;
+}
+
+/* Rotate indicator when collapsed */
+.heading-container[data-collapsed="true"] .collapse-indicator {
+  transform: rotate(-90deg);
+}
+
+/* Hide children when collapsed */
+.heading-container[data-collapsed="true"] .heading-children {
+  display: none;
+}
+
+/* Heading children container */
+.heading-children {
+  margin-left: 1em;
+  margin-top: 0.5em;
 }

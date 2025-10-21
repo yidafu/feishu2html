@@ -69,7 +69,7 @@ internal object TodoBlockRenderer : Renderable<TodoBlock> {
         val todoBlock = blockNode.data
         val elements = todoBlock.todo?.elements ?: return
         val checked = todoBlock.todo?.style?.done == true
-        logger.debug { "Rendering todo block: checked=$checked, elements=${elements.size}" }
+        logger.debug { "Rendering todo block: checked=$checked, elements=${elements.size}, children=${blockNode.children.size}" }
 
         parent.div(classes = "todo-block") {
             div(classes = "todo-block_content") {
@@ -81,6 +81,12 @@ internal object TodoBlockRenderer : Renderable<TodoBlock> {
                 }
                 span {
                     context.textConverter.convertElements(elements, this)
+                }
+            }
+            // 渲染嵌套子节点
+            if (blockNode.children.isNotEmpty()) {
+                div(classes = "nested-list") {
+                    blockNode.renderChildren(this, context)
                 }
             }
         }

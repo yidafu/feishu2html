@@ -210,6 +210,25 @@ fun HEAD.buildStandardHead(context: HtmlBuildContext) {
             )
         }
     }
+
+    // 标题折叠/展开交互
+    script {
+        unsafe {
+            raw(
+                """
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('.collapsible-trigger').forEach(trigger => {
+                        trigger.addEventListener('click', function() {
+                            const container = this.closest('.heading-container');
+                            const isCollapsed = container.dataset.collapsed === 'true';
+                            container.dataset.collapsed = !isCollapsed;
+                        });
+                    });
+                });
+                """.trimIndent(),
+            )
+        }
+    }
 }
 
 /**
@@ -317,6 +336,25 @@ interface HtmlTemplate {
                             raw(context.customCss ?: context.getDefaultCss())
                         }
                     }
+
+                        // 标题折叠/展开交互
+                        script {
+                            unsafe {
+                                raw(
+                                    """
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        document.querySelectorAll('.collapsible-trigger').forEach(trigger => {
+                                            trigger.addEventListener('click', function() {
+                                                const container = this.closest('.heading-container');
+                                                const isCollapsed = container.dataset.collapsed === 'true';
+                                                container.dataset.collapsed = !isCollapsed;
+                                            });
+                                        });
+                                    });
+                                    """.trimIndent(),
+                                )
+                            }
+                        }
                         // No external JavaScript - equations won't be rendered
                     }
                     body {
@@ -396,6 +434,25 @@ interface HtmlTemplate {
                                 padding: 20px;
                             }
                         """.trimIndent())
+                    }
+                }
+
+                // 标题折叠/展开交互
+                script {
+                    unsafe {
+                        raw(
+                            """
+                            document.addEventListener('DOMContentLoaded', function() {
+                                document.querySelectorAll('.collapsible-trigger').forEach(trigger => {
+                                    trigger.addEventListener('click', function() {
+                                        const container = this.closest('.heading-container');
+                                        const isCollapsed = container.dataset.collapsed === 'true';
+                                        container.dataset.collapsed = !isCollapsed;
+                                    });
+                                });
+                            });
+                            """.trimIndent(),
+                        )
                     }
                 }
             }

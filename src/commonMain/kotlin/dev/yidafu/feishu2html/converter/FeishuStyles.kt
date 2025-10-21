@@ -365,6 +365,7 @@ internal object FeishuStyles {
         /* File Attachment - Official Feishu Styles */
         .docx-file-block-container {
             border-radius: 8px;
+            margin: 16px 0;
         }
 
         .docx-file-block-container.docx-view-type-Card {
@@ -669,6 +670,66 @@ internal object FeishuStyles {
 
         .ud__button--text:active {
             background: rgba(31, 35, 41, 0.1);
+        }
+
+        /* ========== Container Block Styles ========== */
+
+        /* Text block with children */
+        .text-block-container {
+            margin: 8px 0;
+        }
+
+        .text-block-children {
+            margin-left: 2em;
+            margin-top: 0.5em;
+        }
+
+        /* Nested lists */
+        .nested-list {
+            margin-left: 2em;
+            margin-top: 0.5em;
+        }
+
+        /* ========== Collapsible Heading Styles ========== */
+
+        /* Heading container for collapsible headings */
+        .heading-container {
+            position: relative;
+        }
+
+        /* Trigger cursor style */
+        .collapsible-trigger {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .collapsible-trigger:hover {
+            opacity: 0.8;
+        }
+
+        /* Collapse indicator (arrow) */
+        .collapse-indicator {
+            display: inline-block;
+            margin-right: 0.5em;
+            transition: transform 0.2s ease;
+            font-size: 0.8em;
+            color: #646a73;
+        }
+
+        /* Rotate indicator when collapsed */
+        .heading-container[data-collapsed="true"] .collapse-indicator {
+            transform: rotate(-90deg);
+        }
+
+        /* Hide children when collapsed */
+        .heading-container[data-collapsed="true"] .heading-children {
+            display: none;
+        }
+
+        /* Heading children container */
+        .heading-children {
+            margin-left: 1em;
+            margin-top: 0.5em;
         }
 
         /* Responsive */
