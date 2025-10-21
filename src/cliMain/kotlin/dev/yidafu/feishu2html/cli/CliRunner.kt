@@ -244,7 +244,7 @@ object CliRunner {
         }
 
         val progressCallback = ConsoleProgressCallback(verbose = verbose)
-        
+
         Feishu2Html(options).use { feishu2Html ->
             if (verbose) {
                 println(LogFormatter.section("Export Process"))

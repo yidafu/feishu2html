@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Console appender for output -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Set default log level to WARN (only warnings and errors) -->
+    <!-- Can be overridden with environment variable: -DLOG_LEVEL=DEBUG -->
+    <root level="${LOG_LEVEL:-WARN}">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
+

@@ -5,8 +5,24 @@ import dev.yidafu.feishu2html.utils.LogFormatter
 import dev.yidafu.feishu2html.utils.LogIcons
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
 
 private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.Main")
+
+/**
+ * Set log level dynamically
+ */
+private fun setLogLevel(level: String) {
+    val rootLogger = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME) as Logger
+    rootLogger.level = when (level.uppercase()) {
+        "DEBUG" -> Level.DEBUG
+        "INFO" -> Level.INFO
+        "WARN" -> Level.WARN
+        "ERROR" -> Level.ERROR
+        else -> Level.WARN
+    }
+}
 
 /**
  * JVM command line entry point
@@ -17,10 +33,12 @@ private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.Main")
 fun main(args: Array<String>) {
     val parsed = CliRunner.parseArguments(args)
     if (parsed == null) {
-        logger.error("Insufficient arguments provided: expected at least 3, got {}", args.size)
         CliRunner.showHelp()
         return
     }
+
+    // Set log level based on verbose flag
+    setLogLevel(if (parsed.verbose) "DEBUG" else "WARN")
 
     // Only show detailed startup info in verbose mode
     if (parsed.verbose) {
