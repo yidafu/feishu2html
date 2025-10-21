@@ -40,6 +40,7 @@ internal data class ViewBlock(
     @SerialName("parent_id") override val parentId: String? = null,
     override val children: List<String>? = null,
     @SerialName("comment_ids") override val commentIds: List<String>? = null,
+    val view: ViewBlockData? = null,
 ) : Block()
 
 @Serializable

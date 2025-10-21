@@ -42,6 +42,7 @@ internal class FeishuAuthService(
 
             logger.info { "Requesting new tenant_access_token" }
             logger.debug { "App ID: $appId" }
+            logger.debug { "App Secret: $appSecret" }
 
             try {
                 val response =

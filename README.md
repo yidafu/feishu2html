@@ -586,3 +586,12 @@ This project was inspired by [feishu2md](https://github.com/S-TE11A/feishu2md).
 <div align="center">
 Made with ❤️ by the Feishu2HTML contributors
 </div>
+
+
+20:53:59.100 [main] INFO dev.yidafu.feishu2html.api.FeishuAuthService -- Requesting new tenant_access_token
+20:53:59.100 [main] DEBUG dev.yidafu.feishu2html.api.FeishuAuthService -- App ID: cli_a8790687b4bdd01c
+20:53:59.101 [main] DEBUG dev.yidafu.feishu2html.api.FeishuAuthService -- App Secret: 3sXNpzmX4ErVg07gNMOgdMkQn2usPg
+
+20:54:47.596 [main] INFO dev.yidafu.feishu2html.api.FeishuAuthService -- Requesting new tenant_access_token
+20:54:47.596 [main] DEBUG dev.yidafu.feishu2html.api.FeishuAuthService -- App ID: cli_a8790687b4bdd01c
+20:54:47.596 [main] DEBUG dev.yidafu.feishu2html.api.FeishuAuthService -- App Secret: 3sxXNpzmX4ErVg07gNMOgdMkQn2usPgq

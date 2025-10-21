@@ -173,3 +173,8 @@ internal data class AddOnsBlockData(
     @SerialName("component_type_id") val componentTypeId: String? = null,
     val record: String? = null,
 )
+
+@Serializable
+internal data class ViewBlockData(
+    @SerialName("view_type") val viewType: Int? = null,
+)

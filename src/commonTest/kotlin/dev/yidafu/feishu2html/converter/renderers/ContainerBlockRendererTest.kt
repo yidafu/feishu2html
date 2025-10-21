@@ -249,4 +249,65 @@ class ContainerBlockRendererTest : FunSpec({
 
         html.length shouldBe html.length // 基本验证
     }
+
+    test("应该正确渲染ViewBlock（附件容器）") {
+        // Create a FILE block (child of VIEW)
+        val fileBlock =
+            FileBlock(
+                blockId = "file1",
+                blockType = BlockType.FILE,
+                children = emptyList(),
+                parentId = "view1",
+                file =
+                    FileBlockData(
+                        name = "sample.txt",
+                        token = "test_token_123",
+                    ),
+            )
+
+        // Create a VIEW block (container)
+        val viewBlock =
+            ViewBlock(
+                blockId = "view1",
+                blockType = BlockType.VIEW,
+                children = listOf("file1"),
+                parentId = "page1",
+                view = ViewBlockData(viewType = 1),
+            )
+
+        // Build tree structure
+        val allBlocks = listOf(viewBlock, fileBlock)
+        val tree = buildBlockTree(allBlocks)
+        val viewNode = tree.first()
+
+        @Suppress("UNCHECKED_CAST")
+        val html =
+            createHTML().div {
+                ViewBlockRenderer.render(this, viewNode as BlockNode<ViewBlock>, context)
+            }
+
+        // Verify FILE block is rendered (not "Unsupported")
+        html shouldContain "file-card"
+        html shouldContain "sample.txt"
+        html shouldContain "files/sample.txt"
+    }
+
+    test("应该处理空的ViewBlock") {
+        val block =
+            ViewBlock(
+                blockId = "view_empty",
+                blockType = BlockType.VIEW,
+                children = emptyList(),
+                parentId = "page1",
+                view = ViewBlockData(viewType = 2),
+            )
+
+        val html =
+            createHTML().div {
+                ViewBlockRenderer.render(this, block.toBlockNode(), context)
+            }
+
+        // Should render without errors, producing empty output
+        html shouldContain "<div></div>"
+    }
 })
