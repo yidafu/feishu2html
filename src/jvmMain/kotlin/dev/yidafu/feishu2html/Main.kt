@@ -15,13 +15,6 @@ private val logger = LoggerFactory.getLogger("dev.yidafu.feishu2html.Main")
  * ./gradlew run --args="<app_id> <app_secret> <document_id>"
  */
 fun main(args: Array<String>) {
-    logger.info("Feishu2HTML application started (JVM)")
-
-    // Visual startup message
-    println(LogFormatter.info("Feishu2HTML application started"))
-    println(LogFormatter.keyValue("Platform", "JVM", LogIcons.PROCESSING))
-    println(LogFormatter.keyValue("Arguments", args.size.toString(), LogIcons.INFO))
-
     val parsed = CliRunner.parseArguments(args)
     if (parsed == null) {
         logger.error("Insufficient arguments provided: expected at least 3, got {}", args.size)
@@ -29,15 +22,24 @@ fun main(args: Array<String>) {
         return
     }
 
-    logger.info("Parsed arguments - App ID: {}, Document count: {}, Template: {}",
-        parsed.appId, parsed.documentIds.size, parsed.template::class.simpleName)
-    logger.debug("Document IDs to export: {}", parsed.documentIds.joinToString(", "))
+    // Only show detailed startup info in verbose mode
+    if (parsed.verbose) {
+        logger.info("Feishu2HTML application started (JVM)")
+        println(LogFormatter.info("Feishu2HTML application started"))
+        println(LogFormatter.keyValue("Platform", "JVM", LogIcons.PROCESSING))
+        println(LogFormatter.keyValue("Arguments", args.size.toString(), LogIcons.INFO))
+        logger.info("Parsed arguments - App ID: {}, Document count: {}, Template: {}",
+            parsed.appId, parsed.documentIds.size, parsed.template::class.simpleName)
+        logger.debug("Document IDs to export: {}", parsed.documentIds.joinToString(", "))
+    }
 
     CliRunner.printBanner(parsed.appId, parsed.documentIds.size, "JVM")
 
     try {
-        logger.info("Starting export process with template: {}, inline images: {}, inline CSS: {}, hide unsupported: {}",
-            parsed.template::class.simpleName, parsed.inlineImages, parsed.inlineCss, parsed.hideUnsupported)
+        if (parsed.verbose) {
+            logger.info("Starting export process with template: {}, inline images: {}, inline CSS: {}, hide unsupported: {}, verbose: {}",
+                parsed.template::class.simpleName, parsed.inlineImages, parsed.inlineCss, parsed.hideUnsupported, parsed.verbose)
+        }
         runBlocking {
             CliRunner.runExport(
                 parsed.appId,
@@ -46,19 +48,22 @@ fun main(args: Array<String>) {
                 parsed.template,
                 parsed.inlineImages,
                 parsed.inlineCss,
-                parsed.hideUnsupported
+                parsed.hideUnsupported,
+                parsed.verbose
             )
         }
-        logger.info("Export completed successfully")
-        println(LogFormatter.success("All operations completed successfully!"))
+        if (parsed.verbose) {
+            logger.info("Export completed successfully")
+        }
     } catch (e: Exception) {
         logger.error("Export failed: {}", e.message, e)
         CliRunner.handleError(e)
-        if (logger.isDebugEnabled) {
+        if (parsed.verbose) {
             e.printStackTrace()
         }
     }
 
-    logger.info("Feishu2HTML application terminated")
-    println(LogFormatter.info("Application terminated"))
+    if (parsed.verbose) {
+        logger.info("Feishu2HTML application terminated")
+    }
 }

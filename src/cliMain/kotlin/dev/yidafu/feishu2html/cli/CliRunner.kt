@@ -19,6 +19,7 @@ data class CliArgs(
     val inlineImages: Boolean = false,
     val inlineCss: Boolean = false,
     val hideUnsupported: Boolean = false,
+    val verbose: Boolean = false,
 )
 
 /**
@@ -71,6 +72,14 @@ object CliRunner {
             description = "Hide unsupported block type warnings"
         ).default(false)
 
+        // Define --verbose option
+        val verbose by parser.option(
+            ArgType.Boolean,
+            shortName = "v",
+            fullName = "verbose",
+            description = "Enable verbose logging (shows debug and info messages)"
+        ).default(false)
+
         // Define required positional arguments
         val appId by parser.argument(
             ArgType.String,
@@ -120,7 +129,8 @@ object CliRunner {
                 template = template,
                 inlineImages = inlineImages,
                 inlineCss = inlineCss,
-                hideUnsupported = hideUnsupported
+                hideUnsupported = hideUnsupported,
+                verbose = verbose
             )
         } catch (e: IllegalStateException) {
             // kotlinx-cli throws IllegalStateException for parsing errors
@@ -151,6 +161,7 @@ object CliRunner {
         println("  --inline-images         Embed images as base64 data URLs")
         println("  --inline-css            Embed CSS styles inline in <style> tag")
         println("  --hide-unsupported      Hide unsupported block type warnings")
+        println("  -v, --verbose           Enable verbose logging (shows debug and info messages)")
         println("  -h, --help              Show this help message")
         println()
         println("Examples:")
@@ -218,33 +229,53 @@ object CliRunner {
         inlineImages: Boolean = false,
         inlineCss: Boolean = false,
         hideUnsupported: Boolean = false,
+        verbose: Boolean = false,
     ) {
         val options = createOptions(appId, appSecret, template, inlineImages, inlineCss, hideUnsupported)
 
-        println(LogFormatter.section("Configuration"))
-        println(LogFormatter.keyValue("Output Directory", options.outputDir, LogIcons.FOLDER))
-        println(LogFormatter.keyValue("Template", template::class.simpleName ?: "Default", LogIcons.DOCUMENT))
-        println(LogFormatter.keyValue("Inline Images", if (inlineImages) "Enabled" else "Disabled", LogIcons.IMAGE))
-        println(LogFormatter.keyValue("Inline CSS", if (inlineCss) "Enabled" else "Disabled", LogIcons.PROCESSING))
-        println(LogFormatter.keyValue("Hide Unsupported", if (hideUnsupported) "Yes" else "No", LogIcons.INFO))
+        // Only show detailed configuration in verbose mode
+        if (verbose) {
+            println(LogFormatter.section("Configuration"))
+            println(LogFormatter.keyValue("Output Directory", options.outputDir, LogIcons.FOLDER))
+            println(LogFormatter.keyValue("Template", template::class.simpleName ?: "Default", LogIcons.DOCUMENT))
+            println(LogFormatter.keyValue("Inline Images", if (inlineImages) "Enabled" else "Disabled", LogIcons.IMAGE))
+            println(LogFormatter.keyValue("Inline CSS", if (inlineCss) "Enabled" else "Disabled", LogIcons.PROCESSING))
+            println(LogFormatter.keyValue("Hide Unsupported", if (hideUnsupported) "Yes" else "No", LogIcons.INFO))
+        }
 
-        val progressCallback = ConsoleProgressCallback(verbose = true)
-
+        val progressCallback = ConsoleProgressCallback(verbose = verbose)
+        
         Feishu2Html(options).use { feishu2Html ->
-            println(LogFormatter.section("Export Process"))
+            if (verbose) {
+                println(LogFormatter.section("Export Process"))
+            }
 
             if (documentIds.size == 1) {
-                println(LogFormatter.processing("Exporting single document: ${documentIds[0]}"))
+                if (!verbose) {
+                    println(LogFormatter.processing("Exporting document..."))
+                } else {
+                    println(LogFormatter.processing("Exporting single document: ${documentIds[0]}"))
+                }
                 feishu2Html.export(documentIds[0], progressCallback = progressCallback)
             } else {
-                println(LogFormatter.processing("Batch exporting ${documentIds.size} documents"))
+                if (!verbose) {
+                    println(LogFormatter.processing("Exporting ${documentIds.size} documents..."))
+                } else {
+                    println(LogFormatter.processing("Batch exporting ${documentIds.size} documents"))
+                }
                 feishu2Html.exportBatch(documentIds, progressCallback = progressCallback)
             }
 
-            println()
-            println(LogFormatter.section("Summary"))
+            if (verbose) {
+                println()
+                println(LogFormatter.section("Summary"))
+            }
             println(LogFormatter.success("Export completed successfully!"))
-            println(LogFormatter.keyValue("Output Directory", options.outputDir, LogIcons.FOLDER))
+            if (!verbose) {
+                println(LogFormatter.keyValue("Output", options.outputDir, LogIcons.FOLDER))
+            } else {
+                println(LogFormatter.keyValue("Output Directory", options.outputDir, LogIcons.FOLDER))
+            }
             println()
         }
     }

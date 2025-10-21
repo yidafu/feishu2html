@@ -11,21 +11,31 @@ class ConsoleProgressCallback(
 ) : ExportProgressCallback {
     private val documentStartTimes = mutableMapOf<String, Long>()
     private val documentStats = mutableMapOf<String, MutableMap<String, Int>>()
-
+    
     override fun onStart(documentId: String) {
         documentStartTimes[documentId] = Clock.System.now().toEpochMilliseconds()
         documentStats[documentId] = mutableMapOf()
-
-        println(LogFormatter.processing("Starting export for document: $documentId"))
+        
+        // Only show in verbose mode
+        if (verbose) {
+            println(LogFormatter.processing("Starting export for document: $documentId"))
+        }
     }
-
+    
     override fun onMetadataFetched(documentId: String, title: String, blocksCount: Int) {
-        println(LogFormatter.documentStart(documentId, title))
-        println(LogFormatter.keyValue("Blocks Count", blocksCount.toString(), LogIcons.DOCUMENT))
-
+        // In non-verbose mode, show minimal info
+        if (!verbose) {
+            // Simplified single-line message
+            println(LogFormatter.keyValue("Document", title, LogIcons.DOCUMENT))
+        } else {
+            // Full decorated card in verbose mode
+            println(LogFormatter.documentStart(documentId, title))
+            println(LogFormatter.keyValue("Blocks Count", blocksCount.toString(), LogIcons.DOCUMENT))
+        }
+        
         documentStats[documentId]?.set("Blocks", blocksCount)
     }
-
+    
     override fun onContentFetched(documentId: String, blocksCount: Int) {
         if (verbose) {
             println(LogFormatter.success("Content fetched: $blocksCount blocks"))
@@ -53,12 +63,18 @@ class ConsoleProgressCallback(
         val startTime = documentStartTimes[documentId] ?: 0
         val duration = Clock.System.now().toEpochMilliseconds() - startTime
         val stats = documentStats[documentId] ?: mutableMapOf()
-
+        
         // Extract title from outputPath if available
         val title = outputPath.substringAfterLast('/').substringBeforeLast('.')
-
-        println(LogFormatter.documentComplete(title, duration, stats))
-        println(LogFormatter.keyValue("Output File", outputPath, LogIcons.FILE))
+        
+        if (verbose) {
+            // Full completion card in verbose mode
+            println(LogFormatter.documentComplete(title, duration, stats))
+            println(LogFormatter.keyValue("Output File", outputPath, LogIcons.FILE))
+        } else {
+            // Minimal output in non-verbose mode
+            println(LogFormatter.keyValue("Output", outputPath.substringAfterLast('/'), LogIcons.FILE))
+        }
     }
 
     override fun onError(documentId: String, error: Throwable) {
