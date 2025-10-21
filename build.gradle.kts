@@ -385,7 +385,10 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 
     // Set source directories
     sourceDirectories.setFrom(
-        files(kotlin.sourceSets["commonMain"].kotlin.srcDirs, kotlin.sourceSets["jvmMain"].kotlin.srcDirs),
+        files(
+            "src/commonMain/kotlin",
+            "src/jvmMain/kotlin"
+        ),
     )
 
     classDirectories.setFrom(
