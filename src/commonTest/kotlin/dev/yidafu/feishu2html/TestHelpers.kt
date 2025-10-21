@@ -38,11 +38,11 @@ fun List<Block>.toBlockNodes(): List<BlockNode<out Block>> {
  * This mimics the behavior of FeishuApiClient.getOrderedBlocks() and properly constructs
  * the tree structure based on each block's children field.
  */
-fun buildBlockTree(blocks: List<Block>): List<BlockNode<out Block>> {
+fun buildBlockTree(blocks: List<Block>): List<BlockNode<Block>> {
     val blocksMap = blocks.associateBy { it.blockId }
-    val nodeCache = mutableMapOf<String, BlockNode<out Block>>()
-
-    fun buildNode(blockId: String, parent: BlockNode<out Block>? = null): BlockNode<out Block>? {
+    val nodeCache = mutableMapOf<String, BlockNode<Block>>()
+    
+    fun buildNode(blockId: String, parent: BlockNode<Block>? = null): BlockNode<Block>? {
         if (blockId in nodeCache) {
             return nodeCache[blockId]
         }
