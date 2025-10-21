@@ -21,16 +21,10 @@ fun main(args: Array<String>) {
         return
     }
 
-    // Configure slf4j-simple via system properties
-    // Must be set before any logger is created
-    System.setProperty(
-        "org.slf4j.simpleLogger.defaultLogLevel",
-        if (parsed.verbose) "debug" else "warn"
-    )
-    System.setProperty("org.slf4j.simpleLogger.showDateTime", "false")
-    System.setProperty("org.slf4j.simpleLogger.showThreadName", "false")
-    System.setProperty("org.slf4j.simpleLogger.showLogName", "false")
-    System.setProperty("org.slf4j.simpleLogger.levelInBrackets", "false")
+    // Override log level if verbose mode (default is WARN from simplelogger.properties)
+    if (parsed.verbose) {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug")
+    }
 
     // Only show detailed startup info in verbose mode
     if (parsed.verbose) {
